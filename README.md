@@ -2,7 +2,7 @@
 
 A simple tool that converts MIDI files to QWERTY sheets for playing on your favorite VP platform.
 
-Available at https://arijan.github.io/midi-converter.
+Available at https://arijanj.github.io/midi-converter.
 
 ---
 
