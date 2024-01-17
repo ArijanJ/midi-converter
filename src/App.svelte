@@ -110,6 +110,7 @@
                  oldSettings.sequentialQuantize != settings.sequentialQuantize) {
             saveSheet()
             createLines()
+            lines = lines
         }
         oldSettings = { ...settings }
 	}

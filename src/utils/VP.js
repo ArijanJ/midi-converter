@@ -63,14 +63,14 @@ class Chord {
 class Sheet {
     constructor(chords) { this.chords = chords }
 
-    transpose(by, shifts='Start', oors='Start') { /* Does not mutate */
+    transpose(by, shifts='Start', oors='Start', sequentialQuantize=true) { /* Does not mutate */
         let newChords = []
         this.chords.forEach((chord) => {
             let newChord = []
             chord.notes.forEach((note) => {
                 newChord.push(new Note(note.value + by, note.playTime, note.tempo, note.BPM, note.delta, shifts, oors))
             })
-            newChords.push(new Chord(newChord))
+            newChords.push(new Chord(newChord, sequentialQuantize))
         })
         return new Sheet(newChords)
     }

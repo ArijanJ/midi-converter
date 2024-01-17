@@ -12,7 +12,7 @@
     $: {
         previousChord = { notes: [{ playTime: -999999 }] }
         originalSheet = new Sheet(line.chords)
-        sheet = originalSheet.transpose(line.transposition, settings.pShifts, settings.pOors)
+        sheet = originalSheet.transpose(line.transposition, settings.pShifts, settings.pOors, settings.sequentialQuantize)
         penalty = 0.000
     }
 
