@@ -130,7 +130,7 @@
     .viewer {
         display: block;
         white-space: pre-line;
-        overflow-y: scroll;
+        overflow-y: hidden;
         overflow-x: hidden;
         font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
             "Lucida Sans", Arial, sans-serif;

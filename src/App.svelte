@@ -1,5 +1,7 @@
 <script>
-	import { getMIDIFileFromArrayBuffer, getEvents, getTempo } from './utils/MIDI.js'
+    import { domToBlob } from "modern-screenshot";
+    import {isImageCaptureInProgress} from "./store";
+    import { getMIDIFileFromArrayBuffer, getEvents, getTempo } from './utils/MIDI.js'
 	import { generateSheet, bestTransposition } from './utils/VP.js'
     import SheetOptions from './components/SheetOptions.svelte'
     import Track from './components/Track.svelte'
@@ -24,6 +26,9 @@
     // For line break calculations
     let penalty = 0.000
     let error_range = 0.5
+
+    let container
+    let notesContainerWidth
 
 	onMount(() => {
 		fileInput.addEventListener('change', async() => {
@@ -139,6 +144,66 @@
         const sheet = e.detail.sheet
         setLineTransposition(index, bestTransposition(sheet, 11))
     }
+
+    /**
+     * Takes an image of the sheet, which can then be either copied/downloaded.
+     * The image should be cropped to the maximum measure length via the value notesContainerWidth.
+     * It's value depends on the max-content width of the div where notesContainerWidth is set.
+     * @param {string} mode - A string indicating how the user wants to retrieve the image.
+     * @enum {string} ["download", "copy"]
+     */
+    function captureSheetAsImage(mode) {
+        isImageCaptureInProgress.set(true)
+
+        setTimeout(() =>
+            domToBlob(container, {width: notesContainerWidth, scale: 2}).then((blob) => {
+                if (mode === "copy") {
+                    copyCapturedImage(blob);
+                    return;
+                }
+
+                downloadCapturedImage(blob);
+            }
+        ), 250)
+    }
+
+    function handleCaptureSheetAsImage(event) {
+       captureSheetAsImage(event.detail.mode);
+    }
+
+    function copyCapturedImage(blob) {
+        try {
+            navigator.clipboard.write([
+                new ClipboardItem({
+                    'image/png': blob
+                })
+            ])
+            isImageCaptureInProgress.set(false)
+        }
+        catch (err) {
+            console.error(err);
+        }
+    }
+
+    function downloadCapturedImage(blob) {
+        const url = URL.createObjectURL(blob);
+
+        // create a temporary element to download the image
+        let filename = fileInput.files[0].name.split(".");
+        filename.pop();
+        filename = filename[0] + ".png";
+
+        let linkEl = document.createElement("a");
+        linkEl.href = url
+        linkEl.download = filename
+
+        document.body.appendChild(linkEl);
+        linkEl.click();
+
+        URL.revokeObjectURL(url);
+        document.body.removeChild(linkEl);
+        isImageCaptureInProgress.set(false)
+    }
 </script>
 
 <svelte:head>
@@ -150,7 +215,12 @@
     <input type="file" bind:this={fileInput} accept=".mid,.midi">
 </div>
 
-<SheetOptions show={sheetReady} on:auto={auto} bind:settings/>
+<SheetOptions
+    show={sheetReady}
+    on:auto={auto}
+    on:captureSheetAsImage={handleCaptureSheetAsImage}
+    bind:settings
+/>
 
 {#if trackSelection}
 <section id="track-chooser">
@@ -165,16 +235,20 @@
 {/if}
 
 {#if sheetReady}
-    {#each Object.entries(lines) as [ index, line ]}
-        {@const last = lines[index-1]}
-        {@const next = line.continuation}
-        {@const sameTranspositionAsPrevious = last?.transposition == line.transposition}
-        <Line line={line} 
-              {sameTranspositionAsPrevious}
-              {index} 
-              {settings} 
-              passedNext={next}
-              on:clicked={lineClicked} 
-              on:auto={autoLine}/>
-    {/each}
+    <div style="background: #2D2A32" bind:this={container}>
+        <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
+            {#each Object.entries(lines) as [ index, line ]}
+                {@const last = lines[index-1]}
+                {@const next = line.continuation}
+                {@const sameTranspositionAsPrevious = last?.transposition == line.transposition}
+                <Line line={line}
+                      {sameTranspositionAsPrevious}
+                      {index}
+                      {settings}
+                      passedNext={next}
+                      on:clicked={lineClicked}
+                      on:auto={autoLine}/>
+            {/each}
+        </div>
+    </div>
 {/if}

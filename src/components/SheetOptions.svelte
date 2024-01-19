@@ -1,6 +1,13 @@
 <script>
     import { createEventDispatcher } from 'svelte'
+    import {isImageCaptureInProgress} from "../store";
+
     let dispatch = createEventDispatcher()
+
+    let isImgCaptureInProgress = false
+    isImageCaptureInProgress.subscribe((value) => {
+        isImgCaptureInProgress = value;
+    })
 
     export let show
 
@@ -66,6 +73,28 @@
         <input type='checkbox' id="tempo-checkbox" bind:checked={settings.tempoMarks}>
         Show tempo marks
     </label>
+
+    <button
+        disabled={isImgCaptureInProgress}
+        on:click={() => dispatch("captureSheetAsImage", {mode: "download"})}
+    >
+        {#if isImgCaptureInProgress}
+            Please Wait...
+        {:else}
+            Download Image
+        {/if}
+    </button>
+
+    <button
+        disabled={isImgCaptureInProgress}
+        on:click={() => dispatch("captureSheetAsImage", {mode: "copy"})}
+    >
+        {#if isImgCaptureInProgress}
+            Please Wait...
+        {:else}
+            Copy Image
+        {/if}
+    </button>
 </div>
 
 <style>
