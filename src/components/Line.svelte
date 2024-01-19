@@ -118,10 +118,20 @@
 
 <div class="viewer">
     <button class="line" 
-            on:click={() => dispatch('clicked', { index: +index, by: 1 })}
-            on:contextmenu|preventDefault={() => dispatch('clicked', {index: +index, by: -1})}
-            on:auxclick|preventDefault={() => dispatch('auto', {index: +index, sheet: originalSheet})}
-            on:mousedown={(e) => {if(e.which === 2) e.preventDefault()}}>
+            on:mousedown|preventDefault={(e) => {
+                switch(e.button) {
+                    case 0: // Left
+                        dispatch('transpose', { index: +index, by: 1 })
+                        break
+                    case 1: // Middle
+                        dispatch('auto', { index: +index, sheet: originalSheet })
+                        break
+                    case 2: // Right
+                        dispatch('transpose', { index: +index, by: -1 })
+                        break
+                }
+            }}
+            on:contextmenu|preventDefault>
         {@html render(sheet)}
     </button>
 </div>

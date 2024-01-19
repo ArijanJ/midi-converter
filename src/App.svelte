@@ -132,10 +132,9 @@
         lines[index+1].difference = lines[index+1].transposition - lines[index].transposition // Relative
     }
 
-    let lineClicked = (e) => {
+    let lineTransposed = (e) => {
         const index = e.detail.index
         let by = e.detail.by
-        console.log(`Transposing line ${e.detail.index} by ${by}`)
         setLineTransposition(index, lines[index].transposition+by)
     }
 
@@ -238,16 +237,16 @@
     <div style="background: #2D2A32" bind:this={container}>
         <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
             {#each Object.entries(lines) as [ index, line ]}
-                {@const last = lines[index-1]}
-                {@const next = line.continuation}
-                {@const sameTranspositionAsPrevious = last?.transposition == line.transposition}
-                <Line line={line}
-                      {sameTranspositionAsPrevious}
-                      {index}
-                      {settings}
-                      passedNext={next}
-                      on:clicked={lineClicked}
-                      on:auto={autoLine}/>
+            {@const last = lines[index-1]}
+            {@const next = line.continuation}
+            {@const sameTranspositionAsPrevious = last?.transposition == line.transposition}
+            <Line line={line}
+                  {sameTranspositionAsPrevious}
+                  {index}
+                  {settings}
+                  passedNext={next}
+                  on:transpose={lineTransposed}
+                  on:auto={autoLine}/>
             {/each}
         </div>
     </div>
