@@ -191,7 +191,7 @@
         // create a temporary element to download the image
         let filename = fileInput.files[0].name.split(".");
         filename.pop();
-        filename = filename[0] + ".png";
+        filename = filename.join(".") + ".png";
 
         let linkEl = document.createElement("a");
         linkEl.href = url
