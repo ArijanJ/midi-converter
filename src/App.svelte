@@ -127,10 +127,9 @@
         lines[index+1].difference = lines[index+1].transposition - lines[index].transposition // Relative
     }
 
-    let lineClicked = (e) => {
+    let lineTransposed = (e) => {
         const index = e.detail.index
         let by = e.detail.by
-        console.log(`Transposing line ${e.detail.index} by ${by}`)
         setLineTransposition(index, lines[index].transposition+by)
     }
 
@@ -174,7 +173,7 @@
               {index} 
               {settings} 
               passedNext={next}
-              on:clicked={lineClicked} 
+              on:transpose={lineTransposed} 
               on:auto={autoLine}/>
     {/each}
 {/if}
