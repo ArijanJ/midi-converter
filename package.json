@@ -23,6 +23,7 @@
     "midi-parser-js": "^4.0.4",
     "midievents": "^2.0.0",
     "midifile": "^2.0.0",
+    "modern-screenshot": "^4.4.37",
     "sirv-cli": "^2.0.0"
   }
 }

@@ -117,7 +117,7 @@
 </script>
 
 <div class="viewer">
-    <button class="line" 
+    <div class="line"
             on:mousedown|preventDefault={(e) => {
                 switch(e.button) {
                     case 0: // Left
@@ -133,14 +133,14 @@
             }}
             on:contextmenu|preventDefault>
         {@html render(sheet)}
-    </button>
+    </div>
 </div>
 
 <style>
     .viewer {
         display: block;
         white-space: pre-line;
-        overflow-y: scroll;
+        overflow-y: hidden;
         overflow-x: hidden;
         font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
             "Lucida Sans", Arial, sans-serif;

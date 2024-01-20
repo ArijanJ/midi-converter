@@ -1,5 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte'
+
     let dispatch = createEventDispatcher()
 
     export let show
@@ -12,7 +13,8 @@
         pOors: 'Start',
         oors: true,
         tempoMarks: false,
-        transposition: 0
+        transposition: 0,
+        capturingImage: false
     }
 </script>
 
@@ -66,6 +68,31 @@
         <input type='checkbox' id="tempo-checkbox" bind:checked={settings.tempoMarks}>
         Show tempo marks
     </label>
+
+    <button
+        disabled={settings.capturingImage}
+        on:click={() => dispatch("captureSheetAsImage", {mode: "download"})}
+    >
+        {#if settings.capturingImage}
+            Please Wait...
+        {:else}
+            Download Image
+        {/if}
+    </button>
+
+    {#if typeof ClipboardItem !== "undefined"}
+        <!-- note: not supported by mozilla -->
+        <button
+            disabled={settings.capturingImage}
+            on:click={() => dispatch("captureSheetAsImage", {mode: "copy"})}
+        >
+            {#if settings.capturingImage}
+                Please Wait...
+            {:else}
+                Copy Image
+            {/if}
+        </button>
+    {/if}
 </div>
 
 <style>
