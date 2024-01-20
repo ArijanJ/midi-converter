@@ -120,9 +120,8 @@
 
     let auto = () => { 
         settings.transposition = bestTransposition(originalSheet, 11)
-        for (let line of lines) {
-            line.transposition = settings.transposition
-        }
+        for (let i = 0; i < lines.length; i++)
+            setLineTransposition(i, settings.transposition)
     }
 
     let lineBasedAuto = () => {
