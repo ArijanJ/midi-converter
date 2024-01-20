@@ -117,7 +117,7 @@
 </script>
 
 <div class="viewer">
-    <button class="line" 
+    <div class="line"
             on:mousedown|preventDefault={(e) => {
                 switch(e.button) {
                     case 0: // Left
@@ -133,7 +133,7 @@
             }}
             on:contextmenu|preventDefault>
         {@html render(sheet)}
-    </button>
+    </div>
 </div>
 
 <style>
