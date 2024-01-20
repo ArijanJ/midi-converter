@@ -15,7 +15,7 @@ $ npm run build # to build static site
 
 ### Deploying to GitHub pages
 ```
-$ npm run build && mv public/build/* build/ # then commit & push
+$ npm run build # before pushing public/
 ```
 
 ## Further reading
