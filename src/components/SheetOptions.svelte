@@ -23,6 +23,7 @@
 	<label for="number">Transpose (sheet) by:</label>
 	<input type="number" bind:value={settings.transposition} min=-24 max=24>
     <button on:click={() => { dispatch('auto') }}>Auto-transpose</button>
+    <button on:click={() => { dispatch('lineBasedAuto') }}>Line-based auto-transpose</button>
 </div>
 
 <div>

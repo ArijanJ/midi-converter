@@ -11,7 +11,7 @@
     export let line /* Sheet-like */
     $: {
         previousChord = { notes: [{ playTime: -999999 }] }
-        originalSheet = new Sheet(line.chords)
+        line.originalSheet = new Sheet(line.chords)
         sheet = originalSheet.transpose(line.transposition, settings.pShifts, settings.pOors, settings.sequentialQuantize)
         penalty = 0.000
     }
@@ -116,7 +116,7 @@
     }
 </script>
 
-<div class="viewer">
+<div class="viewer" on:contextmenu|preventDefault>
     <div class="line"
             on:mousedown|preventDefault={(e) => {
                 switch(e.button) {

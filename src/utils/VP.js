@@ -124,7 +124,10 @@ const vpScale =
 
 const lowercases = '1234567890qwertyuiopasdfghklzxcvbnm'
 
-function bestTransposition(sheet, deviation) {
+/** Returns the transposition of a sheet within [-deviation, +deviation] with the least lowercase letters 
+* @param {boolean} [strict=true] - Whether to always return the best transposition, regardless of how distant it is
+*/
+function bestTransposition(sheet, deviation, prioritizeNear = 0, strict = true) {
     function countLowercases(sheet) {
         let monochord = []
         for (let chord of sheet.chords) {
@@ -133,16 +136,31 @@ function bestTransposition(sheet, deviation) {
         }
         return monochord.filter(note => lowercases.includes(note.char) && note.oor === false && note.valid === true).length
     }
+
     let most = 0
     let best = 0
-    for(let d = -deviation; d <= deviation; d++) {
-        let contender = sheet.transpose(d)
-        let lowercases = countLowercases(contender) + Math.abs(deviation) / 10 // Incentivize closer to 0
+
+    function consider(deviation) {
+        let contender = sheet.transpose(deviation)
+        let lowercases = countLowercases(contender)
         if (lowercases > most) {
+            if (!strict && Math.abs(deviation - prioritizeNear) > 4) { // If next transposition is more than +3/-3 
+                let difference = Math.abs(lowercases - most)
+                if (difference < 5) // Less than +5 lowercase gain, not worth it, don't consider
+                    return
+            }
             most = lowercases
-            best = d
+            best = deviation
         }
     }
+
+    // Run from prioritizeNear to -deviation, then from prioritizeNear to +deviation
+    for (let d = prioritizeNear; d >= -deviation; d--)
+        consider(d)
+
+    for (let d = prioritizeNear; d <= +deviation; d++)
+        consider(d)
+
     return best
 }
 

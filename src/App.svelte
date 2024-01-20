@@ -52,7 +52,6 @@
         let tempo_ms = note.tempo / 1000 // Turn 652174 into 652.174
         let goal = tempo_ms * settings.beats
         let normalizedPlayTime = note.playTime - penalty
-        // console.log(`So far: ${normalizedPlayTime}, Goal: ${goal}`)
         if (normalizedPlayTime + error_range >= goal) {
             penalty += normalizedPlayTime
             return true
@@ -71,7 +70,7 @@
 
         penalty = 0.000
         lines = []
-        let acc = [] // [Chord]
+        let acc = [] // Chord[]
         for (let i = 0; i <= chords.length; i++) {
             const current = {
                 chord: chords[i],
@@ -119,16 +118,32 @@
         oldSettings = { ...settings }
 	}
 
-    let auto = () => { settings.transposition = bestTransposition(originalSheet, 11) }
+    let auto = () => { 
+        settings.transposition = bestTransposition(originalSheet, 11)
+        for (let line of lines) {
+            line.transposition = settings.transposition
+        }
+    }
 
-    let lines = [] // [{chords: [], transposition?, continuation: undefined}...]
+    let lineBasedAuto = () => {
+        let previous = bestTransposition(lines[0].originalSheet, 11, 0, true)
+        for (let [index, line] of Object.entries(lines)) {
+            setLineTransposition(index, bestTransposition(line.originalSheet, 11, previous, false))
+            previous = line.transposition
+        }
+        lines = lines
+    }
+
+    let lines = [] // [{ chords: Chord[], transposition?, continuation: undefined }, ...]
 
     function setLineTransposition(idx, transposition) {
         let index = +idx
         lines[index].transposition = transposition
 
-        lines[index].difference = lines[index].transposition - lines[index-1].transposition // Relative
-        lines[index+1].difference = lines[index+1].transposition - lines[index].transposition // Relative
+        if(lines[index-1])
+            lines[index].difference = lines[index].transposition - lines[index-1].transposition
+        if(lines[index+1])
+            lines[index+1].difference = lines[index+1].transposition - lines[index].transposition
     }
 
     let lineTransposed = (e) => {
@@ -140,7 +155,8 @@
     let autoLine = (e) => {
         const index = e.detail.index
         const sheet = e.detail.sheet
-        setLineTransposition(index, bestTransposition(sheet, 11))
+        let previous = lines[index-1]?.transposition ?? 0
+        setLineTransposition(index, bestTransposition(sheet, 11, previous))
     }
 
     /**
@@ -217,6 +233,7 @@
 <SheetOptions
     show={sheetReady}
     on:auto={auto}
+    on:lineBasedAuto={lineBasedAuto}
     on:captureSheetAsImage={handleCaptureSheetAsImage}
     bind:settings
 />
