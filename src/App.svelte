@@ -1,6 +1,5 @@
 <script>
     import { domToBlob } from "modern-screenshot";
-    import {isImageCaptureInProgress} from "./store";
     import { getMIDIFileFromArrayBuffer, getEvents, getTempo } from './utils/MIDI.js'
 	import { generateSheet, bestTransposition } from './utils/VP.js'
     import SheetOptions from './components/SheetOptions.svelte'
@@ -152,16 +151,18 @@
      * @enum {string} ["download", "copy"]
      */
     function captureSheetAsImage(mode) {
-        isImageCaptureInProgress.set(true)
+        settings.capturingImage = true;
 
         setTimeout(() =>
             domToBlob(container, {width: notesContainerWidth, scale: 2}).then((blob) => {
                 if (mode === "copy") {
                     copyCapturedImage(blob);
-                    return;
+                }
+                else {
+                    downloadCapturedImage(blob);
                 }
 
-                downloadCapturedImage(blob);
+                settings.capturingImage = false;
             }
         ), 250)
     }
@@ -171,13 +172,13 @@
     }
 
     function copyCapturedImage(blob) {
+        // note: ClipboardItem is not supported by mozilla
         try {
             navigator.clipboard.write([
                 new ClipboardItem({
                     'image/png': blob
                 })
             ])
-            isImageCaptureInProgress.set(false)
         }
         catch (err) {
             console.error(err);
@@ -201,7 +202,6 @@
 
         URL.revokeObjectURL(url);
         document.body.removeChild(linkEl);
-        isImageCaptureInProgress.set(false)
     }
 </script>
 

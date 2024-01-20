@@ -1,13 +1,7 @@
 <script>
     import { createEventDispatcher } from 'svelte'
-    import {isImageCaptureInProgress} from "../store";
 
     let dispatch = createEventDispatcher()
-
-    let isImgCaptureInProgress = false
-    isImageCaptureInProgress.subscribe((value) => {
-        isImgCaptureInProgress = value;
-    })
 
     export let show
 
@@ -19,7 +13,8 @@
         pOors: 'Start',
         oors: true,
         tempoMarks: false,
-        transposition: 0
+        transposition: 0,
+        capturingImage: false
     }
 </script>
 
@@ -75,26 +70,29 @@
     </label>
 
     <button
-        disabled={isImgCaptureInProgress}
+        disabled={settings.capturingImage}
         on:click={() => dispatch("captureSheetAsImage", {mode: "download"})}
     >
-        {#if isImgCaptureInProgress}
+        {#if settings.capturingImage}
             Please Wait...
         {:else}
             Download Image
         {/if}
     </button>
 
-    <button
-        disabled={isImgCaptureInProgress}
-        on:click={() => dispatch("captureSheetAsImage", {mode: "copy"})}
-    >
-        {#if isImgCaptureInProgress}
-            Please Wait...
-        {:else}
-            Copy Image
-        {/if}
-    </button>
+    {#if typeof ClipboardItem !== "undefined"}
+        <!-- note: not supported by mozilla -->
+        <button
+            disabled={settings.capturingImage}
+            on:click={() => dispatch("captureSheetAsImage", {mode: "copy"})}
+        >
+            {#if settings.capturingImage}
+                Please Wait...
+            {:else}
+                Copy Image
+            {/if}
+        </button>
+    {/if}
 </div>
 
 <style>
