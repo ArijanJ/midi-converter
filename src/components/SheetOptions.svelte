@@ -14,16 +14,25 @@
         oors: true,
         tempoMarks: false,
         transposition: 0,
+        lbauto_atleast: 4,
         capturingImage: false
     }
 </script>
 
 {#if show}
 <div style="display: inline-block">
-	<label for="number">Transpose (sheet) by:</label>
-	<input type="number" bind:value={settings.transposition} min=-24 max=24>
+	<label for="transpose">Transpose (sheet) by:</label>
+	<input id="transpose" type="number" bind:value={settings.transposition} min=-24 max=24>
     <button on:click={() => { dispatch('auto') }}>Auto-transpose</button>
-    <button on:click={() => { dispatch('lineBasedAuto') }}>Line-based auto-transpose</button>
+</div>
+
+<div class="quantize">
+    <button style="margin-bottom: 0" on:click={() => { dispatch('lineBasedAuto') }}>Line-based auto-transpose</button>
+    <label style="margin-left: 0.5em; display:flex; align-items: center"
+           title="Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)" 
+           for="atleast" class='slider-label'>Resilience (?):</label>
+    <input id="atleast" type="range" min=1 max=24 bind:value={settings.lbauto_atleast}>
+    <span style="display:flex; align-items: center">{settings.lbauto_atleast}</span>
 </div>
 
 <div>

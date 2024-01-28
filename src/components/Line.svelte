@@ -137,7 +137,8 @@
                         else dispatch('transpose', { index: +index, by: 1 })
                         break
                     case 1: // Middle
-                        dispatch('auto', { index: +index, sheet: originalSheet })
+                        dispatch('auto', { index: +index, sheet: originalSheet, keepGoing: e.ctrlKey })
+                        e.preventDefault()
                         break
                     case 2: // Right
                         if (e.ctrlKey && comment) dispatch('comment', { action: 'remove', index: +index })

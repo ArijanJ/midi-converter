@@ -75,6 +75,41 @@ class Sheet {
         })
         return new Sheet(newChords)
     }
+
+    countNotes() {
+        let notes = 0
+        for (let chord of this.chords) {
+            for (let _ of chord.notes)
+                notes++
+        }
+        return notes
+    }
+
+    text() {
+        let result = '' 
+
+        let chords = this.chords
+        for (let i = 0; i < chords.length; i++) {
+            if (!chords) { result += '[no-chords] '; continue }
+
+            const chord = chords[i]
+
+            let isChord = (chord.notes.length > 1 && chord.notes.find(note => note.valid === true))
+            if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
+                isChord = false
+
+            if (isChord) result += '['
+
+            for (const note of chord.notes) {
+                result += note.char
+            } 
+
+            if (isChord) result += ']'
+
+            result += ' '
+        }
+        return result
+    }
 }
 
 // Takes NOTE_ON and SET_TEMPO events
@@ -123,46 +158,58 @@ const vpScale =
 
     `yuiopasdfghj`
 
-const lowercases = '1234567890qwertyuiopasdfghklzxcvbnm'
+const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
 
-/** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least lowercase letters
-* @param {boolean} [strict=true] - Whether to always return the best transposition, regardless of how distant it is
-*/
-function bestTransposition(sheet, deviation, prioritizeNear = 0, strict = true) {
-    if(!sheet?.chords) return prioritizeNear
+/** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least lowercase letters */
+function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {
+    if(!sheet?.chords) return stickTo
     function countLowercases(sheet) {
         let monochord = []
         for (let chord of sheet.chords) {
             for (let note of chord.notes)
                 monochord.push({ char: note.char, oor: note.outOfRange, valid: note.valid })
         }
-        return monochord.filter(note => lowercases.includes(note.char) && note.oor === false && note.valid === true).length
+        // return monochord.filter(note => lowercases.includes(note.char) && note.oor === false && note.valid === true).length
+        let all = monochord.filter(note => note.oor === false && note.valid === true)
+        let lowercaseCount = all.filter(note => lowercases.includes(note.char))
+        let uppercaseCount = all.filter(note => !(lowercases.includes(note.char)))
+        return Math.abs(uppercaseCount.length-lowercaseCount.length)
     }
 
-    let most = 0
-    let best = 0
+    let sticks = countLowercases(sheet.transpose(stickTo))
+
+    let most = sticks
+    let best = stickTo
 
     function consider(deviation) {
         let contender = sheet.transpose(deviation)
         let lowercases = countLowercases(contender)
+        // console.log([`stickTo: ${stickTo}`,
+        //              `Most: ${most}`,
+        //              `Original: ${sheet.text()}`,
+        //              `Stuck: ${sheet.transpose(stickTo).text()}`,
+        //              `Transposed by ${deviation}: ${sheet.transpose(deviation).text()}`,
+        //              `Gained: ${lowercases - most}`].join('\n'))
         if (lowercases > most) {
-            if (!strict && Math.abs(deviation - prioritizeNear) > 4) { // If next transposition is more than +3/-3 
-                let difference = Math.abs(lowercases - most)
-                if (difference < 5) // Less than +5 lowercase gain, not worth it, don't consider
+            if (!strict) {
+                let difference = lowercases - most
+                if (difference < atLeast) { // Minimal lowercase gain, not worth it, don't consider
                     return
+                }
             }
+            // console.log(`Good to go with ${most}, transposed by ${deviation}, sheet: ${sheet.text()}`)
             most = lowercases
             best = deviation
         }
     }
 
-    // Run from prioritizeNear to -deviation, then from prioritizeNear to +deviation
-    for (let d = prioritizeNear; d >= -deviation; d--)
-        consider(d)
+    // Run from stickTo to -deviation, then from stickTo to +deviation
+    for (let i = startFrom; i <= deviation; i++) {
+        consider(stickTo - i)
+        consider(stickTo + i)
+    }
 
-    for (let d = prioritizeNear; d <= +deviation; d++)
-        consider(d)
-
+    // console.log(`Giving back ${best}`)
     return best
 }
 

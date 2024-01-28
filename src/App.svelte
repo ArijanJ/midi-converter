@@ -124,11 +124,17 @@
             setLineTransposition(i, settings.transposition)
     }
 
-    let lineBasedAuto = () => {
-        let previous = bestTransposition(lines[0].originalSheet, 11, 0, true)
-        for (let [index, line] of Object.entries(lines)) {
-            setLineTransposition(index, bestTransposition(line.originalSheet, 11, previous, false))
-            previous = line.transposition
+    let lineBasedAuto = (fromLine = 0) => {
+        let previous = bestTransposition(lines[fromLine].originalSheet, 11, 0, true)
+
+        for (let index = fromLine; index <= lines.length; index++) {
+            const line = lines[index]; if (!line) continue
+            if (index == 0 && fromLine == 0) { setLineTransposition(0, previous); continue }
+            if (index + 1 < fromLine) continue
+            const newTransposition = bestTransposition(line.originalSheet, 8, previous, false, settings.lbauto_atleast, previous)
+            // console.log(`Calculating ${line.originalSheet.text()} with previous: ${previous}, got back ${newTransposition}`)
+            setLineTransposition(index, newTransposition)
+            previous = newTransposition
         }
         lines = lines
     }
@@ -147,17 +153,21 @@
 
     let lineTransposed = (e) => {
         const index = e.detail.index
-        let by = e.detail.by
+        const by = e.detail.by
         setTimeout(() => {
             setLineTransposition(index, lines[index].transposition+by)
         }, 0)
     }
 
     let autoLine = (e) => {
+        const keepGoing = e.detail.keepGoing
         const index = e.detail.index
         const sheet = e.detail.sheet
         let previous = lines[index-1]?.transposition ?? 0
-        setLineTransposition(index, bestTransposition(sheet, 11, previous))
+        setLineTransposition(index, bestTransposition(sheet, 11, previous, 0, 0))
+        if(keepGoing) { // Transpose all the way down
+            lineBasedAuto(index)
+        }
     }
 
     /**
@@ -272,7 +282,7 @@
 <SheetOptions
     show={sheetReady}
     on:auto={auto}
-    on:lineBasedAuto={lineBasedAuto}
+    on:lineBasedAuto={() => { lineBasedAuto() }}
     on:captureSheetAsImage={handleCaptureSheetAsImage}
     bind:settings
 />
