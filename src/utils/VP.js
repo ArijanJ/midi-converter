@@ -64,6 +64,7 @@ class Sheet {
     constructor(chords) { this.chords = chords }
 
     transpose(by, shifts='Start', oors='Start', sequentialQuantize=true) { /* Does not mutate */
+        if (!this.chords) return
         let newChords = []
         this.chords.forEach((chord) => {
             let newChord = []
@@ -124,10 +125,11 @@ const vpScale =
 
 const lowercases = '1234567890qwertyuiopasdfghklzxcvbnm'
 
-/** Returns the transposition of a sheet within [-deviation, +deviation] with the least lowercase letters 
+/** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least lowercase letters
 * @param {boolean} [strict=true] - Whether to always return the best transposition, regardless of how distant it is
 */
 function bestTransposition(sheet, deviation, prioritizeNear = 0, strict = true) {
+    if(!sheet?.chords) return prioritizeNear
     function countLowercases(sheet) {
         let monochord = []
         for (let chord of sheet.chords) {

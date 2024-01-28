@@ -133,7 +133,7 @@
         lines = lines
     }
 
-    let lines = [] // [{ chords: Chord[], transposition?, continuation: undefined }, ...]
+    let lines = [] // [{ chords: Chord[], transposition?, continuation: undefined, comment: false }, ...]
 
     function setLineTransposition(idx, transposition) {
         let index = +idx
@@ -148,7 +148,9 @@
     let lineTransposed = (e) => {
         const index = e.detail.index
         let by = e.detail.by
-        setLineTransposition(index, lines[index].transposition+by)
+        setTimeout(() => {
+            setLineTransposition(index, lines[index].transposition+by)
+        }, 0)
     }
 
     let autoLine = (e) => {
@@ -218,6 +220,41 @@
         URL.revokeObjectURL(url);
         document.body.removeChild(linkEl);
     }
+
+    function comment(e) {
+        const index = e.detail.index
+        const action = e.detail.action
+        const comment = e.detail.comment
+        switch(action) {
+            case "add": {
+                setTimeout(() => { // Make sure previous comment, if it exists, gets to update
+                    if (lines[index-1]?.comment) return
+                    lines.splice(index, 0, { comment: "Add a comment..." })
+                    lines = lines
+                }, 0)
+                break
+            }
+            case "remove": {
+                lines.splice(index, 1)
+                lines = lines
+                break
+            }
+            case "update": {
+                lines[index].comment = comment
+            }
+        }
+    }
+
+    /** Checks if a line at index has same transposition as previous non-comment line */
+    function stap(index) {
+        const line = lines[index]
+        for (let i = index - 1; i >= 0; i--) {
+            const previous = lines[i]
+            if (previous.comment) continue
+
+            return previous.transposition == line.transposition
+        }
+    }
 </script>
 
 <svelte:head>
@@ -225,7 +262,10 @@
 </svelte:head>
 
 <div style="display: inline-block">
-    <label for="file">Please import a MIDI file:</label>
+    <label for="file">
+        Please import a MIDI file:
+        <a href="https://github.com/ArijanJ/midi-converter/wiki/Usage">How do I use this?</a>
+    </label>
     <input type="file" bind:this={fileInput} accept=".mid,.midi">
 </div>
 
@@ -253,16 +293,15 @@
     <div style="background: #2D2A32" bind:this={container}>
         <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
             {#each Object.entries(lines) as [ index, line ]}
-            {@const last = lines[index-1]}
-            {@const next = line.continuation}
-            {@const sameTranspositionAsPrevious = last?.transposition == line.transposition}
             <Line line={line}
-                  {sameTranspositionAsPrevious}
                   {index}
                   {settings}
-                  passedNext={next}
+                  comment={line.comment}
+                  passedNext={line.continuation}
                   on:transpose={lineTransposed}
-                  on:auto={autoLine}/>
+                  on:auto={autoLine}
+                  on:comment={comment}
+                  sameTranspositionAsPrevious={stap(index)}/>
             {/each}
         </div>
     </div>

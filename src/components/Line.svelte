@@ -8,6 +8,12 @@
 
     export let index /* ID */
 
+    /**
+     * Cosmetic comment inserted between lines.
+     * If defined, no notes are rendered and transposition/settings don't matter.
+     */
+    export let comment = undefined
+
     export let line /* Sheet-like */
     $: {
         previousChord = { notes: [{ playTime: -999999 }] }
@@ -102,11 +108,11 @@
                 color = colors.quarter
             else if (difference < beat * 2) // Or equal to a beat
                 color = colors.half
-            else if (difference < beat * 2)
-                color = colors.whole
             else if (difference < beat * 4)
-                color = colors.quadruple
+                color = colors.whole
             else if (difference < beat * 8)
+                color = colors.quadruple
+            else if (difference < beat * 16)
                 color = colors.long
 
             result += colored_chord(current.chord, color)
@@ -114,25 +120,41 @@
         }
         return result
     }
+
+    function updateComment() {
+        if (comment == '' || comment == '<br>') dispatch('comment', { action: 'remove', index: +index })
+        else dispatch('comment', { index: +index, action: 'update', comment: comment })
+    }
 </script>
 
 <div class="viewer" on:contextmenu|preventDefault>
     <div class="line"
-            on:mousedown|preventDefault={(e) => {
+            on:mousedown={(e) => {
                 switch(e.button) {
                     case 0: // Left
-                        dispatch('transpose', { index: +index, by: 1 })
+                        if (comment) return
+                        if (e.ctrlKey) dispatch('comment', { action: 'add', index: +index })
+                        else dispatch('transpose', { index: +index, by: 1 })
                         break
                     case 1: // Middle
                         dispatch('auto', { index: +index, sheet: originalSheet })
                         break
                     case 2: // Right
-                        dispatch('transpose', { index: +index, by: -1 })
+                        if (e.ctrlKey && comment) dispatch('comment', { action: 'remove', index: +index })
+                        else dispatch('transpose', { index: +index, by: -1 })
                         break
                 }
             }}
             on:contextmenu|preventDefault>
-        {@html render(sheet)}
+        {#if (comment || comment == '')}
+            <!-- svelte-ignore a11y-autofocus -->
+            <span autofocus on:focusout={updateComment} 
+              contenteditable=true bind:textContent={comment} class="comment">
+                {comment}
+            </span>
+        {:else}
+            {@html render(sheet)}
+        {/if}
     </div>
 </div>
 
@@ -147,6 +169,10 @@
         /* height: 100%; */
         padding: 0.1em;
         background: #2D2A32;
+    }
+
+    .comment {
+        color:white
     }
 
     .line {
