@@ -130,7 +130,7 @@
         for (let index = fromLine; index <= lines.length; index++) {
             const line = lines[index]; if (!line) continue
             if (index == 0 && fromLine == 0) { setLineTransposition(0, previous); continue }
-            if (index + 1 < fromLine) continue
+            if (index < fromLine) continue
             const newTransposition = bestTransposition(line.originalSheet, 8, previous, false, settings.lbauto_atleast, previous)
             // console.log(`Calculating ${line.originalSheet.text()} with previous: ${previous}, got back ${newTransposition}`)
             setLineTransposition(index, newTransposition)

@@ -5,6 +5,8 @@
 
     export let show
 
+    let fonts = ['Verdana', 'Tahoma', 'Dejavu Sans', 'Segoe UI', 'Gill Sans', 'Helvetica',  'Lucida Sans', 'Century Gothic']
+
     export let settings = {
         beats: 4,
         quantize: 35,
@@ -15,6 +17,7 @@
         tempoMarks: false,
         transposition: 0,
         lbauto_atleast: 4,
+        font: fonts[0],
         capturingImage: false
     }
 </script>
@@ -49,6 +52,15 @@
         <select name='oors-position' id='oors-position' bind:value={settings.pOors}>
             <option value='Start'>Start</option>
             <option value='End'>End</option>
+        </select>
+    </div>
+
+    <div class='select-div'>
+        <label for='font'>Font:</label>
+        <select name='font' id='font' bind:value={settings.font}>
+            {#each fonts as font}
+                <option value={font}>{font}</option>
+            {/each}
         </select>
     </div>
 
@@ -137,6 +149,10 @@
     }
 
     input[type="file"] {
+        margin-bottom: 0;
+    }
+
+    input[type="text"] {
         margin-bottom: 0;
     }
     

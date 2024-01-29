@@ -127,7 +127,7 @@
     }
 </script>
 
-<div class="viewer" on:contextmenu|preventDefault>
+<div class="viewer" style="font-family: {settings.font}" on:contextmenu|preventDefault>
     <div class="line"
             on:mousedown={(e) => {
                 switch(e.button) {
@@ -165,8 +165,8 @@
         white-space: pre-line;
         overflow-y: hidden;
         overflow-x: hidden;
-        font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
-            "Lucida Sans", Arial, sans-serif;
+        /* font-family: "Verdana", "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", */
+            /* "Lucida Sans", Arial, sans-serif; */
         /* height: 100%; */
         padding: 0.1em;
         background: #2D2A32;
