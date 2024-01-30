@@ -61,7 +61,7 @@ class Chord {
 }
 
 class Sheet {
-    constructor(chords) { this.chords = chords }
+    constructor(chords) { this.chords = chords; this.missingTempo = false }
 
     transpose(by, shifts='Start', oors='Start', sequentialQuantize=true) { /* Does not mutate */
         if (!this.chords) return
@@ -112,22 +112,28 @@ class Sheet {
     }
 }
 
+function validNoteSpeed(event) {
+    return event.tempo && event.tempoBPM && event.tempo !== 0 && event.tempoBPM !== 0
+}
+
 // Takes NOTE_ON and SET_TEMPO events
-function generateSheet(events, quantize = 100, shifts = 'Start', oors = 'Start', sequentialQuantize = true) /* -> Sheet */ { 
+function generateSheet(events, quantize = 100, shifts = 'Start', oors = 'Start', sequentialQuantize = true, bpm = 120) /* -> Sheet */ { 
     // console.log({ quantize, shifts, oors, sequentialQuantize })
 
     let chords = []
     let currentChord = []
     let lastPlaytime = events[0].playTime ?? 0.0
 
+    let hasTempo = false
     // default tempo
-    let nextBPM = 120
-    let nextTempo = 500000
+    let nextBPM = bpm
+    let nextTempo = bpm*4166.66 // Magic number
+    // let nextTempo = 500000
 
     // Generate chords
     events.forEach(element => {
-        const isNoteSpeedValid = element.tempo && element.tempoBPM && element.tempo !== 0 && element.tempoBPM !== 0
-        if(isNoteSpeedValid && element.subtype == 0x51) { // SET TEMPO META EVENT
+        if(element.subtype == 0x51 && validNoteSpeed(element)) { // SET TEMPO META EVENT
+            hasTempo = true
             nextTempo = element.tempo
             nextBPM = element.tempoBPM
             return
@@ -147,7 +153,14 @@ function generateSheet(events, quantize = 100, shifts = 'Start', oors = 'Start',
     })
 
     chords.push(new Chord(currentChord))
-    return new Sheet(chords)
+
+    let resultingSheet = new Sheet(chords)
+
+    if (!hasTempo) { 
+        console.log(`No tempo found in sheet, set to ${nextBPM}/${nextTempo}`); 
+    }; resultingSheet.missingTempo = !hasTempo
+
+    return resultingSheet
 }
 
 const vpScale =
