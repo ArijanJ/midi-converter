@@ -1,2 +1,6072 @@
-var app=function(){"use strict";function e(){}function t(e){return e()}function n(){return Object.create(null)}function r(e){e.forEach(t)}function o(e){return"function"==typeof e}function i(e,t){return e!=e?t==t:e!==t||e&&"object"==typeof e||"function"==typeof e}function a(e,t){e.appendChild(t)}function s(e,t,n){e.insertBefore(t,n||null)}function l(e){e.parentNode&&e.parentNode.removeChild(e)}function c(e,t){for(let n=0;n<e.length;n+=1)e[n]&&e[n].d(t)}function u(e){return document.createElement(e)}function d(e){return document.createTextNode(e)}function f(){return d(" ")}function h(){return d("")}function p(e,t,n,r){return e.addEventListener(t,n,r),()=>e.removeEventListener(t,n,r)}function m(e){return function(t){return t.preventDefault(),e.call(this,t)}}function g(e,t,n){null==n?e.removeAttribute(t):e.getAttribute(t)!==n&&e.setAttribute(t,n)}function E(e){return""===e?null:+e}function y(e,t){t=""+t,e.wholeText!==t&&(e.data=t)}function w(e,t){e.value=null==t?"":t}function T(e,t,n,r){null===n?e.style.removeProperty(t):e.style.setProperty(t,n,r?"important":"")}function b(e,t){for(let n=0;n<e.options.length;n+=1){const r=e.options[n];if(r.__value===t)return void(r.selected=!0)}e.selectedIndex=-1}function v(e){const t=e.querySelector(":checked")||e.options[0];return t&&t.__value}let _,N;function S(){if(void 0===_){_=!1;try{"undefined"!=typeof window&&window.parent&&window.parent.document}catch(e){_=!0}}return _}class A{constructor(e=!1){this.is_svg=!1,this.is_svg=e,this.e=this.n=null}c(e){this.h(e)}m(e,t,n=null){var r;this.e||(this.is_svg?this.e=(r=t.nodeName,document.createElementNS("http://www.w3.org/2000/svg",r)):this.e=u(t.nodeName),this.t=t,this.c(e)),this.i(n)}h(e){this.e.innerHTML=e,this.n=Array.from(this.e.childNodes)}i(e){for(let t=0;t<this.n.length;t+=1)s(this.t,this.n[t],e)}p(e){this.d(),this.h(e),this.i(this.a)}d(){this.n.forEach(l)}}function k(e){N=e}function I(){if(!N)throw new Error("Function called outside component initialization");return N}function x(){const e=I();return(t,n,{cancelable:r=!1}={})=>{const o=e.$$.callbacks[t];if(o){const i=function(e,t,{bubbles:n=!1,cancelable:r=!1}={}){const o=document.createEvent("CustomEvent");return o.initCustomEvent(e,n,r,t),o}(t,n,{cancelable:r});return o.slice().forEach((t=>{t.call(e,i)})),!i.defaultPrevented}return!0}}function C(e,t){const n=e.$$.callbacks[t.type];n&&n.slice().forEach((e=>e.call(this,t)))}const M=[],$=[],D=[],U=[],V=Promise.resolve();let P=!1;function R(e){D.push(e)}function O(e){U.push(e)}const F=new Set;let L=0;function B(){if(0!==L)return;const e=N;do{try{for(;L<M.length;){const e=M[L];L++,k(e),H(e.$$)}}catch(e){throw M.length=0,L=0,e}for(k(null),M.length=0,L=0;$.length;)$.pop()();for(let e=0;e<D.length;e+=1){const t=D[e];F.has(t)||(F.add(t),t())}D.length=0}while(M.length);for(;U.length;)U.pop()();P=!1,F.clear(),k(e)}function H(e){if(null!==e.fragment){e.update(),r(e.before_update);const t=e.dirty;e.dirty=[-1],e.fragment&&e.fragment.p(e.ctx,t),e.after_update.forEach(R)}}const q=new Set;let z;function G(){z={r:0,c:[],p:z}}function j(){z.r||r(z.c),z=z.p}function W(e,t){e&&e.i&&(q.delete(e),e.i(t))}function K(e,t,n,r){if(e&&e.o){if(q.has(e))return;q.add(e),z.c.push((()=>{q.delete(e),r&&(n&&e.d(1),r())})),e.o(t)}else r&&r()}const Y="undefined"!=typeof window?window:"undefined"!=typeof globalThis?globalThis:global;function Q(e,t,n){const r=e.$$.props[t];void 0!==r&&(e.$$.bound[r]=n,n(e.$$.ctx[r]))}function X(e){e&&e.c()}function J(e,n,i,a){const{fragment:s,after_update:l}=e.$$;s&&s.m(n,i),a||R((()=>{const n=e.$$.on_mount.map(t).filter(o);e.$$.on_destroy?e.$$.on_destroy.push(...n):r(n),e.$$.on_mount=[]})),l.forEach(R)}function Z(e,t){const n=e.$$;null!==n.fragment&&(r(n.on_destroy),n.fragment&&n.fragment.d(t),n.on_destroy=n.fragment=null,n.ctx=[])}function ee(e,t){-1===e.$$.dirty[0]&&(M.push(e),P||(P=!0,V.then(B)),e.$$.dirty.fill(0)),e.$$.dirty[t/31|0]|=1<<t%31}function te(t,o,i,a,s,c,u,d=[-1]){const f=N;k(t);const h=t.$$={fragment:null,ctx:[],props:c,update:e,not_equal:s,bound:n(),on_mount:[],on_destroy:[],on_disconnect:[],before_update:[],after_update:[],context:new Map(o.context||(f?f.$$.context:[])),callbacks:n(),dirty:d,skip_bound:!1,root:o.target||f.$$.root};u&&u(h.root);let p=!1;if(h.ctx=i?i(t,o.props||{},((e,n,...r)=>{const o=r.length?r[0]:n;return h.ctx&&s(h.ctx[e],h.ctx[e]=o)&&(!h.skip_bound&&h.bound[e]&&h.bound[e](o),p&&ee(t,e)),n})):[],h.update(),p=!0,r(h.before_update),h.fragment=!!a&&a(h.ctx),o.target){if(o.hydrate){const e=function(e){return Array.from(e.childNodes)}(o.target);h.fragment&&h.fragment.l(e),e.forEach(l)}else h.fragment&&h.fragment.c();o.intro&&W(t.$$.fragment),J(t,o.target,o.anchor,o.customElement),B()}k(f)}class ne{$destroy(){Z(this,1),this.$destroy=e}$on(t,n){if(!o(n))return e;const r=this.$$.callbacks[t]||(this.$$.callbacks[t]=[]);return r.push(n),()=>{const e=r.indexOf(n);-1!==e&&r.splice(e,1)}}$set(e){var t;this.$$set&&(t=e,0!==Object.keys(t).length)&&(this.$$.skip_bound=!0,this.$$set(e),this.$$.skip_bound=!1)}}var re=Object.defineProperty,oe=Object.defineProperties,ie=Object.getOwnPropertyDescriptors,ae=Object.getOwnPropertySymbols,se=Object.prototype.hasOwnProperty,le=Object.prototype.propertyIsEnumerable,ce=Math.pow,ue=(e,t,n)=>t in e?re(e,t,{enumerable:!0,configurable:!0,writable:!0,value:n}):e[t]=n,de=(e,t)=>{for(var n in t||(t={}))se.call(t,n)&&ue(e,n,t[n]);if(ae)for(var n of ae(t))le.call(t,n)&&ue(e,n,t[n]);return e},fe=(e,t)=>oe(e,ie(t)),he=(e,t)=>{var n={};for(var r in e)se.call(e,r)&&t.indexOf(r)<0&&(n[r]=e[r]);if(null!=e&&ae)for(var r of ae(e))t.indexOf(r)<0&&le.call(e,r)&&(n[r]=e[r]);return n},pe=(e,t,n)=>new Promise(((r,o)=>{var i=e=>{try{s(n.next(e))}catch(e){o(e)}},a=e=>{try{s(n.throw(e))}catch(e){o(e)}},s=e=>e.done?r(e.value):Promise.resolve(e.value).then(i,a);s((n=n.apply(e,t)).next())}));const me="p".charCodeAt(0),ge="H".charCodeAt(0),Ee="Y".charCodeAt(0),ye="s".charCodeAt(0);let we;function Te(e){let t=-1;we||(we=function(){const e=new Int32Array(256);for(let t=0;t<256;t++){let n=t;for(let e=0;e<8;e++)n=1&n?3988292384^n>>>1:n>>>1;e[t]=n}return e}());for(let n=0;n<e.length;n++)t=we[255&(t^e[n])]^t>>>8;return-1^t}function be(e,t,n=!1){const r=new Uint8Array(13);t*=39.3701,r[0]=me,r[1]=ge,r[2]=Ee,r[3]=ye,r[4]=t>>>24,r[5]=t>>>16,r[6]=t>>>8,r[7]=255&t,r[8]=r[4],r[9]=r[5],r[10]=r[6],r[11]=r[7],r[12]=1;const o=Te(r),i=new Uint8Array(4);if(i[0]=o>>>24,i[1]=o>>>16,i[2]=o>>>8,i[3]=255&o,n){const t=function(e){for(let t=e.length-1;t>=4;t--)if(9===e[t-4]&&e[t-3]===me&&e[t-2]===ge&&e[t-1]===Ee&&e[t]===ye)return t-3;return 0}(e);return e.set(r,t),e.set(i,t+13),e}{const t=new Uint8Array(4);t[0]=0,t[1]=0,t[2]=0,t[3]=9;const n=new Uint8Array(54);return n.set(e,0),n.set(t,33),n.set(r,37),n.set(i,50),n}}const ve="[modern-screenshot]",_e="undefined"!=typeof window,Ne=_e&&"Worker"in window,Se=_e&&"atob"in window;var Ae;const ke=_e?null==(Ae=window.navigator)?void 0:Ae.userAgent:"",Ie=ke.includes("Chrome"),xe=ke.includes("AppleWebKit")&&!Ie,Ce=ke.includes("Firefox"),Me=e=>e&&"__CONTEXT__"in e,$e=e=>"CSSFontFaceRule"===e.constructor.name,De=e=>"CSSImportRule"===e.constructor.name,Ue=e=>1===e.nodeType,Ve=e=>"object"==typeof e.className,Pe=e=>"image"===e.tagName,Re=e=>"use"===e.tagName,Oe=e=>Ue(e)&&void 0!==e.style&&!Ve(e),Fe=e=>8===e.nodeType,Le=e=>3===e.nodeType,Be=e=>"IMG"===e.tagName,He=e=>"VIDEO"===e.tagName,qe=e=>"CANVAS"===e.tagName,ze=e=>"TEXTAREA"===e.tagName,Ge=e=>"INPUT"===e.tagName,je=e=>"STYLE"===e.tagName,We=e=>"SCRIPT"===e.tagName,Ke=e=>"SELECT"===e.tagName,Ye=e=>"SLOT"===e.tagName,Qe=e=>"IFRAME"===e.tagName,Xe=(...e)=>console.warn(ve,...e),Je=e=>console.time(`${ve} ${e}`),Ze=e=>console.timeEnd(`${ve} ${e}`),et=e=>{var t;const n=null==(t=null==e?void 0:e.createElement)?void 0:t.call(e,"canvas");return n&&(n.height=n.width=1),n&&"toDataURL"in n&&Boolean(n.toDataURL("image/webp").includes("image/webp"))},tt=e=>e.startsWith("data:");function nt(e,t){if(e.match(/^[a-z]+:\/\//i))return e;if(_e&&e.match(/^\/\//))return window.location.protocol+e;if(e.match(/^[a-z]+:/i)||!_e)return e;const n=rt().implementation.createHTMLDocument(),r=n.createElement("base"),o=n.createElement("a");return n.head.appendChild(r),n.body.appendChild(o),t&&(r.href=t),o.href=e,o.href}function rt(e){var t;return null!=(t=e&&Ue(e)?null==e?void 0:e.ownerDocument:e)?t:window.document}const ot="http://www.w3.org/2000/svg";function it(e,t="image/png",n=1){return pe(this,null,(function*(){try{return yield new Promise(((r,o)=>{e.toBlob((e=>{e?r(e):o(new Error("Blob is null"))}),t,n)}))}catch(r){if(Se)return Xe("Failed canvas to blob",{type:t,quality:n},r),function(e){var t,n;const[r,o]=e.split(","),i=null!=(n=null==(t=r.match(/data:(.+);/))?void 0:t[1])?n:void 0,a=window.atob(o),s=a.length,l=new Uint8Array(s);for(let e=0;e<s;e+=1)l[e]=a.charCodeAt(e);return new Blob([l],{type:i})}(e.toDataURL(t,n));throw r}}))}function at(e,t){return new Promise(((n,r)=>{const o=new FileReader;o.onload=()=>n(o.result),o.onerror=()=>r(o.error),o.onabort=()=>r(new Error(`Failed read blob to ${t}`)),"dataUrl"===t?o.readAsDataURL(e):"arrayBuffer"===t&&o.readAsArrayBuffer(e)}))}const st=e=>at(e,"dataUrl"),lt=e=>at(e,"arrayBuffer");function ct(e,t){const n=rt(t).createElement("img");return n.decoding="sync",n.loading="eager",n.src=e,n}function ut(e,t){return new Promise((n=>{const{timeout:r,ownerDocument:o,onError:i}=null!=t?t:{},a="string"==typeof e?ct(e,rt(o)):e;let s=null,l=null;function c(){n(a),s&&clearTimeout(s),null==l||l()}if(r&&(s=setTimeout(c,r)),He(a)){const e=a.currentSrc||a.src;if(!e)return a.poster?ut(a.poster,t).then(n):c();if(a.readyState>=2)return c();const r=c,o=t=>{Xe("Failed video load",e,t),null==i||i(t),c()};l=()=>{a.removeEventListener("loadeddata",r),a.removeEventListener("error",o)},a.addEventListener("loadeddata",r,{once:!0}),a.addEventListener("error",o,{once:!0})}else{const e=Pe(a)?a.href.baseVal:a.currentSrc||a.src;if(!e)return c();const t=()=>pe(this,null,(function*(){if(Be(a)&&"decode"in a)try{yield a.decode()}catch(t){Xe("Failed to decode image, trying to render anyway",a.dataset.originalSrc||e,t)}c()})),n=t=>{Xe("Failed image load",a.dataset.originalSrc||e,t),c()};if(Be(a)&&a.complete)return t();l=()=>{a.removeEventListener("load",t),a.removeEventListener("error",n)},a.addEventListener("load",t,{once:!0}),a.addEventListener("error",n,{once:!0})}}))}const dt=function(){let e=0;return()=>(e+=1,`u${`0000${(Math.random()*ce(36,4)<<0).toString(36)}`.slice(-4)}${e}`)}();function ft(e){return null==e?void 0:e.split(",").map((e=>e.trim().replace(/"|'/g,"").toLowerCase())).filter(Boolean)}function ht(e){return{time:t=>e&&Je(t),timeEnd:t=>e&&Ze(t),warn:(...t)=>e&&Xe(...t)}}function pt(e){return{cache:e?"no-cache":"force-cache"}}function mt(e,t){return pe(this,null,(function*(){return Me(e)?e:function(e,t){return pe(this,null,(function*(){var n,r,o,i,a;const{scale:s=1,workerUrl:l,workerNumber:c=1}=t||{},u=Boolean(null==t?void 0:t.debug),d=null==(n=null==t?void 0:t.features)||n,f=null!=(r=e.ownerDocument)?r:_e?window.document:void 0,h=null!=(i=null==(o=e.ownerDocument)?void 0:o.defaultView)?i:_e?window:void 0,p=new Map,m=fe(de({width:0,height:0,quality:1,type:"image/png",scale:s,backgroundColor:null,style:null,filter:null,maximumCanvasSize:0,timeout:3e4,progress:null,debug:u,fetch:de({requestInit:pt(null==(a=null==t?void 0:t.fetch)?void 0:a.bypassingCache),placeholderImage:"data:image/png;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",bypassingCache:!1},null==t?void 0:t.fetch),fetchFn:null,font:{},drawImageInterval:100,workerUrl:null,workerNumber:c,onCloneNode:null,onEmbedNode:null,onCreateForeignObjectSvg:null,includeStyleProperties:null,autoDestruct:!1},t),{__CONTEXT__:!0,log:ht(u),node:e,ownerDocument:f,ownerWindow:h,dpi:1===s?null:96*s,svgStyleElement:gt(f),svgDefsElement:null==f?void 0:f.createElementNS(ot,"defs"),svgStyles:new Map,defaultComputedStyles:new Map,workers:[...new Array(Ne&&l&&c?c:0)].map((()=>{try{const e=new Worker(l);return e.onmessage=e=>pe(this,null,(function*(){var t,n,r,o;const{url:i,result:a}=e.data;a?null==(n=null==(t=p.get(i))?void 0:t.resolve)||n.call(t,a):null==(o=null==(r=p.get(i))?void 0:r.reject)||o.call(r,new Error(`Error receiving message from worker: ${i}`))})),e.onmessageerror=e=>{var t,n;const{url:r}=e.data;null==(n=null==(t=p.get(r))?void 0:t.reject)||n.call(t,new Error(`Error receiving message from worker: ${r}`))},e}catch(e){return Xe("Failed to new Worker",e),null}})).filter(Boolean),fontFamilies:new Set,fontCssTexts:new Map,acceptOfImage:`${[et(f)&&"image/webp","image/svg+xml","image/*","*/*"].filter(Boolean).join(",")};q=0.8`,requests:p,drawImageCount:0,tasks:[],features:d,isEnable:e=>{var t;return"boolean"==typeof d?d:null==(t=d[e])||t}});m.log.time("wait until load"),yield function(e,t){return pe(this,null,(function*(){Oe(e)&&(Be(e)||He(e)?yield ut(e,{timeout:t}):yield Promise.all(["img","video"].flatMap((n=>Array.from(e.querySelectorAll(n)).map((e=>ut(e,{timeout:t})))))))}))}(e,m.timeout),m.log.timeEnd("wait until load");const{width:g,height:E}=function(e,t){let{width:n,height:r}=t;if(Ue(e)&&(!n||!r)){const t=e.getBoundingClientRect();n=n||t.width||Number(e.getAttribute("width"))||0,r=r||t.height||Number(e.getAttribute("height"))||0}return{width:n,height:r}}(e,m);return m.width=g,m.height=E,m}))}(e,fe(de({},t),{autoDestruct:!0}))}))}function gt(e){if(!e)return;const t=e.createElement("style"),n=t.ownerDocument.createTextNode("\n.______background-clip--text {\n  background-clip: text;\n  -webkit-background-clip: text;\n}\n");return t.appendChild(n),t}function Et(e,t){return pe(this,null,(function*(){const{log:n,timeout:r,drawImageCount:o,drawImageInterval:i}=t;n.time("image to canvas");const a=yield ut(e,{timeout:r}),{canvas:s,context2d:l}=function(e,t){const{width:n,height:r,scale:o,backgroundColor:i,maximumCanvasSize:a}=t,s=e.createElement("canvas");s.width=Math.floor(n*o),s.height=Math.floor(r*o),s.style.width=`${n}px`,s.style.height=`${r}px`,a&&(s.width>a||s.height>a)&&(s.width>a&&s.height>a?s.width>s.height?(s.height*=a/s.width,s.width=a):(s.width*=a/s.height,s.height=a):s.width>a?(s.height*=a/s.width,s.width=a):(s.width*=a/s.height,s.height=a));const l=s.getContext("2d");return l&&i&&(l.fillStyle=i,l.fillRect(0,0,s.width,s.height)),{canvas:s,context2d:l}}(e.ownerDocument,t),c=()=>{try{null==l||l.drawImage(a,0,0,s.width,s.height)}catch(e){Xe("Failed to drawImage",e)}};if(c(),t.isEnable("fixSvgXmlDecode"))for(let e=0;e<o;e++)yield new Promise((t=>{setTimeout((()=>{c(),t()}),e+i)}));return t.drawImageCount=0,n.timeEnd("image to canvas"),s}))}const yt=["width","height","-webkit-text-fill-color"],wt=["stroke","fill"];function Tt(e,t,n){var r;const{defaultComputedStyles:o,ownerDocument:i}=n,a=e.nodeName.toLowerCase(),s=Ve(e)&&"svg"!==a,l=s?wt.map((t=>[t,e.getAttribute(t)])).filter((([,e])=>null!==e)):[],c=[s&&"svg",a,l.map(((e,t)=>`${e}=${t}`)).join(","),t].filter(Boolean).join(":");if(o.has(c))return o.get(c);let u=n.sandbox;if(!u)try{i&&(u=i.createElement("iframe"),u.id=`__SANDBOX__-${dt()}`,u.width="0",u.height="0",u.style.visibility="hidden",u.style.position="fixed",i.body.appendChild(u),null==(r=u.contentWindow)||r.document.write('<!DOCTYPE html><meta charset="UTF-8"><title></title><body>'),n.sandbox=u)}catch(e){Xe("Failed to create iframe sandbox",e)}if(!u)return new Map;const d=u.contentWindow;if(!d)return new Map;const f=d.document;let h,p;s?(h=f.createElementNS(ot,"svg"),p=h.ownerDocument.createElementNS(h.namespaceURI,a),l.forEach((([e,t])=>{p.setAttributeNS(null,e,t)})),h.appendChild(p)):h=p=f.createElement(a),p.textContent=" ",f.body.appendChild(h);const m=d.getComputedStyle(p,t),g=new Map;for(let e=m.length,t=0;t<e;t++){const e=m.item(t);yt.includes(e)||g.set(e,m.getPropertyValue(e))}return f.body.removeChild(h),o.set(c,g),g}function bt(e,t,n){var r;const o=new Map,i=[],a=new Map;if(n)for(const e of n)s(e);else for(let t=e.length,n=0;n<t;n++){s(e.item(n))}for(let e=i.length,t=0;t<e;t++)null==(r=a.get(i[t]))||r.forEach(((e,t)=>o.set(t,e)));function s(n){const r=e.getPropertyValue(n),s=e.getPropertyPriority(n),l=n.lastIndexOf("-"),c=l>-1?n.substring(0,l):void 0;if(c){let e=a.get(c);e||(e=new Map,a.set(c,e)),e.set(n,[r,s])}t.get(n)===r&&!s||(c?i.push(c):o.set(n,[r,s]))}return o}const vt=[":before",":after"],_t=[":-webkit-scrollbar",":-webkit-scrollbar-button",":-webkit-scrollbar-thumb",":-webkit-scrollbar-track",":-webkit-scrollbar-track-piece",":-webkit-scrollbar-corner",":-webkit-resizer"];function Nt(e){if(e.ownerDocument)try{const t=e.toDataURL();if("data:,"!==t)return ct(t,e.ownerDocument)}catch(e){}const t=e.cloneNode(!1),n=e.getContext("2d"),r=t.getContext("2d");try{return n&&r&&r.putImageData(n.getImageData(0,0,e.width,e.height),0,0),t}catch(e){Xe("Failed to clone canvas",e)}return t}function St(e,t){return qe(e)?Nt(e):Qe(e)?function(e,t){var n;try{if(null!=(n=null==e?void 0:e.contentDocument)&&n.body)return Ct(e.contentDocument.body,t)}catch(e){Xe("Failed to clone iframe",e)}return e.cloneNode(!1)}(e,t):Be(e)?function(e){const t=e.cloneNode(!1);return e.currentSrc&&e.currentSrc!==e.src&&(t.src=e.currentSrc,t.srcset=""),"lazy"===t.loading&&(t.loading="eager"),t}(e):He(e)?function(e){return pe(this,null,(function*(){if(e.ownerDocument&&!e.currentSrc&&e.poster)return ct(e.poster,e.ownerDocument);const t=e.cloneNode(!1);t.crossOrigin="anonymous",e.currentSrc&&e.currentSrc!==e.src&&(t.src=e.currentSrc);const n=t.ownerDocument;if(n){let r=!0;if(yield ut(t,{onError:()=>r=!1}),!r)return e.poster?ct(e.poster,e.ownerDocument):t;t.currentTime=e.currentTime,yield new Promise((e=>{t.addEventListener("seeked",e,{once:!0})}));const o=n.createElement("canvas");o.width=e.offsetWidth,o.height=e.offsetHeight;try{const e=o.getContext("2d");e&&e.drawImage(t,0,0,o.width,o.height)}catch(n){return Xe("Failed to clone video",n),e.poster?ct(e.poster,e.ownerDocument):t}return Nt(o)}return t}))}(e):e.cloneNode(!1)}const At=new Set(["symbol"]);function kt(e,t,n){return pe(this,null,(function*(){Ue(t)&&(je(t)||We(t))||n.filter&&!n.filter(t)||(At.has(e.nodeName)||At.has(t.nodeName)?n.currentParentNodeStyle=void 0:n.currentParentNodeStyle=n.currentNodeStyle,e.appendChild(yield Ct(t,n)))}))}function It(e,t,n){return pe(this,null,(function*(){var r,o;for(let i=null!=(o=Ue(e)?null==(r=e.shadowRoot)?void 0:r.firstChild:void 0)?o:e.firstChild;i;i=i.nextSibling)if(!Fe(i))if(Ue(i)&&Ye(i)&&"function"==typeof i.assignedNodes){const e=i.assignedNodes();for(let r=0;r<e.length;r++)yield kt(t,e[r],n)}else yield kt(t,i,n)}))}const xt=/^[\w-:]+$/;function Ct(e,t,n=!1){return pe(this,null,(function*(){var r,o,i,a;const{ownerDocument:s,ownerWindow:l,fontFamilies:c}=t;if(s&&Le(e))return s.createTextNode(e.data);if(s&&l&&Ue(e)&&(Oe(e)||Ve(e))){const s=yield St(e,t);if(t.isEnable("removeAbnormalAttributes")){const e=s.getAttributeNames();for(let t=e.length,n=0;n<t;n++){const t=e[n];xt.test(t)||s.removeAttribute(t)}}const l=t.currentNodeStyle=function(e,t,n,r){var o,i,a,s;const{ownerWindow:l,includeStyleProperties:c,currentParentNodeStyle:u}=r,d=t.style,f=l.getComputedStyle(e),h=Tt(e,null,r);null==u||u.forEach(((e,t)=>{h.delete(t)}));const p=bt(f,h,c);return p.delete("transition-property"),p.delete("all"),p.delete("d"),p.delete("content"),n&&(p.delete("margin-top"),p.delete("margin-right"),p.delete("margin-bottom"),p.delete("margin-left"),p.delete("margin-block-start"),p.delete("margin-block-end"),p.delete("margin-inline-start"),p.delete("margin-inline-end"),p.set("box-sizing",["border-box",""])),"text"===(null==(o=p.get("background-clip"))?void 0:o[0])&&t.classList.add("______background-clip--text"),Ie&&(p.has("font-kerning")||p.set("font-kerning",["normal",""]),("hidden"===(null==(i=p.get("overflow-x"))?void 0:i[0])||"hidden"===(null==(a=p.get("overflow-y"))?void 0:a[0]))&&"ellipsis"===(null==(s=p.get("text-overflow"))?void 0:s[0])&&e.scrollWidth===e.clientWidth&&p.set("text-overflow",["clip",""])),p.forEach((([e,t],n)=>{d.setProperty(n,e,t)})),p}(e,s,n,t);n&&function(e,t){const{backgroundColor:n,width:r,height:o,style:i}=t,a=e.style;if(n&&a.setProperty("background-color",n,"important"),r&&a.setProperty("width",`${r}px`,"important"),o&&a.setProperty("height",`${o}px`,"important"),i)for(const e in i)a[e]=i[e]}(s,t);let u=!1;if(t.isEnable("copyScrollbar")){const t=[null==(r=l.get("overflow-x"))?void 0:r[0],null==(o=l.get("overflow-y"))?void 0:o[1]];u=t.includes("scroll")||(t.includes("auto")||t.includes("overlay"))&&(e.scrollHeight>e.clientHeight||e.scrollWidth>e.clientWidth)}return function(e,t,n,r){const{ownerWindow:o,svgStyleElement:i,svgStyles:a,currentNodeStyle:s}=r;function l(n){var i;const l=o.getComputedStyle(e,n);let c=l.getPropertyValue("content");if(!c||"none"===c)return;c=c.replace(/(')|(")|(counter\(.+\))/g,"");const u=[dt()],d=Tt(e,n,r);null==s||s.forEach(((e,t)=>{d.delete(t)}));const f=bt(l,d,r.includeStyleProperties);f.delete("content"),f.delete("-webkit-locale"),"text"===(null==(i=f.get("background-clip"))?void 0:i[0])&&t.classList.add("______background-clip--text");const h=[`content: '${c}';`];if(f.forEach((([e,t],n)=>{h.push(`${n}: ${e}${t?" !important":""};`)})),1===h.length)return;try{t.className=[t.className,...u].join(" ")}catch(e){return}const p=h.join("\n  ");let m=a.get(p);m||(m=[],a.set(p,m)),m.push(`.${u[0]}:${n}`)}i&&o&&(vt.forEach(l),n&&_t.forEach(l))}(e,s,u,t),function(e,t){ze(e)&&(t.innerHTML=e.value),(ze(e)||Ge(e)||Ke(e))&&t.setAttribute("value",e.value)}(e,s),null==(a=ft(null==(i=l.get("font-family"))?void 0:i[0]))||a.forEach((e=>c.add(e))),He(e)||(yield It(e,s,t)),s}const u=e.cloneNode(!1);return yield It(e,u,t),u}))}function Mt(e,t){const{url:n,requestType:r="text",responseType:o="text",imageDom:i}=t;let a=n;const{timeout:s,acceptOfImage:l,requests:c,fetchFn:u,fetch:{requestInit:d,bypassingCache:f,placeholderImage:h},workers:p}=e;"image"===r&&(xe||Ce)&&e.drawImageCount++;let m=c.get(n);if(!m){f&&f instanceof RegExp&&f.test(a)&&(a+=(/\?/.test(a)?"&":"?")+(new Date).getTime());const e=de({url:a,timeout:s,responseType:o,headers:"image"===r?{accept:l}:void 0},d);m={type:r,resolve:void 0,reject:void 0,response:null},m.response=(()=>pe(this,null,(function*(){if(u&&"image"===r){const e=yield u(n);if(e)return e}return!xe&&n.startsWith("http")&&p.length?new Promise(((t,r)=>{p[c.size&p.length-1].postMessage(de({rawUrl:n},e)),m.resolve=t,m.reject=r})):function(e){const t=e,{url:n,timeout:r,responseType:o}=t,i=he(t,["url","timeout","responseType"]),a=new AbortController,s=r?setTimeout((()=>a.abort()),r):void 0;return fetch(n,de({signal:a.signal},i)).then((e=>{if(!e.ok)throw new Error("Failed fetch, not 2xx response",{cause:e});return"dataUrl"===o?e.blob().then(st):e.text()})).finally((()=>clearTimeout(s)))}(e)})))().catch((e=>{if(c.delete(n),"image"===r&&h)return Xe("Failed to fetch image base64, trying to use placeholder image",a),"string"==typeof h?h:h(i);throw e})),c.set(n,m)}return m.response}function $t(e,t,n,r){return pe(this,null,(function*(){if(!Dt(e))return e;for(const[o,i]of function(e,t){const n=[];return e.replace(Ut,((e,r,o)=>(n.push([o,nt(o,t)]),e))),n.filter((([e])=>!tt(e)))}(e,t))try{const t=yield Mt(n,{url:i,requestType:r?"image":"text",responseType:"dataUrl"});e=e.replace(Vt(o),`$1${t}$3`)}catch(e){Xe("Failed to fetch css data url",o,e)}return e}))}function Dt(e){return/url\((['"]?)([^'"]+?)\1\)/.test(e)}const Ut=/url\((['"]?)([^'"]+?)\1\)/g;function Vt(e){const t=e.replace(/([.*+?^${}()|\[\]\/\\])/g,"\\$1");return new RegExp(`(url\\(['"]?)(${t})(['"]?\\))`,"g")}function Pt(e,t){return pe(this,null,(function*(){const{ownerDocument:e,svgStyleElement:n,fontFamilies:r,fontCssTexts:o,tasks:i,font:a}=t;if(e&&n&&r.size)if(a&&a.cssText){const r=Bt(a.cssText,t);n.appendChild(e.createTextNode(`${r}\n`))}else{const a=Array.from(e.styleSheets).filter((e=>{try{return"cssRules"in e&&Boolean(e.cssRules.length)}catch(t){return Xe(`Error while reading CSS rules from ${e.href}`,t),!1}}));yield Promise.all(a.flatMap((e=>Array.from(e.cssRules).map(((n,r)=>pe(this,null,(function*(){if(De(n)){let o=r+1;const i=n.href;let a="";try{a=yield Mt(t,{url:i,requestType:"text",responseType:"text"})}catch(e){Xe(`Error fetch remote css import from ${i}`,e)}const s=a.replace(Ut,((e,t,n)=>e.replace(n,nt(n,i))));for(const t of function(e){if(null==e)return[];const t=[];let n=e.replace(Rt,"");for(;;){const e=Ot.exec(n);if(!e)break;t.push(e[0])}n=n.replace(Ot,"");const r=/@import[\s\S]*?url\([^)]*\)[\s\S]*?;/gi,o=new RegExp("((\\s*?(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*?@media[\\s\\S]*?){([\\s\\S]*?)}\\s*?})|(([\\s\\S]*?){([\\s\\S]*?)})","gi");for(;;){let e=r.exec(n);if(e)o.lastIndex=r.lastIndex;else{if(e=o.exec(n),!e)break;r.lastIndex=o.lastIndex}t.push(e[0])}return t}(s))try{e.insertRule(t,t.startsWith("@import")?o+=1:e.cssRules.length)}catch(e){Xe("Error inserting rule from remote css import",{rule:t,error:e})}}}))))))),a.flatMap((e=>Array.from(e.cssRules))).filter((e=>{var t;return $e(e)&&Dt(e.style.getPropertyValue("src"))&&(null==(t=ft(e.style.getPropertyValue("font-family")))?void 0:t.some((e=>r.has(e))))})).forEach((r=>{const a=r,s=o.get(a.cssText);s?n.appendChild(e.createTextNode(`${s}\n`)):i.push($t(a.cssText,a.parentStyleSheet?a.parentStyleSheet.href:null,t).then((r=>{r=Bt(r,t),o.set(a.cssText,r),n.appendChild(e.createTextNode(`${r}\n`))})))}))}}))}const Rt=/(\/\*[\s\S]*?\*\/)/gi,Ot=/((@.*?keyframes [\s\S]*?){([\s\S]*?}\s*?)})/gi;const Ft=/url\([^)]+\)\s*format\((["']?)([^"']+)\1\)/g,Lt=/src:\s*(?:url\([^)]+\)\s*format\([^)]+\)[,;]\s*)+/g;function Bt(e,t){const{font:n}=t,r=n?null==n?void 0:n.preferredFormat:void 0;return r?e.replace(Lt,(e=>{for(;;){const[t,,n]=Ft.exec(e)||[];if(!n)return"";if(n===r)return`src: ${t};`}})):e}const Ht=["background-image","border-image-source","-webkit-border-image","-webkit-mask-image","list-style-image"];function qt(e,t){const{tasks:n}=t;Ue(e)&&((Be(e)||Pe(e))&&n.push(...function(e,t){if(Be(e)){const n=e.currentSrc||e.src;if(!tt(n))return[Mt(t,{url:n,imageDom:e,requestType:"image",responseType:"dataUrl"}).then((t=>{t&&(e.srcset="",e.dataset.originalSrc=n,e.src=t||"")}))];(xe||Ce)&&t.drawImageCount++}else if(Ve(e)&&!tt(e.href.baseVal)){const n=e.href.baseVal;return[Mt(t,{url:n,imageDom:e,requestType:"image",responseType:"dataUrl"}).then((t=>{t&&(e.dataset.originalSrc=n,e.href.baseVal=t||"")}))]}return[]}(e,t)),Re(e)&&n.push(...function(e,t){var n;const{ownerDocument:r,svgDefsElement:o}=t,i=null!=(n=e.getAttribute("href"))?n:e.getAttribute("xlink:href");if(!i)return[];const[a,s]=i.split("#");if(s){const n=`#${s}`,i=null==r?void 0:r.querySelector(`svg ${n}`);if(a&&e.setAttribute("href",n),null!=o&&o.querySelector(n))return[];if(i)return[Ct(i,t).then((e=>{null!=o&&o.querySelector(n)||null==o||o.appendChild(e)}))];if(a)return[Mt(t,{url:a,responseType:"text"}).then((e=>{null==o||o.insertAdjacentHTML("beforeend",e)}))]}return[]}(e,t))),Oe(e)&&n.push(...function(e,t){return Ht.map((n=>{const r=e.getPropertyValue(n);return r&&"none"!==r?((xe||Ce)&&t.drawImageCount++,$t(r,null,t,!0).then((t=>{!t||r===t||e.setProperty(n,t,e.getPropertyPriority(n))}))):null})).filter(Boolean)}(e.style,t)),e.childNodes.forEach((e=>{qt(e,t)}))}function zt(e,t){return pe(this,null,(function*(){const n=yield mt(e,t);if(Ue(n.node)&&Ve(n.node))return n.node;const{ownerDocument:r,log:o,tasks:i,svgStyleElement:a,svgDefsElement:s,svgStyles:l,font:c,progress:u,autoDestruct:d,onCloneNode:f,onEmbedNode:h,onCreateForeignObjectSvg:p}=n;o.time("clone node");const m=yield Ct(n.node,n,!0);if(a&&r){let e="";l.forEach(((t,n)=>{e+=`${t.join(",\n")} {\n  ${n}\n}\n`})),a.appendChild(r.createTextNode(e))}o.timeEnd("clone node"),null==f||f(m),!1!==c&&Ue(m)&&(o.time("embed web font"),yield Pt(0,n),o.timeEnd("embed web font")),o.time("embed node"),qt(m,n);const g=i.length;let E=0;null==u||u(E,g),yield Promise.all([...Array(4)].map((()=>pe(this,null,(function*(){for(;;){const e=i.pop();if(!e)break;try{yield e}catch(e){Xe("Failed to run task",e)}null==u||u(++E,g)}}))))),o.timeEnd("embed node"),null==h||h(m);const y=function(e,t){const{width:n,height:r}=t,o=function(e,t,n){const r=rt(n).createElementNS(ot,"svg");return r.setAttributeNS(null,"width",e.toString()),r.setAttributeNS(null,"height",t.toString()),r.setAttributeNS(null,"viewBox",`0 0 ${e} ${t}`),r}(n,r,e.ownerDocument),i=o.ownerDocument.createElementNS(o.namespaceURI,"foreignObject");return i.setAttributeNS(null,"x","0%"),i.setAttributeNS(null,"y","0%"),i.setAttributeNS(null,"width","100%"),i.setAttributeNS(null,"height","100%"),i.append(e),o.appendChild(i),o}(m,n);return s&&y.insertBefore(s,y.children[0]),a&&y.insertBefore(a,y.children[0]),d&&function(e){if(e.ownerDocument=void 0,e.ownerWindow=void 0,e.svgStyleElement=void 0,e.svgDefsElement=void 0,e.svgStyles.clear(),e.defaultComputedStyles.clear(),e.sandbox){try{e.sandbox.remove()}catch(e){}e.sandbox=void 0}e.workers=[],e.fontFamilies.clear(),e.fontCssTexts.clear(),e.requests.clear(),e.tasks=[]}(n),null==p||p(y),y}))}function Gt(e,t){return pe(this,null,(function*(){var n;const r=yield mt(e,t),o=yield zt(r),i=function(e,t){let n=(new XMLSerializer).serializeToString(e);return t&&(n=n.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uD800-\uDFFF\uFFFE\uFFFF]/gu,"")),`data:image/svg+xml;charset=utf-8,${encodeURIComponent(n)}`}(o,r.isEnable("removeControlCharacter"));r.autoDestruct||(r.svgStyleElement=gt(r.ownerDocument),r.svgDefsElement=null==(n=r.ownerDocument)?void 0:n.createElementNS(ot,"defs"),r.svgStyles.clear());const a=ct(i,o.ownerDocument);return yield Et(a,r)}))}function jt(e){let t;if(e){if(!(e instanceof ArrayBuffer))throw Error("Invalid buffer received.");if(this.datas=new DataView(e,0,jt.HEADER_LENGTH),"M"!==String.fromCharCode(this.datas.getUint8(0))||"T"!==String.fromCharCode(this.datas.getUint8(1))||"h"!==String.fromCharCode(this.datas.getUint8(2))||"d"!==String.fromCharCode(this.datas.getUint8(3)))throw new Error("Invalid MIDIFileHeader : MThd prefix not found");if(6!==this.datas.getUint32(4))throw new Error("Invalid MIDIFileHeader : Chunk length must be 6")}else t=new Uint8Array(jt.HEADER_LENGTH),t[0]=77,t[1]=84,t[2]=104,t[3]=100,t[4]=0,t[5]=0,t[6]=0,t[7]=6,t[8]=0,t[9]=1,t[10]=0,t[11]=1,t[12]=0,t[13]=192,this.datas=new DataView(t.buffer,0,jt.HEADER_LENGTH)}jt.HEADER_LENGTH=14,jt.FRAMES_PER_SECONDS=1,jt.TICKS_PER_BEAT=2,jt.prototype.getFormat=function(){const e=this.datas.getUint16(8);if(0!==e&&1!==e&&2!==e)throw new Error("Invalid MIDI file : MIDI format ("+e+"), format can be 0, 1 or 2 only.");return e},jt.prototype.setFormat=function(e){if(0!==e&&1!==e&&2!==e)throw new Error("Invalid MIDI format given ("+e+"), format can be 0, 1 or 2 only.");this.datas.setUint16(8,e)},jt.prototype.getTracksCount=function(){return this.datas.getUint16(10)},jt.prototype.setTracksCount=function(e){return this.datas.setUint16(10,e)},jt.prototype.getTickResolution=function(e){return 32768&this.datas.getUint16(12)?1e6/(this.getSMPTEFrames()*this.getTicksPerFrame()):(e=e||5e5)/this.getTicksPerBeat()},jt.prototype.getTimeDivision=function(){return 32768&this.datas.getUint16(12)?jt.FRAMES_PER_SECONDS:jt.TICKS_PER_BEAT},jt.prototype.getTicksPerBeat=function(){var e=this.datas.getUint16(12);if(32768&e)throw new Error("Time division is not expressed as ticks per beat.");return e},jt.prototype.setTicksPerBeat=function(e){this.datas.setUint16(12,32767&e)},jt.prototype.getSMPTEFrames=function(){const e=this.datas.getUint16(12);let t;if(!(32768&e))throw new Error("Time division is not expressed as frames per seconds.");if(t=32512&e,-1===[24,25,29,30].indexOf(t))throw new Error("Invalid SMPTE frames value ("+t+").");return 29===t?29.97:t},jt.prototype.getTicksPerFrame=function(){const e=this.datas.getUint16(12);if(!(32768&e))throw new Error("Time division is not expressed as frames per seconds.");return 255&e},jt.prototype.setSMTPEDivision=function(e,t){if(29.97===e&&(e=29),-1===[24,25,29,30].indexOf(e))throw new Error("Invalid SMPTE frames value given ("+e+").");if(0>t||255<t)throw new Error("Invalid ticks per frame value given ("+e+").");this.datas.setUint8(12,128|e),this.datas.setUint8(13,t)};var Wt=jt;function Kt(e,t){let n,r;if(e){if(!(e instanceof ArrayBuffer))throw new Error("Invalid buffer received.");if(12>e.byteLength-t)throw new Error("Invalid MIDIFileTrack (0x"+t.toString(16)+") : Buffer length must size at least 12bytes");if(this.datas=new DataView(e,t,Kt.HDR_LENGTH),"M"!==String.fromCharCode(this.datas.getUint8(0))||"T"!==String.fromCharCode(this.datas.getUint8(1))||"r"!==String.fromCharCode(this.datas.getUint8(2))||"k"!==String.fromCharCode(this.datas.getUint8(3)))throw new Error("Invalid MIDIFileTrack (0x"+t.toString(16)+") : MTrk prefix not found");if(r=this.getTrackLength(),e.byteLength-t<r)throw new Error("Invalid MIDIFileTrack (0x"+t.toString(16)+") : The track size exceed the buffer length.");if(this.datas=new DataView(e,t,Kt.HDR_LENGTH+r),255!==this.datas.getUint8(Kt.HDR_LENGTH+(r-3))||47!==this.datas.getUint8(Kt.HDR_LENGTH+(r-2))||0!==this.datas.getUint8(Kt.HDR_LENGTH+(r-1)))throw new Error("Invalid MIDIFileTrack (0x"+t.toString(16)+") : No track end event found at the expected index ("+(Kt.HDR_LENGTH+(r-1)).toString(16)+").")}else n=new Uint8Array(12),n[0]=77,n[1]=84,n[2]=114,n[3]=107,n[4]=0,n[5]=0,n[6]=0,n[7]=4,n[8]=0,n[9]=255,n[10]=47,n[11]=0,this.datas=new DataView(n.buffer,0,Kt.HDR_LENGTH+4)}Kt.HDR_LENGTH=8,Kt.prototype.getTrackLength=function(){return this.datas.getUint32(4)},Kt.prototype.setTrackLength=function(e){return this.datas.setUint32(4,e)},Kt.prototype.getTrackContent=function(){return new DataView(this.datas.buffer,this.datas.byteOffset+Kt.HDR_LENGTH,this.datas.byteLength-Kt.HDR_LENGTH)},Kt.prototype.setTrackContent=function(e){let t,n,r,o;const i=e.byteLength-e.byteOffset;if(4>i)throw new Error("Invalid track length, must size at least 4bytes");for(this.datas=new DataView(new Uint8Array(Kt.HDR_LENGTH+i).buffer),this.datas.setUint8(0,77),this.datas.setUint8(1,84),this.datas.setUint8(2,114),this.datas.setUint8(3,107),this.datas.setUint32(4,i),t=new Uint8Array(e.buffer,e.byteOffset,e.byteLength),n=new Uint8Array(this.datas.buffer,Kt.HDR_LENGTH,i),r=0,o=t.length;r<o;r++)n[r]=t[r]};var Yt=Kt;function Qt(){throw new Error("MIDIEvents function not intended to be run.")}Qt.EVENT_META=255,Qt.EVENT_SYSEX=240,Qt.EVENT_DIVSYSEX=247,Qt.EVENT_MIDI=8,Qt.EVENT_META_SEQUENCE_NUMBER=0,Qt.EVENT_META_TEXT=1,Qt.EVENT_META_COPYRIGHT_NOTICE=2,Qt.EVENT_META_TRACK_NAME=3,Qt.EVENT_META_INSTRUMENT_NAME=4,Qt.EVENT_META_LYRICS=5,Qt.EVENT_META_MARKER=6,Qt.EVENT_META_CUE_POINT=7,Qt.EVENT_META_MIDI_CHANNEL_PREFIX=32,Qt.EVENT_META_END_OF_TRACK=47,Qt.EVENT_META_SET_TEMPO=81,Qt.EVENT_META_SMTPE_OFFSET=84,Qt.EVENT_META_TIME_SIGNATURE=88,Qt.EVENT_META_KEY_SIGNATURE=89,Qt.EVENT_META_SEQUENCER_SPECIFIC=127,Qt.EVENT_MIDI_NOTE_OFF=8,Qt.EVENT_MIDI_NOTE_ON=9,Qt.EVENT_MIDI_NOTE_AFTERTOUCH=10,Qt.EVENT_MIDI_CONTROLLER=11,Qt.EVENT_MIDI_PROGRAM_CHANGE=12,Qt.EVENT_MIDI_CHANNEL_AFTERTOUCH=13,Qt.EVENT_MIDI_PITCH_BEND=14,Qt.MIDI_1PARAM_EVENTS=[Qt.EVENT_MIDI_PROGRAM_CHANGE,Qt.EVENT_MIDI_CHANNEL_AFTERTOUCH],Qt.MIDI_2PARAMS_EVENTS=[Qt.EVENT_MIDI_NOTE_OFF,Qt.EVENT_MIDI_NOTE_ON,Qt.EVENT_MIDI_NOTE_AFTERTOUCH,Qt.EVENT_MIDI_CONTROLLER,Qt.EVENT_MIDI_PITCH_BEND],Qt.createParser=function(e,t,n){var r,o,i,a,s;if(e instanceof DataView&&(e={position:t||0,buffer:e,readUint8:function(){return this.buffer.getUint8(this.position++)},readUint16:function(){var e=this.buffer.getUint16(this.position);return this.position=this.position+2,e},readUint32:function(){var e=this.buffer.getUint16(this.position);return this.position=this.position+2,e},readVarInt:function(){for(var e,t=0,n=0;4>n++;){if(!(128&(e=this.readUint8())))return t+e;t+=127&e,t<<=7}throw new Error("0x"+this.position.toString(16)+": Variable integer length cannot exceed 4 bytes")},readBytes:function(e){for(var t=[];0<e;e--)t.push(this.readUint8());return t},pos:function(){return"0x"+(this.buffer.byteOffset+this.position).toString(16)},end:function(){return this.position===this.buffer.byteLength}},t=0),0<t)for(;t--;)e.readUint8();return{next:function(){if(e.end())return null;if(o={index:e.pos(),delta:e.readVarInt()},240==(240&(r=e.readUint8()))){if(r!==Qt.EVENT_META){if(r===Qt.EVENT_SYSEX||r===Qt.EVENT_DIVSYSEX)return o.type=r,o.length=e.readVarInt(),o.data=e.readBytes(o.length),o;if(n)throw new Error(e.pos()+" Unknown event type "+r.toString(16)+", Delta: "+o.delta+".");return o.type=r,o.badsubtype=e.readVarInt(),o.length=e.readUint8(),o.data=e.readBytes(o.length),o}switch(o.type=Qt.EVENT_META,o.subtype=e.readUint8(),o.length=e.readVarInt(),o.subtype){case Qt.EVENT_META_SEQUENCE_NUMBER:if(n&&2!==o.length)throw new Error(e.pos()+" Bad metaevent length.");return o.msb=e.readUint8(),o.lsb=e.readUint8(),o;case Qt.EVENT_META_TEXT:case Qt.EVENT_META_COPYRIGHT_NOTICE:case Qt.EVENT_META_TRACK_NAME:case Qt.EVENT_META_INSTRUMENT_NAME:case Qt.EVENT_META_LYRICS:case Qt.EVENT_META_MARKER:case Qt.EVENT_META_CUE_POINT:return o.data=e.readBytes(o.length),o;case Qt.EVENT_META_MIDI_CHANNEL_PREFIX:if(n&&1!==o.length)throw new Error(e.pos()+" Bad metaevent length.");return o.prefix=e.readUint8(),o;case Qt.EVENT_META_END_OF_TRACK:if(n&&0!==o.length)throw new Error(e.pos()+" Bad metaevent length.");return o;case Qt.EVENT_META_SET_TEMPO:if(n&&3!==o.length)throw new Error(e.pos()+" Tempo meta event length must be 3.");return o.tempo=(e.readUint8()<<16)+(e.readUint8()<<8)+e.readUint8(),o.tempoBPM=6e7/o.tempo,o;case Qt.EVENT_META_SMTPE_OFFSET:if(n&&5!==o.length)throw new Error(e.pos()+" Bad metaevent length.");if(o.hour=e.readUint8(),n&&23<o.hour)throw new Error(e.pos()+" SMTPE offset hour value must be part of 0-23.");if(o.minutes=e.readUint8(),n&&59<o.minutes)throw new Error(e.pos()+" SMTPE offset minutes value must be part of 0-59.");if(o.seconds=e.readUint8(),n&&59<o.seconds)throw new Error(e.pos()+" SMTPE offset seconds value must be part of 0-59.");if(o.frames=e.readUint8(),n&&30<o.frames)throw new Error(e.pos()+" SMTPE offset frames value must be part of 0-30.");if(o.subframes=e.readUint8(),n&&99<o.subframes)throw new Error(e.pos()+" SMTPE offset subframes value must be part of 0-99.");return o;case Qt.EVENT_META_KEY_SIGNATURE:if(n&&2!==o.length)throw new Error(e.pos()+" Bad metaevent length.");if(o.key=e.readUint8(),n&&(-7>o.key||7<o.key))throw new Error(e.pos()+" Bad metaevent length.");if(o.scale=e.readUint8(),n&&0!==o.scale&&1!==o.scale)throw new Error(e.pos()+" Key signature scale value must be 0 or 1.");return o;case Qt.EVENT_META_TIME_SIGNATURE:if(n&&4!==o.length)throw new Error(e.pos()+" Bad metaevent length.");return o.data=e.readBytes(o.length),o.param1=o.data[0],o.param2=o.data[1],o.param3=o.data[2],o.param4=o.data[3],o;case Qt.EVENT_META_SEQUENCER_SPECIFIC:return o.data=e.readBytes(o.length),o;default:if(n)throw new Error(e.pos()+" Unknown meta event type ("+o.subtype.toString(16)+").");return o.data=e.readBytes(o.length),o}}else{if(0==(128&r)){if(!i)throw new Error(e.pos()+" Running status without previous event");s=r}else i=r>>4,a=15&r,s=e.readUint8();switch(o.type=Qt.EVENT_MIDI,o.subtype=i,o.channel=a,o.param1=s,i){case Qt.EVENT_MIDI_NOTE_OFF:return o.param2=e.readUint8(),o;case Qt.EVENT_MIDI_NOTE_ON:return o.param2=e.readUint8(),o.param2||(o.subtype=Qt.EVENT_MIDI_NOTE_OFF,o.param2=127),o;case Qt.EVENT_MIDI_NOTE_AFTERTOUCH:case Qt.EVENT_MIDI_CONTROLLER:return o.param2=e.readUint8(),o;case Qt.EVENT_MIDI_PROGRAM_CHANGE:case Qt.EVENT_MIDI_CHANNEL_AFTERTOUCH:return o;case Qt.EVENT_MIDI_PITCH_BEND:return o.param2=e.readUint8(),o;default:if(n)throw new Error(e.pos()+" Unknown MIDI event type ("+i.toString(16)+").");return o}}}}},Qt.writeToTrack=function(e,t,n){var r,o,i,a,s=0;for(r=0,o=e.length;r<o;r++){if(e[r].delta>>>28)throw Error("Event #"+r+": Maximum delta time value reached ("+e[r].delta+"/134217728 max)");if(e[r].delta>>>21&&(t[s++]=e[r].delta>>>21&127|128),e[r].delta>>>14&&(t[s++]=e[r].delta>>>14&127|128),e[r].delta>>>7&&(t[s++]=e[r].delta>>>7&127|128),t[s++]=127&e[r].delta,e[r].type===Qt.EVENT_MIDI)t[s++]=(e[r].subtype<<4)+e[r].channel,t[s++]=e[r].param1,-1!==Qt.MIDI_2PARAMS_EVENTS.indexOf(e[r].subtype)&&(t[s++]=e[r].param2);else{if(t[s++]=e[r].type,e[r].type===Qt.EVENT_META&&(t[s++]=e[r].subtype),e[r].length>>>28)throw Error("Event #"+r+": Maximum length reached ("+e[r].length+"/134217728 max)");if(e[r].length>>>21&&(t[s++]=e[r].length>>>21&127|128),e[r].length>>>14&&(t[s++]=e[r].length>>>14&127|128),e[r].length>>>7&&(t[s++]=e[r].length>>>7&127|128),t[s++]=127&e[r].length,e[r].type===Qt.EVENT_META)switch(e[r].subtype){case Qt.EVENT_META_SEQUENCE_NUMBER:t[s++]=e[r].msb,t[s++]=e[r].lsb;break;case Qt.EVENT_META_TEXT:case Qt.EVENT_META_COPYRIGHT_NOTICE:case Qt.EVENT_META_TRACK_NAME:case Qt.EVENT_META_INSTRUMENT_NAME:case Qt.EVENT_META_LYRICS:case Qt.EVENT_META_MARKER:case Qt.EVENT_META_CUE_POINT:for(i=0,a=e[r].length;i<a;i++)t[s++]=e[r].data[i];break;case Qt.EVENT_META_MIDI_CHANNEL_PREFIX:t[s++]=e[r].prefix;break;case Qt.EVENT_META_END_OF_TRACK:break;case Qt.EVENT_META_SET_TEMPO:t[s++]=e[r].tempo>>16,t[s++]=e[r].tempo>>8&255,t[s++]=255&e[r].tempo;break;case Qt.EVENT_META_SMTPE_OFFSET:if(n&&23<e[r].hour)throw new Error("Event #"+r+": SMTPE offset hour value must be part of 0-23.");if(t[s++]=e[r].hour,n&&59<e[r].minutes)throw new Error("Event #"+r+": SMTPE offset minutes value must be part of 0-59.");if(t[s++]=e[r].minutes,n&&59<e[r].seconds)throw new Error("Event #"+r+": SMTPE offset seconds value must be part of 0-59.");if(t[s++]=e[r].seconds,n&&30<e[r].frames)throw new Error("Event #"+r+": SMTPE offset frames amount must be part of 0-30.");if(t[s++]=e[r].frames,n&&99<e[r].subframes)throw new Error("Event #"+r+": SMTPE offset subframes amount must be part of 0-99.");t[s++]=e[r].subframes;break;case Qt.EVENT_META_KEY_SIGNATURE:if("number"!=typeof e[r].key||-7>e[r].key||7<e[r].scale)throw new Error("Event #"+r+":The key signature key must be between -7 and 7");if("number"!=typeof e[r].scale||0>e[r].scale||1<e[r].scale)throw new Error("Event #"+r+":The key signature scale must be 0 or 1");t[s++]=e[r].key,t[s++]=e[r].scale;break;case Qt.EVENT_META_TIME_SIGNATURE:case Qt.EVENT_META_SEQUENCER_SPECIFIC:default:for(i=0,a=e[r].length;i<a;i++)t[s++]=e[r].data[i]}else for(i=0,a=e[r].length;i<a;i++)t[s++]=e[r].data[i]}}},Qt.getRequiredBufferLength=function(e){var t,n=0,r=0;for(r=0,t=e.length;r<t;r++)n+=e[r].delta>>>21?4:e[r].delta>>>14?3:e[r].delta>>>7?2:1,e[r].type===Qt.EVENT_MIDI?(n++,n++,-1!==Qt.MIDI_2PARAMS_EVENTS.indexOf(e[r].subtype)&&n++):(n++,e[r].type===Qt.EVENT_META&&n++,n+=e[r].length>>>21?4:e[r].length>>>14?3:e[r].length>>>7?2:1,n+=e[r].length);return n};var Xt=Qt,Jt={isNotUTF8:function(e,t,n){try{tn(e,t,n,!0)}catch(e){return!0}return!1},getCharLength:Zt,getCharCode:en,getStringFromBytes:tn,getBytesForCharCode:nn,setBytesFromCharCode:rn,setBytesFromString:function(e,t,n,r,o){e=e||"",t=t||[],n|=0,r="number"==typeof r?r:t.byteLength||1/0;for(var i=0,a=e.length;i<a;i++){var s=nn(e[i].codePointAt(0));if(o&&n+s>r)throw new Error('Not enought bytes to encode the char "'+e[i]+'" at the offset "'+n+'".');rn(e[i].codePointAt(0),t,n,s),n+=s}return t}};function Zt(e){return 240==(240&e)?4:224==(224&e)?3:192==(192&e)?2:e==(127&e)?1:0}function en(e,t,n){var r=0,o="";if(t=t||0,e.length-t<=0)throw new Error("No more characters remaining in array.");if(0==(n=n||Zt(e[t])))throw new Error(e[t].toString(2)+" is not a significative byte (offset:"+t+").");if(1===n)return e[t];if(e.length-t<n)throw new Error("Expected at least "+n+" bytes remaining in array.");if(o="00000000".slice(0,n)+1+"00000000".slice(n+1),e[t]&parseInt(o,2))throw Error("Index "+t+": A "+n+" bytes encoded char cannot encode the "+(n+1)+"th rank bit to 1.");for(o="0000".slice(0,n+1)+"11111111".slice(n+1),r+=(e[t]&parseInt(o,2))<<6*--n;n;){if(128!=(128&e[t+1])||64==(64&e[t+1]))throw Error("Index "+(t+1)+': Next bytes of encoded char must begin with a "10" bit sequence.');r+=(63&e[++t])<<6*--n}return r}function tn(e,t,n,r){var o,i=[];for(t|=0,n="number"==typeof n?n:e.byteLength||e.length;t<n;t++){if(t+(o=Zt(e[t]))>n){if(r)throw Error("Index "+t+": Found a "+o+" bytes encoded char declaration but only "+(n-t)+" bytes are available.")}else i.push(String.fromCodePoint(en(e,t,o)));t+=o-1}return i.join("")}function nn(e){if(e<128)return 1;if(e<2048)return 2;if(e<65536)return 3;if(e<2097152)return 4;throw new Error("CharCode "+e+" cannot be encoded with UTF8.")}function rn(e,t,n,r){if(e|=0,t=t||[],n|=0,1==(r=r||nn(e)))t[n]=e;else for(t[n++]=(parseInt("1111".slice(0,r),2)<<8-r)+(e>>>6*--r);r>0;)t[n++]=e>>>6*--r&63|128;return t}function on(e,t){var n,r,o,i;if(e){if(25>(e=function(e){if(e){if(e instanceof ArrayBuffer)return e;if(e instanceof Uint8Array)return new Uint8Array(e).buffer}throw new Error("Unsupported buffer type, need ArrayBuffer or Uint8Array")}(e)).byteLength)throw new Error("A buffer of a valid MIDI file must have, at least, a size of 25bytes.");for(this.header=new Wt(e),this.tracks=[],r=Wt.HEADER_LENGTH,o=0,i=this.header.getTracksCount();o<i;o++){if(t&&r>=e.byteLength-1)throw new Error("Couldn't find datas corresponding to the track #"+o+".");n=new Yt(e,r),this.tracks.push(n),r+=n.getTrackLength()+8}if(t&&r!==e.byteLength)throw new Error("It seems that the buffer contains too much datas.")}else this.header=new Wt,this.tracks=[new Yt]}on.prototype.getEvents=function(e,t){var n,r,o,i,a,s,l=0,c=[],u=this.header.getFormat(),d=this.header.getTickResolution();if(1!==u||1===this.tracks.length)for(o=0,i=this.tracks.length;o<i;o++)for(l=2===u&&l?l:0,r=(n=Xt.createParser(this.tracks[o].getTrackContent(),0,!1)).next();r;)l+=r.delta?r.delta*d/1e3:0,r.type===Xt.EVENT_META&&r.subtype===Xt.EVENT_META_SET_TEMPO&&(d=this.header.getTickResolution(r.tempo)),e&&r.type!==e||t&&(!r.subtype||r.subtype!==t)||(r.playTime=l,c.push(r)),r=n.next();else{for(a=[],s=-1,o=0,i=this.tracks.length;o<i;o++)a[o]={},a[o].parser=Xt.createParser(this.tracks[o].getTrackContent(),0,!1),a[o].curEvent=a[o].parser.next();do{for(s=-1,o=0,i=a.length;o<i;o++)a[o].curEvent&&(-1===s||a[o].curEvent.delta<a[s].curEvent.delta)&&(s=o);if(-1!==s){for(o=0,i=a.length;o<i;o++)o!==s&&a[o].curEvent&&(a[o].curEvent.delta-=a[s].curEvent.delta);l+=(r=a[s].curEvent).delta?r.delta*d/1e3:0,r.type===Xt.EVENT_META&&r.subtype===Xt.EVENT_META_SET_TEMPO&&(d=this.header.getTickResolution(r.tempo)),e&&r.type!==e||t&&(!r.subtype||r.subtype!==t)||(r.playTime=l,r.track=s,c.push(r)),a[s].curEvent=a[s].parser.next()}}while(-1!==s)}return c},on.prototype.getMidiEvents=function(){return this.getEvents(Xt.EVENT_MIDI)},on.prototype.getLyrics=function(){var e,t,n,r=this.getEvents(Xt.EVENT_META),o=[],i=[];for(t=0,n=r.length;t<n;t++)(e=r[t]).subtype===Xt.EVENT_META_LYRICS?i.push(e):e.subtype===Xt.EVENT_META_TEXT&&("@"===String.fromCharCode(e.data[0])?"T"===String.fromCharCode(e.data[1])||"I"===String.fromCharCode(e.data[1])||String.fromCharCode(e.data[1]):0===String.fromCharCode.apply(String,e.data).indexOf("words")?o.length=0:0!==e.playTime&&o.push(e));2<i.length?o=i:o.length||(o=[]);try{o.forEach((function(e){e.text=Jt.getStringFromBytes(e.data,0,e.length,!0)}))}catch(e){o.forEach((function(e){e.text=e.data.map((function(e){return String.fromCharCode(e)})).join("")}))}return o},on.prototype.getTrackEvents=function(e){var t,n,r=[];if(e>this.tracks.length||0>e)throw Error("Invalid track index ("+e+")");t=(n=Xt.createParser(this.tracks[e].getTrackContent(),0,!1)).next();do{r.push(t),t=n.next()}while(t);return r},on.prototype.setTrackEvents=function(e,t){var n,r;if(e>this.tracks.length||0>e)throw Error("Invalid track index ("+e+")");if(!t||!t.length)throw Error("A track must contain at least one event, none given.");n=Xt.getRequiredBufferLength(t),r=new Uint8Array(n),Xt.writeToTrack(t,r),this.tracks[e].setTrackContent(r)},on.prototype.deleteTrack=function(e){if(e>this.tracks.length||0>e)throw Error("Invalid track index ("+e+")");this.tracks.splice(e,1),this.header.setTracksCount(this.tracks.length)},on.prototype.addTrack=function(e){var t;if(e>this.tracks.length||0>e)throw Error("Invalid track index ("+e+")");t=new Yt,e===this.tracks.length?this.tracks.push(t):this.tracks.splice(e,0,t),this.header.setTracksCount(this.tracks.length)},on.prototype.getContent=function(){var e,t,n,r,o,i,a,s,l;for(e=Wt.HEADER_LENGTH,r=0,o=this.tracks.length;r<o;r++)e+=this.tracks[r].getTrackLength()+8;for(t=new Uint8Array(e),n=new Uint8Array(this.header.datas.buffer,this.header.datas.byteOffset,Wt.HEADER_LENGTH),r=0,o=Wt.HEADER_LENGTH;r<o;r++)t[r]=n[r];for(i=0,a=this.tracks.length;i<a;i++)for(n=new Uint8Array(this.tracks[i].datas.buffer,this.tracks[i].datas.byteOffset,this.tracks[i].datas.byteLength),s=0,l=this.tracks[i].datas.byteLength;s<l;s++)t[r++]=n[s];return t.buffer},on.Header=Wt,on.Track=Yt;var an=on;class sn{constructor(e,t,n,r,o,i="keep",a="keep"){this.value=e,this.playTime=t,this.delta=o,this.char=un[e-21],this.tempo=n,this.BPM=r,this.valid=e>=21&&e<=108,this.outOfRange=e<=35||e>=97,"!@#$%^&*()QWERTYUIOPASDFGHJKLZXCBVNM".includes(this.char)?"Start"===i?this.displayValue=e-108:"End"==i&&(this.displayValue=e+108):this.outOfRange?"Start"===a?this.displayValue=e-1024:"End"==a&&(this.displayValue=e+1024):this.displayValue=e}}class ln{constructor(e,t=!0){let n=!1,r=e[0];for(let t of e){if(t.playTime!=r.playTime){n=!0;break}r=t}if(this.is_quantized=n,n)this.notes=t?e:e.sort(((e,t)=>e.displayValue-t.displayValue));else{let t=[],n=[];e.forEach((e=>{t.includes(e.value)||(t.push(e.value),n.push(e))})),this.notes=n.sort(((e,t)=>e.displayValue-t.displayValue))}}}class cn{constructor(e){this.chords=e}transpose(e,t="Start",n="Start",r=!0){if(!this.chords)return;let o=[];return this.chords.forEach((i=>{let a=[];i.notes.forEach((r=>{a.push(new sn(r.value+e,r.playTime,r.tempo,r.BPM,r.delta,t,n))})),o.push(new ln(a,r))})),new cn(o)}countNotes(){let e=0;for(let t of this.chords)for(let n of t.notes)e++;return e}text(){let e="",t=this.chords;for(let n=0;n<t.length;n++){if(!t){e+="[no-chords] ";continue}const r=t[n];let o=r.notes.length>1&&r.notes.find((e=>!0===e.valid));r.notes.filter((e=>!1===e.outOfRange)).length<=1&&(o=!1),o&&(e+="[");for(const t of r.notes)e+=t.char;o&&(e+="]"),e+=" "}return e}}const un="1234567890qwert1!2@34$5%6^78*9(0qQwWeErtTyYuiIoOpPasSdDfgGhHjJklLzZxcCvVbBnmyuiopasdfghj",dn="1234567890qwertyuiopasdfghjklzxcvbnm";function fn(e,t,n=0,r=!1,o=4,i=0){if(!e?.chords)return n;function a(e){let t=[];for(let n of e.chords)for(let e of n.notes)t.push({char:e.char,oor:e.outOfRange,valid:e.valid});let n=t.filter((e=>!1===e.oor&&!0===e.valid)),r=n.filter((e=>dn.includes(e.char))),o=n.filter((e=>!dn.includes(e.char)));return Math.abs(o.length-r.length)}let s=a(e.transpose(n)),l=n;function c(t){let n=a(e.transpose(t));if(n>s){if(!r){if(n-s<o)return}s=n,l=t}}for(let e=i;e<=t;e++)c(n-e),c(n+e);return l}function hn(e,t){return t<e/4?"-":t<e/2?" ":t<e?" - ":t<2*e?", ":t<2.5*e?". ":t<3*e?".. ":t<4*e?"... ":"\n"}function pn(e,t,n){const r=e.slice();return r[18]=t[n],r}function mn(e){let t,n,o,i,h,m,v,_,N,S,A,k,I,x,C,M,$,D,U,V,P,O,F,L,B,H,q,z,G,j,W,K,Y,Q,X,J,Z,ee,te,ne,re,oe,ie,ae,se,le,ce,ue,de,fe,he,pe,me,ge,Ee,ye,we,Te,be,ve,_e,Ne,Se,Ae,ke,Ie,xe,Ce,Me,$e,De,Ue,Ve,Pe,Re=e[0].lbauto_atleast+"",Oe=1==e[0].beats?"1 beat":`${e[0].beats} beats`,Fe=e[0].quantize+"",Le=e[3],Be=[];for(let t=0;t<Le.length;t+=1)Be[t]=gn(pn(e,Le,t));function He(e,t){return e[0].capturingImage?yn:En}let qe=He(e),ze=qe(e),Ge="undefined"!=typeof ClipboardItem&&function(e){let t,n,r,o;function i(e,t){return e[0].capturingImage?Tn:wn}let a=i(e),c=a(e);return{c(){t=u("button"),c.c(),t.disabled=n=e[0].capturingImage},m(n,i){s(n,t,i),c.m(t,null),r||(o=p(t,"click",e[17]),r=!0)},p(e,r){a!==(a=i(e))&&(c.d(1),c=a(e),c&&(c.c(),c.m(t,null))),1&r&&n!==(n=e[0].capturingImage)&&(t.disabled=n)},d(e){e&&l(t),c.d(),r=!1,o()}}}(e);return{c(){t=u("div"),n=u("label"),n.textContent="Transpose (sheet) by:",o=f(),i=u("input"),h=f(),m=u("button"),m.textContent="Auto-transpose",v=f(),_=u("div"),N=u("button"),N.textContent="Line-based auto-transpose",S=f(),A=u("label"),A.textContent="Resilience (?):",k=f(),I=u("input"),x=f(),C=u("span"),M=d(Re),$=f(),D=u("div"),U=u("div"),V=u("label"),V.textContent="Place shifted notes at:",P=f(),O=u("select"),F=u("option"),F.textContent="Start",L=u("option"),L.textContent="End",B=f(),H=u("div"),q=u("label"),q.textContent="Place out of range notes at:",z=f(),G=u("select"),j=u("option"),j.textContent="Start",W=u("option"),W.textContent="End",K=f(),Y=u("div"),Q=u("label"),Q.textContent="Font:",X=f(),J=u("select");for(let e=0;e<Be.length;e+=1)Be[e].c();Z=f(),ee=u("div"),te=u("label"),te.textContent="Break lines:",ne=f(),re=u("input"),oe=f(),ie=u("span"),ae=d("Every "),se=d(Oe),le=f(),ce=u("div"),ue=u("label"),ue.textContent="Quantize:",de=f(),fe=u("input"),he=f(),pe=u("span"),me=d(Fe),ge=d(" miliseconds"),Ee=f(),ye=u("label"),we=u("input"),Te=d("\n        Sequential quantizes"),be=f(),ve=u("label"),_e=u("input"),Ne=d("\n        Include out of range (ctrl) notes"),Se=f(),Ae=u("label"),ke=u("input"),Ie=d("\n        Show tempo marks"),xe=f(),Ce=u("button"),ze.c(),$e=f(),Ge&&Ge.c(),De=f(),Ue=u("style"),Ue.textContent='label {\n        max-width: fit-content;\n        text-align: center;\n    }\n\n    .select-div {\n        display: flex;\n        flex-direction: row;\n        align-items: center;\n        text-align: center;\n    }\n\n    select {\n        height: auto;\n        margin-left: 0.4em;\n        margin-top: 0.2em;\n        margin-bottom: 0;\n    }\n\n    input[type="checkbox"] {\n        display: inline-block;\n        vertical-align: middle;\n    }\n\n    input[type="range"] {\n        margin-left: 0.4em;\n        margin-right: 0.4em;\n        margin-bottom: 0;\n    }\n\n    input[type="file"] {\n        margin-bottom: 0;\n    }\n\n    input[type="text"] {\n        margin-bottom: 0;\n    }\n    \n    .beats, .quantize, .select-label {\n        display: flex;\n        flex-direction: row;\n    }',g(n,"for","transpose"),g(i,"id","transpose"),g(i,"type","number"),g(i,"min","-24"),g(i,"max","24"),T(t,"display","inline-block"),T(N,"margin-bottom","0"),T(A,"margin-left","0.5em"),T(A,"display","flex"),T(A,"align-items","center"),g(A,"title","Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)"),g(A,"for","atleast"),g(A,"class","slider-label"),g(I,"id","atleast"),g(I,"type","range"),g(I,"min","1"),g(I,"max","24"),T(C,"display","flex"),T(C,"align-items","center"),g(_,"class","quantize"),g(V,"for","shifts-position"),F.__value="Start",F.value=F.__value,L.__value="End",L.value=L.__value,g(O,"name","shifts-position"),g(O,"id","shifts-position"),void 0===e[0].pShifts&&R((()=>e[8].call(O))),g(U,"class","select-div"),g(q,"for","oors-position"),j.__value="Start",j.value=j.__value,W.__value="End",W.value=W.__value,g(G,"name","oors-position"),g(G,"id","oors-position"),void 0===e[0].pOors&&R((()=>e[9].call(G))),g(H,"class","select-div"),g(Q,"for","font"),g(J,"name","font"),g(J,"id","font"),void 0===e[0].font&&R((()=>e[10].call(J))),g(Y,"class","select-div"),g(te,"class","slider-label"),g(te,"for","beats-for-newline"),g(re,"type","range"),g(re,"id","beats-for-newline"),g(re,"min","1"),g(re,"max","32"),g(ee,"class","beats"),g(ue,"class","slider-label"),g(ue,"for","quantize-prompt"),g(fe,"type","range"),g(fe,"id","quantize-prompt"),g(fe,"min","1"),g(fe,"max","100"),g(ce,"class","quantize"),g(we,"type","checkbox"),g(we,"id","order-quantizes"),g(ye,"for","order-quantizes"),g(_e,"type","checkbox"),g(_e,"id","out-of-range"),g(ve,"for","out-of-range"),g(ke,"type","checkbox"),g(ke,"id","tempo-checkbox"),g(Ae,"for","tempo-checkbox"),Ce.disabled=Me=e[0].capturingImage},m(r,l){s(r,t,l),a(t,n),a(t,o),a(t,i),w(i,e[0].transposition),a(t,h),a(t,m),s(r,v,l),s(r,_,l),a(_,N),a(_,S),a(_,A),a(_,k),a(_,I),w(I,e[0].lbauto_atleast),a(_,x),a(_,C),a(C,M),s(r,$,l),s(r,D,l),a(D,U),a(U,V),a(U,P),a(U,O),a(O,F),a(O,L),b(O,e[0].pShifts),a(D,B),a(D,H),a(H,q),a(H,z),a(H,G),a(G,j),a(G,W),b(G,e[0].pOors),a(D,K),a(D,Y),a(Y,Q),a(Y,X),a(Y,J);for(let e=0;e<Be.length;e+=1)Be[e].m(J,null);b(J,e[0].font),a(D,Z),a(D,ee),a(ee,te),a(ee,ne),a(ee,re),w(re,e[0].beats),a(ee,oe),a(ee,ie),a(ie,ae),a(ie,se),a(D,le),a(D,ce),a(ce,ue),a(ce,de),a(ce,fe),w(fe,e[0].quantize),a(ce,he),a(ce,pe),a(pe,me),a(pe,ge),a(D,Ee),a(D,ye),a(ye,we),we.checked=e[0].sequentialQuantize,a(ye,Te),a(D,be),a(D,ve),a(ve,_e),_e.checked=e[0].oors,a(ve,Ne),a(D,Se),a(D,Ae),a(Ae,ke),ke.checked=e[0].tempoMarks,a(Ae,Ie),a(D,xe),a(D,Ce),ze.m(Ce,null),a(D,$e),Ge&&Ge.m(D,null),s(r,De,l),s(r,Ue,l),Ve||(Pe=[p(i,"input",e[4]),p(m,"click",e[5]),p(N,"click",e[6]),p(I,"change",e[7]),p(I,"input",e[7]),p(O,"change",e[8]),p(G,"change",e[9]),p(J,"change",e[10]),p(re,"change",e[11]),p(re,"input",e[11]),p(fe,"change",e[12]),p(fe,"input",e[12]),p(we,"change",e[13]),p(_e,"change",e[14]),p(ke,"change",e[15]),p(Ce,"click",e[16])],Ve=!0)},p(e,t){if(1&t&&E(i.value)!==e[0].transposition&&w(i,e[0].transposition),1&t&&w(I,e[0].lbauto_atleast),1&t&&Re!==(Re=e[0].lbauto_atleast+"")&&y(M,Re),1&t&&b(O,e[0].pShifts),1&t&&b(G,e[0].pOors),8&t){let n;for(Le=e[3],n=0;n<Le.length;n+=1){const r=pn(e,Le,n);Be[n]?Be[n].p(r,t):(Be[n]=gn(r),Be[n].c(),Be[n].m(J,null))}for(;n<Be.length;n+=1)Be[n].d(1);Be.length=Le.length}1&t&&b(J,e[0].font),1&t&&w(re,e[0].beats),1&t&&Oe!==(Oe=1==e[0].beats?"1 beat":`${e[0].beats} beats`)&&y(se,Oe),1&t&&w(fe,e[0].quantize),1&t&&Fe!==(Fe=e[0].quantize+"")&&y(me,Fe),1&t&&(we.checked=e[0].sequentialQuantize),1&t&&(_e.checked=e[0].oors),1&t&&(ke.checked=e[0].tempoMarks),qe!==(qe=He(e))&&(ze.d(1),ze=qe(e),ze&&(ze.c(),ze.m(Ce,null))),1&t&&Me!==(Me=e[0].capturingImage)&&(Ce.disabled=Me),"undefined"!=typeof ClipboardItem&&Ge.p(e,t)},d(e){e&&l(t),e&&l(v),e&&l(_),e&&l($),e&&l(D),c(Be,e),ze.d(),Ge&&Ge.d(),e&&l(De),e&&l(Ue),Ve=!1,r(Pe)}}}function gn(t){let n,r,o=t[18]+"";return{c(){n=u("option"),r=d(o),n.__value=t[18],n.value=n.__value},m(e,t){s(e,n,t),a(n,r)},p:e,d(e){e&&l(n)}}}function En(e){let t;return{c(){t=d("Download Image")},m(e,n){s(e,t,n)},d(e){e&&l(t)}}}function yn(e){let t;return{c(){t=d("Please Wait...")},m(e,n){s(e,t,n)},d(e){e&&l(t)}}}function wn(e){let t;return{c(){t=d("Copy Image")},m(e,n){s(e,t,n)},d(e){e&&l(t)}}}function Tn(e){let t;return{c(){t=d("Please Wait...")},m(e,n){s(e,t,n)},d(e){e&&l(t)}}}function bn(t){let n,r=t[1]&&mn(t);return{c(){r&&r.c(),n=h()},m(e,t){r&&r.m(e,t),s(e,n,t)},p(e,[t]){e[1]?r?r.p(e,t):(r=mn(e),r.c(),r.m(n.parentNode,n)):r&&(r.d(1),r=null)},i:e,o:e,d(e){r&&r.d(e),e&&l(n)}}}function vn(e,t,n){let r=x(),{show:o}=t,i=["Verdana","Tahoma","Dejavu Sans","Segoe UI","Gill Sans","Helvetica","Lucida Sans","Century Gothic"],{settings:a={beats:4,quantize:35,sequentialQuantize:!1,pShifts:"Start",pOors:"Start",oors:!0,tempoMarks:!1,transposition:0,lbauto_atleast:4,font:i[0],capturingImage:!1}}=t;return e.$$set=e=>{"show"in e&&n(1,o=e.show),"settings"in e&&n(0,a=e.settings)},[a,o,r,i,function(){a.transposition=E(this.value),n(0,a)},()=>{r("auto")},()=>{r("lineBasedAuto")},function(){a.lbauto_atleast=E(this.value),n(0,a)},function(){a.pShifts=v(this),n(0,a)},function(){a.pOors=v(this),n(0,a)},function(){a.font=v(this),n(0,a)},function(){a.beats=E(this.value),n(0,a)},function(){a.quantize=E(this.value),n(0,a)},function(){a.sequentialQuantize=this.checked,n(0,a)},function(){a.oors=this.checked,n(0,a)},function(){a.tempoMarks=this.checked,n(0,a)},()=>r("captureSheetAsImage",{mode:"download"}),()=>r("captureSheetAsImage",{mode:"copy"})]}class _n extends ne{constructor(e){super(),te(this,e,vn,bn,i,{show:1,settings:0})}}function Nn(t){let n,r,o,i,c,f,h,m,E,w=t[1].getTrackLength()+"";return{c(){n=u("div"),r=u("input"),o=d("\n    Track "),i=d(t[2]),c=d(" - "),f=d(w),h=d(" events"),g(r,"type","checkbox"),g(n,"id","track")},m(e,l){s(e,n,l),a(n,r),r.checked=t[0],a(n,o),a(n,i),a(n,c),a(n,f),a(n,h),m||(E=p(r,"change",t[3]),m=!0)},p(e,[t]){1&t&&(r.checked=e[0]),4&t&&y(i,e[2]),2&t&&w!==(w=e[1].getTrackLength()+"")&&y(f,w)},i:e,o:e,d(e){e&&l(n),m=!1,E()}}}function Sn(e,t,n){let{track:r,idx:o}=t,{selected:i=!1}=t;return e.$$set=e=>{"track"in e&&n(1,r=e.track),"idx"in e&&n(2,o=e.idx),"selected"in e&&n(0,i=e.selected)},[i,r,o,function(){i=this.checked,n(0,i)}]}class An extends ne{constructor(e){super(),te(this,e,Sn,Nn,i,{track:1,idx:2,selected:0})}}const kn={long:"white",quadruple:"#a3f0a3",whole:"#74da74",half:"#9ada5a",quarter:"#c0c05a",eighth:"#da7e5a",sixteenth:"#daa6a6",thirtysecond:"#ff1900",sixtyfourth:"#9c0f00"};function In(e,t){return`<span style="color:${t}">${e}</span>`}function xn(e){let t,n,r=e[6](e[4])+"";return{c(){t=new A(!1),n=h(),t.a=n},m(e,o){t.m(r,e,o),s(e,n,o)},p(e,n){16&n&&r!==(r=e[6](e[4])+"")&&t.p(r)},d(e){e&&l(n),e&&t.d()}}}function Cn(e){let t,n,o,i;return{c(){t=u("span"),n=d(e[0]),g(t,"autofocus",""),g(t,"contenteditable","true"),g(t,"class","comment svelte-jszitz"),void 0===e[0]&&R((()=>e[13].call(t)))},m(r,l){s(r,t,l),a(t,n),void 0!==e[0]&&(t.textContent=e[0]),t.focus(),o||(i=[p(t,"focusout",e[7]),p(t,"input",e[13])],o=!0)},p(e,r){1&r&&y(n,e[0]),1&r&&e[0]!==t.textContent&&(t.textContent=e[0])},d(e){e&&l(t),o=!1,r(i)}}}function Mn(t){let n,o,i,c;function d(e,t){return e[0]||""==e[0]?Cn:xn}let f=d(t),h=f(t);return{c(){n=u("div"),o=u("div"),h.c(),g(o,"class","line svelte-jszitz"),g(n,"class","viewer svelte-jszitz"),T(n,"font-family",t[2].font)},m(e,r){s(e,n,r),a(n,o),h.m(o,null),i||(c=[p(o,"mousedown",t[14]),p(o,"contextmenu",m(t[12])),p(n,"contextmenu",m(t[11]))],i=!0)},p(e,[t]){f===(f=d(e))&&h?h.p(e,t):(h.d(1),h=f(e),h&&(h.c(),h.m(o,null))),4&t&&T(n,"font-family",e[2].font)},i:e,o:e,d(e){e&&l(n),h.d(),i=!1,r(c)}}}function $n(e,t,n){let r=x(),{index:o}=t,{comment:i}=t,{line:a}=t,{passedNext:s}=t,l=new cn(a.chords),c=l,{sameTranspositionAsPrevious:u=!1}=t,{settings:d}=t;function f(e,t){let n=`<span style="color:${t}">`,r=e.notes.length>1&&e.notes.find((e=>!0===e.valid));!1===d.oors&&e.notes.filter((e=>!1===e.outOfRange)).length<=1&&(r=!1),r&&(n+="[");for(const r of e.notes)r.valid?!0===r.outOfRange?!0===d.oors&&(n+=`<span style="display:inline-block; border-bottom: 2px solid ${t}">${r.char}</span>`):n+=r.char:n+="_";return r&&(n+="]"),n+"</span>"}return e.$$set=e=>{"index"in e&&n(1,o=e.index),"comment"in e&&n(0,i=e.comment),"line"in e&&n(8,a=e.line),"passedNext"in e&&n(9,s=e.passedNext),"sameTranspositionAsPrevious"in e&&n(10,u=e.sameTranspositionAsPrevious),"settings"in e&&n(2,d=e.settings)},e.$$.update=()=>{268&e.$$.dirty&&(n(8,a.originalSheet=n(3,l=new cn(a.chords)),a),n(4,c=l.transpose(a.transposition,d.pShifts,d.pOors,d.sequentialQuantize)))},[i,o,d,l,c,r,function(e){const t=-a.transposition;let n="";u||(n+=In(`Transpose by: ${t>0?"+":""}${t}`,"white"),a.difference&&(n+=In(` (${-a.difference>0?"+":""}${-a.difference})`,"white")),n+="\n");let r=e.chords;for(let e=0;e<r.length;e++){if(!r){n+="[bad-midi-file!]<br>";continue}const t={chord:r[e]};t.note=t.chord?.notes[0];const o={chord:r[e+1]};if(o.note=o.chord?.notes[0],!t.note)continue;if(!o.note){if(!s){n+=f(t.chord,"white");continue}o.note=s}let i=t.note.tempo/1e3,a=o.note.playTime-t.note.playTime;t.chord.is_quantized&&(a=o.note.playTime-t.chord.notes.slice(-1)[0].playTime),a-=.5;let l=kn.long;a<i/16?l=kn.sixtyfourth:a<i/8?l=kn.thirtysecond:a<i/4?l=kn.sixteenth:a<i/2?l=kn.eighth:a<i?l=kn.quarter:a<2*i?l=kn.half:a<4*i?l=kn.whole:a<8*i?l=kn.quadruple:a<16*i&&(l=kn.long),n+=f(t.chord,l),n+=d.tempoMarks?In(hn(i,a),l):" "}return n},function(){r("comment",""==i||"<br>"==i?{action:"remove",index:+o}:{index:+o,action:"update",comment:i})},a,s,u,function(t){C.call(this,e,t)},function(t){C.call(this,e,t)},function(){i=this.textContent,n(0,i)},e=>{switch(e.button){case 0:if(i)return;e.ctrlKey?r("comment",{action:"add",index:+o}):r("transpose",{index:+o,by:1});break;case 1:r("auto",{index:+o,sheet:l,keepGoing:e.ctrlKey}),e.preventDefault();break;case 2:e.ctrlKey&&i?r("comment",{action:"remove",index:+o}):r("transpose",{index:+o,by:-1})}}]}class Dn extends ne{constructor(e){super(),te(this,e,$n,Mn,i,{index:1,comment:0,line:8,passedNext:9,sameTranspositionAsPrevious:10,settings:2})}}const{document:Un}=Y;function Vn(e,t,n){const r=e.slice();return r[33]=t[n][0],r[34]=t[n][1],r}function Pn(e,t,n){const r=e.slice();return r[37]=t[n],r[38]=t,r[39]=n,r}function Rn(e){let t,n,r,o,i,d,h,m=e[5],E=[];for(let t=0;t<m.length;t+=1)E[t]=On(Pn(e,m,t));const y=e=>K(E[e],1,1,(()=>{E[e]=null}));return{c(){t=u("section"),n=u("div");for(let e=0;e<E.length;e+=1)E[e].c();r=f(),o=u("button"),o.textContent="Import selected tracks",g(n,"id","tracks"),g(t,"id","track-chooser")},m(l,c){s(l,t,c),a(t,n);for(let e=0;e<E.length;e+=1)E[e].m(n,null);a(t,r),a(t,o),i=!0,d||(h=p(o,"click",e[23]),d=!0)},p(e,t){if(96&t[0]){let r;for(m=e[5],r=0;r<m.length;r+=1){const o=Pn(e,m,r);E[r]?(E[r].p(o,t),W(E[r],1)):(E[r]=On(o),E[r].c(),W(E[r],1),E[r].m(n,null))}for(G(),r=m.length;r<E.length;r+=1)y(r);j()}},i(e){if(!i){for(let e=0;e<m.length;e+=1)W(E[e]);i=!0}},o(e){E=E.filter(Boolean);for(let e=0;e<E.length;e+=1)K(E[e]);i=!1},d(e){e&&l(t),c(E,e),d=!1,h()}}}function On(e){let t,n,r;function o(t){e[22](t,e[39])}let i={track:e[37],idx:e[39]+1};return void 0!==e[6][e[39]]&&(i.selected=e[6][e[39]]),t=new An({props:i}),$.push((()=>Q(t,"selected",o))),{c(){X(t.$$.fragment)},m(e,n){J(t,e,n),r=!0},p(r,o){e=r;const i={};32&o[0]&&(i.track=e[37]),!n&&64&o[0]&&(n=!0,i.selected=e[6][e[39]],O((()=>n=!1))),t.$set(i)},i(e){r||(W(t.$$.fragment,e),r=!0)},o(e){K(t.$$.fragment,e),r=!1},d(e){Z(t,e)}}}function Fn(e){let t,n,r,o,i=Object.entries(e[1]),d=[];for(let t=0;t<i.length;t+=1)d[t]=Ln(Vn(e,i,t));const f=e=>K(d[e],1,1,(()=>{d[e]=null}));return{c(){t=u("div"),n=u("div");for(let e=0;e<d.length;e+=1)d[e].c();T(n,"width","max-content"),R((()=>e[24].call(n))),T(t,"background","#2D2A32")},m(i,c){s(i,t,c),a(t,n);for(let e=0;e<d.length;e+=1)d[e].m(n,null);r=function(e,t){"static"===getComputedStyle(e).position&&(e.style.position="relative");const n=u("iframe");n.setAttribute("style","display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; border: 0; opacity: 0; pointer-events: none; z-index: -1;"),n.setAttribute("aria-hidden","true"),n.tabIndex=-1;const r=S();let o;return r?(n.src="data:text/html,<script>onresize=function(){parent.postMessage(0,'*')}<\/script>",o=p(window,"message",(e=>{e.source===n.contentWindow&&t()}))):(n.src="about:blank",n.onload=()=>{o=p(n.contentWindow,"resize",t)}),a(e,n),()=>{(r||o&&n.contentWindow)&&o(),l(n)}}(n,e[24].bind(n)),e[25](t),o=!0},p(e,t){if(221187&t[0]){let r;for(i=Object.entries(e[1]),r=0;r<i.length;r+=1){const o=Vn(e,i,r);d[r]?(d[r].p(o,t),W(d[r],1)):(d[r]=Ln(o),d[r].c(),W(d[r],1),d[r].m(n,null))}for(G(),r=i.length;r<d.length;r+=1)f(r);j()}},i(e){if(!o){for(let e=0;e<i.length;e+=1)W(d[e]);o=!0}},o(e){d=d.filter(Boolean);for(let e=0;e<d.length;e+=1)K(d[e]);o=!1},d(n){n&&l(t),c(d,n),r(),e[25](null)}}}function Ln(e){let t,n;return t=new Dn({props:{line:e[34],index:e[33],settings:e[0],comment:e[34].comment,passedNext:e[34].continuation,sameTranspositionAsPrevious:e[17](e[33])}}),t.$on("transpose",e[13]),t.$on("auto",e[14]),t.$on("comment",e[16]),{c(){X(t.$$.fragment)},m(e,r){J(t,e,r),n=!0},p(e,n){const r={};2&n[0]&&(r.line=e[34]),2&n[0]&&(r.index=e[33]),1&n[0]&&(r.settings=e[0]),2&n[0]&&(r.comment=e[34].comment),2&n[0]&&(r.passedNext=e[34].continuation),2&n[0]&&(r.sameTranspositionAsPrevious=e[17](e[33])),t.$set(r)},i(e){n||(W(t.$$.fragment,e),n=!0)},o(e){K(t.$$.fragment,e),n=!1},d(e){Z(t,e)}}}function Bn(e){let t,n,r,o,i,c,d,p,m,E,y,w;function b(t){e[20](t)}let v={show:e[4]};void 0!==e[0]&&(v.settings=e[0]),d=new _n({props:v}),$.push((()=>Q(d,"settings",b))),d.$on("auto",e[11]),d.$on("lineBasedAuto",e[21]),d.$on("captureSheetAsImage",e[15]);let _=e[3]&&Rn(e),N=e[4]&&Fn(e);return{c(){t=f(),n=u("div"),r=u("label"),r.innerHTML='Please import a MIDI file:\n        <a href="https://github.com/ArijanJ/midi-converter/wiki/Usage">How do I use this?</a>',o=f(),i=u("input"),c=f(),X(d.$$.fragment),m=f(),_&&_.c(),E=f(),N&&N.c(),y=h(),Un.title="MIDI Converter",g(r,"for","file"),g(i,"type","file"),g(i,"accept",".mid,.midi"),T(n,"display","inline-block")},m(l,u){s(l,t,u),s(l,n,u),a(n,r),a(n,o),a(n,i),e[19](i),s(l,c,u),J(d,l,u),s(l,m,u),_&&_.m(l,u),s(l,E,u),N&&N.m(l,u),s(l,y,u),w=!0},p(e,t){const n={};16&t[0]&&(n.show=e[4]),!p&&1&t[0]&&(p=!0,n.settings=e[0],O((()=>p=!1))),d.$set(n),e[3]?_?(_.p(e,t),8&t[0]&&W(_,1)):(_=Rn(e),_.c(),W(_,1),_.m(E.parentNode,E)):_&&(G(),K(_,1,1,(()=>{_=null})),j()),e[4]?N?(N.p(e,t),16&t[0]&&W(N,1)):(N=Fn(e),N.c(),W(N,1),N.m(y.parentNode,y)):N&&(G(),K(N,1,1,(()=>{N=null})),j())},i(e){w||(W(d.$$.fragment,e),W(_),W(N),w=!0)},o(e){K(d.$$.fragment,e),K(_),K(N),w=!1},d(r){r&&l(t),r&&l(n),e[19](null),r&&l(c),Z(d,r),r&&l(m),_&&_.d(r),r&&l(E),N&&N.d(r),r&&l(y)}}}let Hn=.5;function qn(e,t,n){let r,o,i,a,s,l,c,u=!1,d=!1,f=0;var h;function p(e){if(!e)return!1;let t=e.tempo/1e3*g.beats,n=e.playTime-f;return n+Hn>=t?(f+=n,!0):void 0}h=()=>{r.addEventListener("change",(async()=>{await r.files[0].arrayBuffer().then((e=>{o=new an(e),function(e){return e.header.getTimeDivision()===an.Header.TICKS_PER_BEAT?{ticksPerBeat:e.header.getTicksPerBeat()}:{SMPTEFrames:e.header.getSMPTEFrames(),ticksPerFrame:e.header.getTicksPerFrame()}}(o).ticksPerBeat||console.error("No ticksPerBeat in this midi file"),n(5,i=o.tracks),n(6,s=i.map((()=>!0))),n(3,u=!0),n(4,d=!1),f=0}))}),!1)},I().$$.on_mount.push(h);let m,g,E=()=>{a=function(e,t=100,n="Start",r="Start",o=!0){let i=[],a=[],s=e[0].playTime??0,l=0,c=0;return e.forEach((e=>{if(81==e.subtype)return c=e.tempo,void(l=e.tempoBPM);const u=e.param1,d=e.playTime,f=e.delta;Math.abs(d-s)<t?(a.push(new sn(u,d,c,l,f,n,r)),s=d):(i.push(new ln(a,o)),a=[],a.push(new sn(u,d,c,l,f,n,r)),s=d)})),i.push(new ln(a)),new cn(i)}(function(e,t){let n=[];return e.getEvents().forEach((e=>{e.subtype==Xt.EVENT_META_SET_TEMPO&&n.push(e),e.subtype==Xt.EVENT_MIDI_NOTE_ON&&(e.track||!0!==t[0]?!0===t[e.track]&&n.push(e):n.push(e))})),n}(o,s),g.quantize,g.pShifts,g.pOors,g.sequentialQuantize)},y=()=>{if(n(4,d=!1),!a)return;const e=a.chords;f=0,n(1,T=[]);let t=[];for(let n=0;n<=e.length;n++){const r={chord:e[n]};r.note=r.chord?.notes[0];const o={chord:e[n+1]};o.note=o.chord?.notes[0],r.note&&(p(r.note)&&(T.push({chords:t,transposition:g.transposition,continuation:r.note}),t=[]),t.push(r.chord))}T.push({chords:t,transposition:0,continuation:void 0}),n(4,d=!0),n(3,u=!1),n(1,T),n(18,m),n(0,g),n(10,y),n(9,E)},w=(e=0)=>{let t=fn(T[e].originalSheet,11,0,!0);for(let n=e;n<=T.length;n++){const r=T[n];if(!r)continue;if(0==n&&0==e){b(0,t);continue}if(n<e)continue;const o=fn(r.originalSheet,8,t,!1,g.lbauto_atleast,t);b(n,o),t=o}n(1,T),n(18,m),n(0,g),n(10,y),n(9,E)},T=[];function b(e,t){let r=+e;n(1,T[r].transposition=t,T),T[r-1]&&n(1,T[r].difference=T[r].transposition-T[r-1].transposition,T),T[r+1]&&n(1,T[r+1].difference=T[r+1].transposition-T[r].transposition,T)}function v(e){n(0,g.capturingImage=!0,g),setTimeout((()=>function(e,t){return pe(this,null,(function*(){const n=yield mt(e,t),{log:r,type:o,quality:i,dpi:a}=n,s=yield Gt(n);r.time("canvas to blob");const l=yield it(s,o,i);if(["image/png","image/jpeg"].includes(o)&&a){const e=yield lt(l.slice(0,33));let t=new Uint8Array(e);return"image/png"===o?t=be(t,a):"image/jpeg"===o&&(t=function(e,t){return e[13]=1,e[14]=t>>8,e[15]=255&t,e[16]=t>>8,e[17]=255&t,e}(t,a)),r.timeEnd("canvas to blob"),new Blob([t,l.slice(33)],{type:o})}return r.timeEnd("canvas to blob"),l}))}(l,{width:c,scale:2}).then((t=>{"copy"===e?function(e){try{navigator.clipboard.write([new ClipboardItem({"image/png":e})])}catch(e){console.error(e)}}(t):function(e){const t=URL.createObjectURL(e);let n=r.files[0].name.split(".");n.pop(),n=n.join(".")+".png";let o=document.createElement("a");o.href=t,o.download=n,document.body.appendChild(o),o.click(),URL.revokeObjectURL(t),document.body.removeChild(o)}(t),n(0,g.capturingImage=!1,g)}))),250)}return e.$$.update=()=>{if(262147&e.$$.dirty[0])if(m){if(m.transposition!=g.transposition){for(let e of T)e.transposition=g.transposition;n(1,T),n(18,m),n(0,g),n(10,y),n(9,E)}else m.beats!=g.beats?y():m.quantize==g.quantize&&m.sequentialQuantize==g.sequentialQuantize||(E(),y(),n(1,T),n(18,m),n(0,g),n(10,y),n(9,E));n(18,m={...g})}else n(18,m={...g})},[g,T,r,u,d,i,s,l,c,E,y,()=>{n(0,g.transposition=fn(a,11),g);for(let e=0;e<T.length;e++)b(e,g.transposition)},w,e=>{const t=e.detail.index,n=e.detail.by;setTimeout((()=>{b(t,T[t].transposition+n)}),0)},e=>{const t=e.detail.keepGoing,n=e.detail.index;b(n,fn(e.detail.sheet,11,T[n-1]?.transposition??0,0,0)),t&&w(n)},function(e){v(e.detail.mode)},function(e){const t=e.detail.index,r=e.detail.action,o=e.detail.comment;switch(r){case"add":setTimeout((()=>{T[t-1]?.comment||(T.splice(t,0,{comment:"Add a comment..."}),n(1,T),n(18,m),n(0,g),n(10,y),n(9,E))}),0);break;case"remove":T.splice(t,1),n(1,T),n(18,m),n(0,g),n(10,y),n(9,E);break;case"update":n(1,T[t].comment=o,T)}},function(e){const t=T[e];for(let n=e-1;n>=0;n--){const e=T[n];if(!e.comment)return e.transposition==t.transposition}},m,function(e){$[e?"unshift":"push"]((()=>{r=e,n(2,r)}))},function(e){g=e,n(0,g)},()=>{w()},function(t,r){e.$$.not_equal(s[r],t)&&(s[r]=t,n(6,s))},()=>{E(),y()},function(){c=this.clientWidth,n(8,c)},function(e){$[e?"unshift":"push"]((()=>{l=e,n(7,l)}))}]}return new class extends ne{constructor(e){super(),te(this,e,qn,Bn,i,{},null,[-1,-1])}}({target:document.body})}();
+
+(function(l, r) { if (!l || l.getElementById('livereloadscript')) return; r = l.createElement('script'); r.async = 1; r.src = '//' + (self.location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1'; r.id = 'livereloadscript'; l.getElementsByTagName('head')[0].appendChild(r) })(self.document);
+var app = (function () {
+    'use strict';
+
+    function noop() { }
+    function add_location(element, file, line, column, char) {
+        element.__svelte_meta = {
+            loc: { file, line, column, char }
+        };
+    }
+    function run(fn) {
+        return fn();
+    }
+    function blank_object() {
+        return Object.create(null);
+    }
+    function run_all(fns) {
+        fns.forEach(run);
+    }
+    function is_function(thing) {
+        return typeof thing === 'function';
+    }
+    function safe_not_equal(a, b) {
+        return a != a ? b == b : a !== b || ((a && typeof a === 'object') || typeof a === 'function');
+    }
+    function is_empty(obj) {
+        return Object.keys(obj).length === 0;
+    }
+    function append(target, node) {
+        target.appendChild(node);
+    }
+    function insert(target, node, anchor) {
+        target.insertBefore(node, anchor || null);
+    }
+    function detach(node) {
+        if (node.parentNode) {
+            node.parentNode.removeChild(node);
+        }
+    }
+    function destroy_each(iterations, detaching) {
+        for (let i = 0; i < iterations.length; i += 1) {
+            if (iterations[i])
+                iterations[i].d(detaching);
+        }
+    }
+    function element(name) {
+        return document.createElement(name);
+    }
+    function svg_element(name) {
+        return document.createElementNS('http://www.w3.org/2000/svg', name);
+    }
+    function text(data) {
+        return document.createTextNode(data);
+    }
+    function space() {
+        return text(' ');
+    }
+    function empty() {
+        return text('');
+    }
+    function listen(node, event, handler, options) {
+        node.addEventListener(event, handler, options);
+        return () => node.removeEventListener(event, handler, options);
+    }
+    function prevent_default(fn) {
+        return function (event) {
+            event.preventDefault();
+            // @ts-ignore
+            return fn.call(this, event);
+        };
+    }
+    function attr(node, attribute, value) {
+        if (value == null)
+            node.removeAttribute(attribute);
+        else if (node.getAttribute(attribute) !== value)
+            node.setAttribute(attribute, value);
+    }
+    function to_number(value) {
+        return value === '' ? null : +value;
+    }
+    function children(element) {
+        return Array.from(element.childNodes);
+    }
+    function set_input_value(input, value) {
+        input.value = value == null ? '' : value;
+    }
+    function set_style(node, key, value, important) {
+        if (value === null) {
+            node.style.removeProperty(key);
+        }
+        else {
+            node.style.setProperty(key, value, important ? 'important' : '');
+        }
+    }
+    function select_option(select, value) {
+        for (let i = 0; i < select.options.length; i += 1) {
+            const option = select.options[i];
+            if (option.__value === value) {
+                option.selected = true;
+                return;
+            }
+        }
+        select.selectedIndex = -1; // no option should be selected
+    }
+    function select_value(select) {
+        const selected_option = select.querySelector(':checked') || select.options[0];
+        return selected_option && selected_option.__value;
+    }
+    // unfortunately this can't be a constant as that wouldn't be tree-shakeable
+    // so we cache the result instead
+    let crossorigin;
+    function is_crossorigin() {
+        if (crossorigin === undefined) {
+            crossorigin = false;
+            try {
+                if (typeof window !== 'undefined' && window.parent) {
+                    void window.parent.document;
+                }
+            }
+            catch (error) {
+                crossorigin = true;
+            }
+        }
+        return crossorigin;
+    }
+    function add_resize_listener(node, fn) {
+        const computed_style = getComputedStyle(node);
+        if (computed_style.position === 'static') {
+            node.style.position = 'relative';
+        }
+        const iframe = element('iframe');
+        iframe.setAttribute('style', 'display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; ' +
+            'overflow: hidden; border: 0; opacity: 0; pointer-events: none; z-index: -1;');
+        iframe.setAttribute('aria-hidden', 'true');
+        iframe.tabIndex = -1;
+        const crossorigin = is_crossorigin();
+        let unsubscribe;
+        if (crossorigin) {
+            iframe.src = "data:text/html,<script>onresize=function(){parent.postMessage(0,'*')}</script>";
+            unsubscribe = listen(window, 'message', (event) => {
+                if (event.source === iframe.contentWindow)
+                    fn();
+            });
+        }
+        else {
+            iframe.src = 'about:blank';
+            iframe.onload = () => {
+                unsubscribe = listen(iframe.contentWindow, 'resize', fn);
+            };
+        }
+        append(node, iframe);
+        return () => {
+            if (crossorigin) {
+                unsubscribe();
+            }
+            else if (unsubscribe && iframe.contentWindow) {
+                unsubscribe();
+            }
+            detach(iframe);
+        };
+    }
+    function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
+        const e = document.createEvent('CustomEvent');
+        e.initCustomEvent(type, bubbles, cancelable, detail);
+        return e;
+    }
+    class HtmlTag {
+        constructor(is_svg = false) {
+            this.is_svg = false;
+            this.is_svg = is_svg;
+            this.e = this.n = null;
+        }
+        c(html) {
+            this.h(html);
+        }
+        m(html, target, anchor = null) {
+            if (!this.e) {
+                if (this.is_svg)
+                    this.e = svg_element(target.nodeName);
+                else
+                    this.e = element(target.nodeName);
+                this.t = target;
+                this.c(html);
+            }
+            this.i(anchor);
+        }
+        h(html) {
+            this.e.innerHTML = html;
+            this.n = Array.from(this.e.childNodes);
+        }
+        i(anchor) {
+            for (let i = 0; i < this.n.length; i += 1) {
+                insert(this.t, this.n[i], anchor);
+            }
+        }
+        p(html) {
+            this.d();
+            this.h(html);
+            this.i(this.a);
+        }
+        d() {
+            this.n.forEach(detach);
+        }
+    }
+
+    let current_component;
+    function set_current_component(component) {
+        current_component = component;
+    }
+    function get_current_component() {
+        if (!current_component)
+            throw new Error('Function called outside component initialization');
+        return current_component;
+    }
+    /**
+     * The `onMount` function schedules a callback to run as soon as the component has been mounted to the DOM.
+     * It must be called during the component's initialisation (but doesn't need to live *inside* the component;
+     * it can be called from an external module).
+     *
+     * `onMount` does not run inside a [server-side component](/docs#run-time-server-side-component-api).
+     *
+     * https://svelte.dev/docs#run-time-svelte-onmount
+     */
+    function onMount(fn) {
+        get_current_component().$$.on_mount.push(fn);
+    }
+    /**
+     * Creates an event dispatcher that can be used to dispatch [component events](/docs#template-syntax-component-directives-on-eventname).
+     * Event dispatchers are functions that can take two arguments: `name` and `detail`.
+     *
+     * Component events created with `createEventDispatcher` create a
+     * [CustomEvent](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent).
+     * These events do not [bubble](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Events#Event_bubbling_and_capture).
+     * The `detail` argument corresponds to the [CustomEvent.detail](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/detail)
+     * property and can contain any type of data.
+     *
+     * https://svelte.dev/docs#run-time-svelte-createeventdispatcher
+     */
+    function createEventDispatcher() {
+        const component = get_current_component();
+        return (type, detail, { cancelable = false } = {}) => {
+            const callbacks = component.$$.callbacks[type];
+            if (callbacks) {
+                // TODO are there situations where events could be dispatched
+                // in a server (non-DOM) environment?
+                const event = custom_event(type, detail, { cancelable });
+                callbacks.slice().forEach(fn => {
+                    fn.call(component, event);
+                });
+                return !event.defaultPrevented;
+            }
+            return true;
+        };
+    }
+    // TODO figure out if we still want to support
+    // shorthand events, or if we want to implement
+    // a real bubbling mechanism
+    function bubble(component, event) {
+        const callbacks = component.$$.callbacks[event.type];
+        if (callbacks) {
+            // @ts-ignore
+            callbacks.slice().forEach(fn => fn.call(this, event));
+        }
+    }
+
+    const dirty_components = [];
+    const binding_callbacks = [];
+    const render_callbacks = [];
+    const flush_callbacks = [];
+    const resolved_promise = Promise.resolve();
+    let update_scheduled = false;
+    function schedule_update() {
+        if (!update_scheduled) {
+            update_scheduled = true;
+            resolved_promise.then(flush);
+        }
+    }
+    function add_render_callback(fn) {
+        render_callbacks.push(fn);
+    }
+    function add_flush_callback(fn) {
+        flush_callbacks.push(fn);
+    }
+    // flush() calls callbacks in this order:
+    // 1. All beforeUpdate callbacks, in order: parents before children
+    // 2. All bind:this callbacks, in reverse order: children before parents.
+    // 3. All afterUpdate callbacks, in order: parents before children. EXCEPT
+    //    for afterUpdates called during the initial onMount, which are called in
+    //    reverse order: children before parents.
+    // Since callbacks might update component values, which could trigger another
+    // call to flush(), the following steps guard against this:
+    // 1. During beforeUpdate, any updated components will be added to the
+    //    dirty_components array and will cause a reentrant call to flush(). Because
+    //    the flush index is kept outside the function, the reentrant call will pick
+    //    up where the earlier call left off and go through all dirty components. The
+    //    current_component value is saved and restored so that the reentrant call will
+    //    not interfere with the "parent" flush() call.
+    // 2. bind:this callbacks cannot trigger new flush() calls.
+    // 3. During afterUpdate, any updated components will NOT have their afterUpdate
+    //    callback called a second time; the seen_callbacks set, outside the flush()
+    //    function, guarantees this behavior.
+    const seen_callbacks = new Set();
+    let flushidx = 0; // Do *not* move this inside the flush() function
+    function flush() {
+        // Do not reenter flush while dirty components are updated, as this can
+        // result in an infinite loop. Instead, let the inner flush handle it.
+        // Reentrancy is ok afterwards for bindings etc.
+        if (flushidx !== 0) {
+            return;
+        }
+        const saved_component = current_component;
+        do {
+            // first, call beforeUpdate functions
+            // and update components
+            try {
+                while (flushidx < dirty_components.length) {
+                    const component = dirty_components[flushidx];
+                    flushidx++;
+                    set_current_component(component);
+                    update(component.$$);
+                }
+            }
+            catch (e) {
+                // reset dirty state to not end up in a deadlocked state and then rethrow
+                dirty_components.length = 0;
+                flushidx = 0;
+                throw e;
+            }
+            set_current_component(null);
+            dirty_components.length = 0;
+            flushidx = 0;
+            while (binding_callbacks.length)
+                binding_callbacks.pop()();
+            // then, once components are updated, call
+            // afterUpdate functions. This may cause
+            // subsequent updates...
+            for (let i = 0; i < render_callbacks.length; i += 1) {
+                const callback = render_callbacks[i];
+                if (!seen_callbacks.has(callback)) {
+                    // ...so guard against infinite loops
+                    seen_callbacks.add(callback);
+                    callback();
+                }
+            }
+            render_callbacks.length = 0;
+        } while (dirty_components.length);
+        while (flush_callbacks.length) {
+            flush_callbacks.pop()();
+        }
+        update_scheduled = false;
+        seen_callbacks.clear();
+        set_current_component(saved_component);
+    }
+    function update($$) {
+        if ($$.fragment !== null) {
+            $$.update();
+            run_all($$.before_update);
+            const dirty = $$.dirty;
+            $$.dirty = [-1];
+            $$.fragment && $$.fragment.p($$.ctx, dirty);
+            $$.after_update.forEach(add_render_callback);
+        }
+    }
+    const outroing = new Set();
+    let outros;
+    function group_outros() {
+        outros = {
+            r: 0,
+            c: [],
+            p: outros // parent group
+        };
+    }
+    function check_outros() {
+        if (!outros.r) {
+            run_all(outros.c);
+        }
+        outros = outros.p;
+    }
+    function transition_in(block, local) {
+        if (block && block.i) {
+            outroing.delete(block);
+            block.i(local);
+        }
+    }
+    function transition_out(block, local, detach, callback) {
+        if (block && block.o) {
+            if (outroing.has(block))
+                return;
+            outroing.add(block);
+            outros.c.push(() => {
+                outroing.delete(block);
+                if (callback) {
+                    if (detach)
+                        block.d(1);
+                    callback();
+                }
+            });
+            block.o(local);
+        }
+        else if (callback) {
+            callback();
+        }
+    }
+
+    const globals = (typeof window !== 'undefined'
+        ? window
+        : typeof globalThis !== 'undefined'
+            ? globalThis
+            : global);
+
+    function bind(component, name, callback) {
+        const index = component.$$.props[name];
+        if (index !== undefined) {
+            component.$$.bound[index] = callback;
+            callback(component.$$.ctx[index]);
+        }
+    }
+    function create_component(block) {
+        block && block.c();
+    }
+    function mount_component(component, target, anchor, customElement) {
+        const { fragment, after_update } = component.$$;
+        fragment && fragment.m(target, anchor);
+        if (!customElement) {
+            // onMount happens before the initial afterUpdate
+            add_render_callback(() => {
+                const new_on_destroy = component.$$.on_mount.map(run).filter(is_function);
+                // if the component was destroyed immediately
+                // it will update the `$$.on_destroy` reference to `null`.
+                // the destructured on_destroy may still reference to the old array
+                if (component.$$.on_destroy) {
+                    component.$$.on_destroy.push(...new_on_destroy);
+                }
+                else {
+                    // Edge case - component was destroyed immediately,
+                    // most likely as a result of a binding initialising
+                    run_all(new_on_destroy);
+                }
+                component.$$.on_mount = [];
+            });
+        }
+        after_update.forEach(add_render_callback);
+    }
+    function destroy_component(component, detaching) {
+        const $$ = component.$$;
+        if ($$.fragment !== null) {
+            run_all($$.on_destroy);
+            $$.fragment && $$.fragment.d(detaching);
+            // TODO null out other refs, including component.$$ (but need to
+            // preserve final state?)
+            $$.on_destroy = $$.fragment = null;
+            $$.ctx = [];
+        }
+    }
+    function make_dirty(component, i) {
+        if (component.$$.dirty[0] === -1) {
+            dirty_components.push(component);
+            schedule_update();
+            component.$$.dirty.fill(0);
+        }
+        component.$$.dirty[(i / 31) | 0] |= (1 << (i % 31));
+    }
+    function init(component, options, instance, create_fragment, not_equal, props, append_styles, dirty = [-1]) {
+        const parent_component = current_component;
+        set_current_component(component);
+        const $$ = component.$$ = {
+            fragment: null,
+            ctx: [],
+            // state
+            props,
+            update: noop,
+            not_equal,
+            bound: blank_object(),
+            // lifecycle
+            on_mount: [],
+            on_destroy: [],
+            on_disconnect: [],
+            before_update: [],
+            after_update: [],
+            context: new Map(options.context || (parent_component ? parent_component.$$.context : [])),
+            // everything else
+            callbacks: blank_object(),
+            dirty,
+            skip_bound: false,
+            root: options.target || parent_component.$$.root
+        };
+        append_styles && append_styles($$.root);
+        let ready = false;
+        $$.ctx = instance
+            ? instance(component, options.props || {}, (i, ret, ...rest) => {
+                const value = rest.length ? rest[0] : ret;
+                if ($$.ctx && not_equal($$.ctx[i], $$.ctx[i] = value)) {
+                    if (!$$.skip_bound && $$.bound[i])
+                        $$.bound[i](value);
+                    if (ready)
+                        make_dirty(component, i);
+                }
+                return ret;
+            })
+            : [];
+        $$.update();
+        ready = true;
+        run_all($$.before_update);
+        // `false` as a special case of no DOM component
+        $$.fragment = create_fragment ? create_fragment($$.ctx) : false;
+        if (options.target) {
+            if (options.hydrate) {
+                const nodes = children(options.target);
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                $$.fragment && $$.fragment.l(nodes);
+                nodes.forEach(detach);
+            }
+            else {
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                $$.fragment && $$.fragment.c();
+            }
+            if (options.intro)
+                transition_in(component.$$.fragment);
+            mount_component(component, options.target, options.anchor, options.customElement);
+            flush();
+        }
+        set_current_component(parent_component);
+    }
+    /**
+     * Base class for Svelte components. Used when dev=false.
+     */
+    class SvelteComponent {
+        $destroy() {
+            destroy_component(this, 1);
+            this.$destroy = noop;
+        }
+        $on(type, callback) {
+            if (!is_function(callback)) {
+                return noop;
+            }
+            const callbacks = (this.$$.callbacks[type] || (this.$$.callbacks[type] = []));
+            callbacks.push(callback);
+            return () => {
+                const index = callbacks.indexOf(callback);
+                if (index !== -1)
+                    callbacks.splice(index, 1);
+            };
+        }
+        $set($$props) {
+            if (this.$$set && !is_empty($$props)) {
+                this.$$.skip_bound = true;
+                this.$$set($$props);
+                this.$$.skip_bound = false;
+            }
+        }
+    }
+
+    function dispatch_dev(type, detail) {
+        document.dispatchEvent(custom_event(type, Object.assign({ version: '3.55.1' }, detail), { bubbles: true }));
+    }
+    function append_dev(target, node) {
+        dispatch_dev('SvelteDOMInsert', { target, node });
+        append(target, node);
+    }
+    function insert_dev(target, node, anchor) {
+        dispatch_dev('SvelteDOMInsert', { target, node, anchor });
+        insert(target, node, anchor);
+    }
+    function detach_dev(node) {
+        dispatch_dev('SvelteDOMRemove', { node });
+        detach(node);
+    }
+    function listen_dev(node, event, handler, options, has_prevent_default, has_stop_propagation) {
+        const modifiers = options === true ? ['capture'] : options ? Array.from(Object.keys(options)) : [];
+        if (has_prevent_default)
+            modifiers.push('preventDefault');
+        if (has_stop_propagation)
+            modifiers.push('stopPropagation');
+        dispatch_dev('SvelteDOMAddEventListener', { node, event, handler, modifiers });
+        const dispose = listen(node, event, handler, options);
+        return () => {
+            dispatch_dev('SvelteDOMRemoveEventListener', { node, event, handler, modifiers });
+            dispose();
+        };
+    }
+    function attr_dev(node, attribute, value) {
+        attr(node, attribute, value);
+        if (value == null)
+            dispatch_dev('SvelteDOMRemoveAttribute', { node, attribute });
+        else
+            dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
+    }
+    function prop_dev(node, property, value) {
+        node[property] = value;
+        dispatch_dev('SvelteDOMSetProperty', { node, property, value });
+    }
+    function set_data_dev(text, data) {
+        data = '' + data;
+        if (text.wholeText === data)
+            return;
+        dispatch_dev('SvelteDOMSetData', { node: text, data });
+        text.data = data;
+    }
+    function validate_each_argument(arg) {
+        if (typeof arg !== 'string' && !(arg && typeof arg === 'object' && 'length' in arg)) {
+            let msg = '{#each} only iterates over array-like objects.';
+            if (typeof Symbol === 'function' && arg && Symbol.iterator in arg) {
+                msg += ' You can use a spread to convert this iterable into an array.';
+            }
+            throw new Error(msg);
+        }
+    }
+    function validate_slots(name, slot, keys) {
+        for (const slot_key of Object.keys(slot)) {
+            if (!~keys.indexOf(slot_key)) {
+                console.warn(`<${name}> received an unexpected slot "${slot_key}".`);
+            }
+        }
+    }
+    /**
+     * Base class for Svelte components with some minor dev-enhancements. Used when dev=true.
+     */
+    class SvelteComponentDev extends SvelteComponent {
+        constructor(options) {
+            if (!options || (!options.target && !options.$$inline)) {
+                throw new Error("'target' is a required option");
+            }
+            super();
+        }
+        $destroy() {
+            super.$destroy();
+            this.$destroy = () => {
+                console.warn('Component was already destroyed'); // eslint-disable-line no-console
+            };
+        }
+        $capture_state() { }
+        $inject_state() { }
+    }
+
+    var _e = Object.defineProperty, Ue = Object.defineProperties;
+    var Pe = Object.getOwnPropertyDescriptors;
+    var B = Object.getOwnPropertySymbols;
+    var Z = Object.prototype.hasOwnProperty, ee = Object.prototype.propertyIsEnumerable;
+    var te = Math.pow, Q = (e, t, r) => t in e ? _e(e, t, { enumerable: !0, configurable: !0, writable: !0, value: r }) : e[t] = r, T = (e, t) => {
+      for (var r in t || (t = {}))
+        Z.call(t, r) && Q(e, r, t[r]);
+      if (B)
+        for (var r of B(t))
+          ee.call(t, r) && Q(e, r, t[r]);
+      return e;
+    }, R = (e, t) => Ue(e, Pe(t));
+    var re = (e, t) => {
+      var r = {};
+      for (var n in e)
+        Z.call(e, n) && t.indexOf(n) < 0 && (r[n] = e[n]);
+      if (e != null && B)
+        for (var n of B(e))
+          t.indexOf(n) < 0 && ee.call(e, n) && (r[n] = e[n]);
+      return r;
+    };
+    var S = (e, t, r) => new Promise((n, a) => {
+      var s = (l) => {
+        try {
+          i(r.next(l));
+        } catch (u) {
+          a(u);
+        }
+      }, o = (l) => {
+        try {
+          i(r.throw(l));
+        } catch (u) {
+          a(u);
+        }
+      }, i = (l) => l.done ? n(l.value) : Promise.resolve(l.value).then(s, o);
+      i((r = r.apply(e, t)).next());
+    });
+    function ue(e, t) {
+      return e[13] = 1, e[14] = t >> 8, e[15] = t & 255, e[16] = t >> 8, e[17] = t & 255, e;
+    }
+    const fe = "p".charCodeAt(0), de = "H".charCodeAt(0), ge = "Y".charCodeAt(0), me = "s".charCodeAt(0);
+    let j;
+    function $e() {
+      const e = new Int32Array(256);
+      for (let t = 0; t < 256; t++) {
+        let r = t;
+        for (let n = 0; n < 8; n++)
+          r = r & 1 ? 3988292384 ^ r >>> 1 : r >>> 1;
+        e[t] = r;
+      }
+      return e;
+    }
+    function Be(e) {
+      let t = -1;
+      j || (j = $e());
+      for (let r = 0; r < e.length; r++)
+        t = j[(t ^ e[r]) & 255] ^ t >>> 8;
+      return t ^ -1;
+    }
+    function Le(e) {
+      const t = e.length - 1;
+      for (let r = t; r >= 4; r--)
+        if (e[r - 4] === 9 && e[r - 3] === fe && e[r - 2] === de && e[r - 1] === ge && e[r] === me)
+          return r - 3;
+      return 0;
+    }
+    function he(e, t, r = !1) {
+      const n = new Uint8Array(13);
+      t *= 39.3701, n[0] = fe, n[1] = de, n[2] = ge, n[3] = me, n[4] = t >>> 24, n[5] = t >>> 16, n[6] = t >>> 8, n[7] = t & 255, n[8] = n[4], n[9] = n[5], n[10] = n[6], n[11] = n[7], n[12] = 1;
+      const a = Be(n), s = new Uint8Array(4);
+      if (s[0] = a >>> 24, s[1] = a >>> 16, s[2] = a >>> 8, s[3] = a & 255, r) {
+        const o = Le(e);
+        return e.set(n, o), e.set(s, o + 13), e;
+      } else {
+        const o = new Uint8Array(4);
+        o[0] = 0, o[1] = 0, o[2] = 0, o[3] = 9;
+        const i = new Uint8Array(54);
+        return i.set(e, 0), i.set(o, 33), i.set(n, 37), i.set(s, 50), i;
+      }
+    }
+    const H = "[modern-screenshot]", x = typeof window != "undefined", je = x && "Worker" in window, we = x && "atob" in window;
+    var le;
+    const z = x ? (le = window.navigator) == null ? void 0 : le.userAgent : "", pe = z.includes("Chrome"), L = z.includes("AppleWebKit") && !pe, X = z.includes("Firefox"), He = (e) => e && "__CONTEXT__" in e, ze = (e) => e.constructor.name === "CSSFontFaceRule", Xe = (e) => e.constructor.name === "CSSImportRule", A = (e) => e.nodeType === 1, U = (e) => typeof e.className == "object", ye = (e) => e.tagName === "image", Ge = (e) => e.tagName === "use", G = (e) => A(e) && typeof e.style != "undefined" && !U(e), Ye = (e) => e.nodeType === 8, Je = (e) => e.nodeType === 3, D = (e) => e.tagName === "IMG", M = (e) => e.tagName === "VIDEO", Ke = (e) => e.tagName === "CANVAS", ne = (e) => e.tagName === "TEXTAREA", Qe = (e) => e.tagName === "INPUT", Ze = (e) => e.tagName === "STYLE", et = (e) => e.tagName === "SCRIPT", tt = (e) => e.tagName === "SELECT", rt = (e) => e.tagName === "SLOT", nt = (e) => e.tagName === "IFRAME", E = (...e) => console.warn(H, ...e), ot = (e) => console.time(`${H} ${e}`), at = (e) => console.timeEnd(`${H} ${e}`), st = (e) => {
+      var r;
+      const t = (r = e == null ? void 0 : e.createElement) == null ? void 0 : r.call(e, "canvas");
+      return t && (t.height = t.width = 1), t && "toDataURL" in t && Boolean(t.toDataURL("image/webp").includes("image/webp"));
+    }, V = (e) => e.startsWith("data:");
+    function be(e, t) {
+      if (e.match(/^[a-z]+:\/\//i))
+        return e;
+      if (x && e.match(/^\/\//))
+        return window.location.protocol + e;
+      if (e.match(/^[a-z]+:/i) || !x)
+        return e;
+      const r = O().implementation.createHTMLDocument(), n = r.createElement("base"), a = r.createElement("a");
+      return r.head.appendChild(n), r.body.appendChild(a), t && (n.href = t), a.href = e, a.href;
+    }
+    function O(e) {
+      var t;
+      return (t = e && A(e) ? e == null ? void 0 : e.ownerDocument : e) != null ? t : window.document;
+    }
+    const W = "http://www.w3.org/2000/svg";
+    function Se(e, t, r) {
+      const n = O(r).createElementNS(W, "svg");
+      return n.setAttributeNS(null, "width", e.toString()), n.setAttributeNS(null, "height", t.toString()), n.setAttributeNS(null, "viewBox", `0 0 ${e} ${t}`), n;
+    }
+    function Ee(e, t) {
+      let r = new XMLSerializer().serializeToString(e);
+      return t && (r = r.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uD800-\uDFFF\uFFFE\uFFFF]/ug, "")), `data:image/svg+xml;charset=utf-8,${encodeURIComponent(r)}`;
+    }
+    function it(e, t = "image/png", r = 1) {
+      return S(this, null, function* () {
+        try {
+          return yield new Promise((n, a) => {
+            e.toBlob((s) => {
+              s ? n(s) : a(new Error("Blob is null"));
+            }, t, r);
+          });
+        } catch (n) {
+          if (we)
+            return E("Failed canvas to blob", { type: t, quality: r }, n), ct(e.toDataURL(t, r));
+          throw n;
+        }
+      });
+    }
+    function ct(e) {
+      var i, l;
+      const [t, r] = e.split(","), n = (l = (i = t.match(/data:(.+);/)) == null ? void 0 : i[1]) != null ? l : void 0, a = window.atob(r), s = a.length, o = new Uint8Array(s);
+      for (let u = 0; u < s; u += 1)
+        o[u] = a.charCodeAt(u);
+      return new Blob([o], { type: n });
+    }
+    function Ce(e, t) {
+      return new Promise((r, n) => {
+        const a = new FileReader();
+        a.onload = () => r(a.result), a.onerror = () => n(a.error), a.onabort = () => n(new Error(`Failed read blob to ${t}`)), t === "dataUrl" ? a.readAsDataURL(e) : t === "arrayBuffer" && a.readAsArrayBuffer(e);
+      });
+    }
+    const lt = (e) => Ce(e, "dataUrl"), ut = (e) => Ce(e, "arrayBuffer");
+    function k(e, t) {
+      const r = O(t).createElement("img");
+      return r.decoding = "sync", r.loading = "eager", r.src = e, r;
+    }
+    function F(e, t) {
+      return new Promise((r) => {
+        const { timeout: n, ownerDocument: a, onError: s } = t != null ? t : {}, o = typeof e == "string" ? k(e, O(a)) : e;
+        let i = null, l = null;
+        function u() {
+          r(o), i && clearTimeout(i), l == null || l();
+        }
+        if (n && (i = setTimeout(u, n)), M(o)) {
+          const c = o.currentSrc || o.src;
+          if (!c)
+            return o.poster ? F(o.poster, t).then(r) : u();
+          if (o.readyState >= 2)
+            return u();
+          const f = u, d = (g) => {
+            E(
+              "Failed video load",
+              c,
+              g
+            ), s == null || s(g), u();
+          };
+          l = () => {
+            o.removeEventListener("loadeddata", f), o.removeEventListener("error", d);
+          }, o.addEventListener("loadeddata", f, { once: !0 }), o.addEventListener("error", d, { once: !0 });
+        } else {
+          const c = ye(o) ? o.href.baseVal : o.currentSrc || o.src;
+          if (!c)
+            return u();
+          const f = () => S(this, null, function* () {
+            if (D(o) && "decode" in o)
+              try {
+                yield o.decode();
+              } catch (g) {
+                E(
+                  "Failed to decode image, trying to render anyway",
+                  o.dataset.originalSrc || c,
+                  g
+                );
+              }
+            u();
+          }), d = (g) => {
+            E(
+              "Failed image load",
+              o.dataset.originalSrc || c,
+              g
+            ), u();
+          };
+          if (D(o) && o.complete)
+            return f();
+          l = () => {
+            o.removeEventListener("load", f), o.removeEventListener("error", d);
+          }, o.addEventListener("load", f, { once: !0 }), o.addEventListener("error", d, { once: !0 });
+        }
+      });
+    }
+    function ft(e, t) {
+      return S(this, null, function* () {
+        G(e) && (D(e) || M(e) ? yield F(e, { timeout: t }) : yield Promise.all(
+          ["img", "video"].flatMap((r) => Array.from(e.querySelectorAll(r)).map((n) => F(n, { timeout: t })))
+        ));
+      });
+    }
+    const ve = function() {
+      let t = 0;
+      const r = () => (
+        // eslint-disable-next-line no-bitwise
+        `0000${(Math.random() * te(36, 4) << 0).toString(36)}`.slice(-4)
+      );
+      return () => (t += 1, `u${r()}${t}`);
+    }();
+    function Te(e) {
+      return e == null ? void 0 : e.split(",").map((t) => t.trim().replace(/"|'/g, "").toLowerCase()).filter(Boolean);
+    }
+    function dt(e) {
+      return {
+        time: (t) => e && ot(t),
+        timeEnd: (t) => e && at(t),
+        warn: (...t) => e && E(...t)
+      };
+    }
+    function gt(e) {
+      return {
+        cache: e ? "no-cache" : "force-cache"
+      };
+    }
+    function N(e, t) {
+      return S(this, null, function* () {
+        return He(e) ? e : mt(e, R(T({}, t), { autoDestruct: !0 }));
+      });
+    }
+    function mt(e, t) {
+      return S(this, null, function* () {
+        var g, h, w, y, m;
+        const { scale: r = 1, workerUrl: n, workerNumber: a = 1 } = t || {}, s = Boolean(t == null ? void 0 : t.debug), o = (g = t == null ? void 0 : t.features) != null ? g : !0, i = (h = e.ownerDocument) != null ? h : x ? window.document : void 0, l = (y = (w = e.ownerDocument) == null ? void 0 : w.defaultView) != null ? y : x ? window : void 0, u = /* @__PURE__ */ new Map(), c = R(T({
+          // Options
+          width: 0,
+          height: 0,
+          quality: 1,
+          type: "image/png",
+          scale: r,
+          backgroundColor: null,
+          style: null,
+          filter: null,
+          maximumCanvasSize: 0,
+          timeout: 3e4,
+          progress: null,
+          debug: s,
+          fetch: T({
+            requestInit: gt((m = t == null ? void 0 : t.fetch) == null ? void 0 : m.bypassingCache),
+            placeholderImage: "data:image/png;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+            bypassingCache: !1
+          }, t == null ? void 0 : t.fetch),
+          fetchFn: null,
+          font: {},
+          drawImageInterval: 100,
+          workerUrl: null,
+          workerNumber: a,
+          onCloneNode: null,
+          onEmbedNode: null,
+          onCreateForeignObjectSvg: null,
+          includeStyleProperties: null,
+          autoDestruct: !1
+        }, t), {
+          // InternalContext
+          __CONTEXT__: !0,
+          log: dt(s),
+          node: e,
+          ownerDocument: i,
+          ownerWindow: l,
+          dpi: r === 1 ? null : 96 * r,
+          svgStyleElement: Ae(i),
+          svgDefsElement: i == null ? void 0 : i.createElementNS(W, "defs"),
+          svgStyles: /* @__PURE__ */ new Map(),
+          defaultComputedStyles: /* @__PURE__ */ new Map(),
+          workers: [
+            ...new Array(
+              je && n && a ? a : 0
+            )
+          ].map(() => {
+            try {
+              const b = new Worker(n);
+              return b.onmessage = (p) => S(this, null, function* () {
+                var I, J, $, K;
+                const { url: C, result: v } = p.data;
+                v ? (J = (I = u.get(C)) == null ? void 0 : I.resolve) == null || J.call(I, v) : (K = ($ = u.get(C)) == null ? void 0 : $.reject) == null || K.call($, new Error(`Error receiving message from worker: ${C}`));
+              }), b.onmessageerror = (p) => {
+                var v, I;
+                const { url: C } = p.data;
+                (I = (v = u.get(C)) == null ? void 0 : v.reject) == null || I.call(v, new Error(`Error receiving message from worker: ${C}`));
+              }, b;
+            } catch (b) {
+              return E("Failed to new Worker", b), null;
+            }
+          }).filter(Boolean),
+          fontFamilies: /* @__PURE__ */ new Set(),
+          fontCssTexts: /* @__PURE__ */ new Map(),
+          acceptOfImage: `${[
+        st(i) && "image/webp",
+        "image/svg+xml",
+        "image/*",
+        "*/*"
+      ].filter(Boolean).join(",")};q=0.8`,
+          requests: u,
+          drawImageCount: 0,
+          tasks: [],
+          features: o,
+          isEnable: (b) => {
+            var p;
+            return typeof o == "boolean" ? o : (p = o[b]) != null ? p : !0;
+          }
+        });
+        c.log.time("wait until load"), yield ft(e, c.timeout), c.log.timeEnd("wait until load");
+        const { width: f, height: d } = ht(e, c);
+        return c.width = f, c.height = d, c;
+      });
+    }
+    function Ae(e) {
+      if (!e)
+        return;
+      const t = e.createElement("style"), r = t.ownerDocument.createTextNode(`
+.______background-clip--text {
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+`);
+      return t.appendChild(r), t;
+    }
+    function ht(e, t) {
+      let { width: r, height: n } = t;
+      if (A(e) && (!r || !n)) {
+        const a = e.getBoundingClientRect();
+        r = r || a.width || Number(e.getAttribute("width")) || 0, n = n || a.height || Number(e.getAttribute("height")) || 0;
+      }
+      return { width: r, height: n };
+    }
+    function wt(e, t) {
+      return S(this, null, function* () {
+        const {
+          log: r,
+          timeout: n,
+          drawImageCount: a,
+          drawImageInterval: s
+        } = t;
+        r.time("image to canvas");
+        const o = yield F(e, { timeout: n }), { canvas: i, context2d: l } = pt(e.ownerDocument, t), u = () => {
+          try {
+            l == null || l.drawImage(o, 0, 0, i.width, i.height);
+          } catch (c) {
+            E("Failed to drawImage", c);
+          }
+        };
+        if (u(), t.isEnable("fixSvgXmlDecode"))
+          for (let c = 0; c < a; c++)
+            yield new Promise((f) => {
+              setTimeout(() => {
+                u(), f();
+              }, c + s);
+            });
+        return t.drawImageCount = 0, r.timeEnd("image to canvas"), i;
+      });
+    }
+    function pt(e, t) {
+      const { width: r, height: n, scale: a, backgroundColor: s, maximumCanvasSize: o } = t, i = e.createElement("canvas");
+      i.width = Math.floor(r * a), i.height = Math.floor(n * a), i.style.width = `${r}px`, i.style.height = `${n}px`, o && (i.width > o || i.height > o) && (i.width > o && i.height > o ? i.width > i.height ? (i.height *= o / i.width, i.width = o) : (i.width *= o / i.height, i.height = o) : i.width > o ? (i.height *= o / i.width, i.width = o) : (i.width *= o / i.height, i.height = o));
+      const l = i.getContext("2d");
+      return l && s && (l.fillStyle = s, l.fillRect(0, 0, i.width, i.height)), { canvas: i, context2d: l };
+    }
+    const yt = [
+      "width",
+      "height",
+      "-webkit-text-fill-color"
+    ], bt = [
+      "stroke",
+      "fill"
+    ];
+    function Ne(e, t, r) {
+      var y;
+      const { defaultComputedStyles: n, ownerDocument: a } = r, s = e.nodeName.toLowerCase(), o = U(e) && s !== "svg", i = o ? bt.map((m) => [m, e.getAttribute(m)]).filter(([, m]) => m !== null) : [], l = [
+        o && "svg",
+        s,
+        i.map((m, b) => `${m}=${b}`).join(","),
+        t
+      ].filter(Boolean).join(":");
+      if (n.has(l))
+        return n.get(l);
+      let u = r.sandbox;
+      if (!u)
+        try {
+          a && (u = a.createElement("iframe"), u.id = `__SANDBOX__-${ve()}`, u.width = "0", u.height = "0", u.style.visibility = "hidden", u.style.position = "fixed", a.body.appendChild(u), (y = u.contentWindow) == null || y.document.write('<!DOCTYPE html><meta charset="UTF-8"><title></title><body>'), r.sandbox = u);
+        } catch (m) {
+          E("Failed to create iframe sandbox", m);
+        }
+      if (!u)
+        return /* @__PURE__ */ new Map();
+      const c = u.contentWindow;
+      if (!c)
+        return /* @__PURE__ */ new Map();
+      const f = c.document;
+      let d, g;
+      o ? (d = f.createElementNS(W, "svg"), g = d.ownerDocument.createElementNS(d.namespaceURI, s), i.forEach(([m, b]) => {
+        g.setAttributeNS(null, m, b);
+      }), d.appendChild(g)) : d = g = f.createElement(s), g.textContent = " ", f.body.appendChild(d);
+      const h = c.getComputedStyle(g, t), w = /* @__PURE__ */ new Map();
+      for (let m = h.length, b = 0; b < m; b++) {
+        const p = h.item(b);
+        yt.includes(p) || w.set(p, h.getPropertyValue(p));
+      }
+      return f.body.removeChild(d), n.set(l, w), w;
+    }
+    function Ie(e, t, r) {
+      var i;
+      const n = /* @__PURE__ */ new Map(), a = [], s = /* @__PURE__ */ new Map();
+      if (r)
+        for (const l of r)
+          o(l);
+      else
+        for (let l = e.length, u = 0; u < l; u++) {
+          const c = e.item(u);
+          o(c);
+        }
+      for (let l = a.length, u = 0; u < l; u++)
+        (i = s.get(a[u])) == null || i.forEach((c, f) => n.set(f, c));
+      function o(l) {
+        const u = e.getPropertyValue(l), c = e.getPropertyPriority(l), f = l.lastIndexOf("-"), d = f > -1 ? l.substring(0, f) : void 0;
+        if (d) {
+          let g = s.get(d);
+          g || (g = /* @__PURE__ */ new Map(), s.set(d, g)), g.set(l, [u, c]);
+        }
+        t.get(l) === u && !c || (d ? a.push(d) : n.set(l, [u, c]));
+      }
+      return n;
+    }
+    const St = [
+      ":before",
+      ":after"
+      // ':placeholder', TODO
+    ], Et = [
+      ":-webkit-scrollbar",
+      ":-webkit-scrollbar-button",
+      // ':-webkit-scrollbar:horizontal', TODO
+      ":-webkit-scrollbar-thumb",
+      ":-webkit-scrollbar-track",
+      ":-webkit-scrollbar-track-piece",
+      // ':-webkit-scrollbar:vertical', TODO
+      ":-webkit-scrollbar-corner",
+      ":-webkit-resizer"
+    ];
+    function Ct(e, t, r, n) {
+      const { ownerWindow: a, svgStyleElement: s, svgStyles: o, currentNodeStyle: i } = n;
+      if (!s || !a)
+        return;
+      function l(u) {
+        var b;
+        const c = a.getComputedStyle(e, u);
+        let f = c.getPropertyValue("content");
+        if (!f || f === "none")
+          return;
+        f = f.replace(/(')|(")|(counter\(.+\))/g, "");
+        const d = [ve()], g = Ne(e, u, n);
+        i == null || i.forEach((p, C) => {
+          g.delete(C);
+        });
+        const h = Ie(c, g, n.includeStyleProperties);
+        h.delete("content"), h.delete("-webkit-locale"), ((b = h.get("background-clip")) == null ? void 0 : b[0]) === "text" && t.classList.add("______background-clip--text");
+        const w = [
+          `content: '${f}';`
+        ];
+        if (h.forEach(([p, C], v) => {
+          w.push(`${v}: ${p}${C ? " !important" : ""};`);
+        }), w.length === 1)
+          return;
+        try {
+          t.className = [t.className, ...d].join(" ");
+        } catch (p) {
+          return;
+        }
+        const y = w.join(`
+  `);
+        let m = o.get(y);
+        m || (m = [], o.set(y, m)), m.push(`.${d[0]}:${u}`);
+      }
+      St.forEach(l), r && Et.forEach(l);
+    }
+    function vt(e, t) {
+      ne(e) && (t.innerHTML = e.value), (ne(e) || Qe(e) || tt(e)) && t.setAttribute("value", e.value);
+    }
+    function Tt(e, t, r, n) {
+      var f, d, g, h;
+      const { ownerWindow: a, includeStyleProperties: s, currentParentNodeStyle: o } = n, i = t.style, l = a.getComputedStyle(e), u = Ne(e, null, n);
+      o == null || o.forEach((w, y) => {
+        u.delete(y);
+      });
+      const c = Ie(l, u, s);
+      return c.delete("transition-property"), c.delete("all"), c.delete("d"), c.delete("content"), r && (c.delete("margin-top"), c.delete("margin-right"), c.delete("margin-bottom"), c.delete("margin-left"), c.delete("margin-block-start"), c.delete("margin-block-end"), c.delete("margin-inline-start"), c.delete("margin-inline-end"), c.set("box-sizing", ["border-box", ""])), ((f = c.get("background-clip")) == null ? void 0 : f[0]) === "text" && t.classList.add("______background-clip--text"), pe && (c.has("font-kerning") || c.set("font-kerning", ["normal", ""]), (((d = c.get("overflow-x")) == null ? void 0 : d[0]) === "hidden" || ((g = c.get("overflow-y")) == null ? void 0 : g[0]) === "hidden") && ((h = c.get("text-overflow")) == null ? void 0 : h[0]) === "ellipsis" && e.scrollWidth === e.clientWidth && c.set("text-overflow", ["clip", ""])), c.forEach(([w, y], m) => {
+        i.setProperty(m, w, y);
+      }), c;
+    }
+    function At(e, t) {
+      var r;
+      try {
+        if ((r = e == null ? void 0 : e.contentDocument) != null && r.body)
+          return q(e.contentDocument.body, t);
+      } catch (n) {
+        E("Failed to clone iframe", n);
+      }
+      return e.cloneNode(!1);
+    }
+    function xe(e) {
+      if (e.ownerDocument)
+        try {
+          const a = e.toDataURL();
+          if (a !== "data:,")
+            return k(a, e.ownerDocument);
+        } catch (a) {
+        }
+      const t = e.cloneNode(!1), r = e.getContext("2d"), n = t.getContext("2d");
+      try {
+        return r && n && n.putImageData(
+          r.getImageData(0, 0, e.width, e.height),
+          0,
+          0
+        ), t;
+      } catch (a) {
+        E("Failed to clone canvas", a);
+      }
+      return t;
+    }
+    function Nt(e) {
+      return S(this, null, function* () {
+        if (e.ownerDocument && !e.currentSrc && e.poster)
+          return k(e.poster, e.ownerDocument);
+        const t = e.cloneNode(!1);
+        t.crossOrigin = "anonymous", e.currentSrc && e.currentSrc !== e.src && (t.src = e.currentSrc);
+        const r = t.ownerDocument;
+        if (r) {
+          let n = !0;
+          if (yield F(t, {
+            onError: () => n = !1
+          }), !n)
+            return e.poster ? k(e.poster, e.ownerDocument) : t;
+          t.currentTime = e.currentTime, yield new Promise((s) => {
+            t.addEventListener("seeked", s, { once: !0 });
+          });
+          const a = r.createElement("canvas");
+          a.width = e.offsetWidth, a.height = e.offsetHeight;
+          try {
+            const s = a.getContext("2d");
+            s && s.drawImage(t, 0, 0, a.width, a.height);
+          } catch (s) {
+            return E("Failed to clone video", s), e.poster ? k(e.poster, e.ownerDocument) : t;
+          }
+          return xe(a);
+        }
+        return t;
+      });
+    }
+    function It(e) {
+      const t = e.cloneNode(!1);
+      return e.currentSrc && e.currentSrc !== e.src && (t.src = e.currentSrc, t.srcset = ""), t.loading === "lazy" && (t.loading = "eager"), t;
+    }
+    function xt(e, t) {
+      return Ke(e) ? xe(e) : nt(e) ? At(e, t) : D(e) ? It(e) : M(e) ? Nt(e) : e.cloneNode(!1);
+    }
+    const oe = /* @__PURE__ */ new Set([
+      "symbol"
+      // test/fixtures/svg.symbol.html
+    ]);
+    function ae(e, t, r) {
+      return S(this, null, function* () {
+        A(t) && (Ze(t) || et(t)) || r.filter && !r.filter(t) || (oe.has(e.nodeName) || oe.has(t.nodeName) ? r.currentParentNodeStyle = void 0 : r.currentParentNodeStyle = r.currentNodeStyle, e.appendChild(yield q(t, r)));
+      });
+    }
+    function se(e, t, r) {
+      return S(this, null, function* () {
+        var a, s;
+        const n = (s = A(e) ? (a = e.shadowRoot) == null ? void 0 : a.firstChild : void 0) != null ? s : e.firstChild;
+        for (let o = n; o; o = o.nextSibling)
+          if (!Ye(o))
+            if (A(o) && rt(o) && typeof o.assignedNodes == "function") {
+              const i = o.assignedNodes();
+              for (let l = 0; l < i.length; l++)
+                yield ae(t, i[l], r);
+            } else
+              yield ae(t, o, r);
+      });
+    }
+    function kt(e, t) {
+      const { backgroundColor: r, width: n, height: a, style: s } = t, o = e.style;
+      if (r && o.setProperty("background-color", r, "important"), n && o.setProperty("width", `${n}px`, "important"), a && o.setProperty("height", `${a}px`, "important"), s)
+        for (const i in s)
+          o[i] = s[i];
+    }
+    const Rt = /^[\w-:]+$/;
+    function q(e, t, r = !1) {
+      return S(this, null, function* () {
+        var i, l, u, c;
+        const { ownerDocument: n, ownerWindow: a, fontFamilies: s } = t;
+        if (n && Je(e))
+          return n.createTextNode(e.data);
+        if (n && a && A(e) && (G(e) || U(e))) {
+          const f = yield xt(e, t);
+          if (t.isEnable("removeAbnormalAttributes")) {
+            const h = f.getAttributeNames();
+            for (let w = h.length, y = 0; y < w; y++) {
+              const m = h[y];
+              Rt.test(m) || f.removeAttribute(m);
+            }
+          }
+          const d = t.currentNodeStyle = Tt(e, f, r, t);
+          r && kt(f, t);
+          let g = !1;
+          if (t.isEnable("copyScrollbar")) {
+            const h = [
+              (i = d.get("overflow-x")) == null ? void 0 : i[0],
+              (l = d.get("overflow-y")) == null ? void 0 : l[1]
+            ];
+            g = h.includes("scroll") || (h.includes("auto") || h.includes("overlay")) && (e.scrollHeight > e.clientHeight || e.scrollWidth > e.clientWidth);
+          }
+          return Ct(e, f, g, t), vt(e, f), (c = Te((u = d.get("font-family")) == null ? void 0 : u[0])) == null || c.forEach((h) => s.add(h)), M(e) || (yield se(e, f, t)), f;
+        }
+        const o = e.cloneNode(!1);
+        return yield se(e, o, t), o;
+      });
+    }
+    function Dt(e) {
+      if (e.ownerDocument = void 0, e.ownerWindow = void 0, e.svgStyleElement = void 0, e.svgDefsElement = void 0, e.svgStyles.clear(), e.defaultComputedStyles.clear(), e.sandbox) {
+        try {
+          e.sandbox.remove();
+        } catch (t) {
+        }
+        e.sandbox = void 0;
+      }
+      e.workers = [], e.fontFamilies.clear(), e.fontCssTexts.clear(), e.requests.clear(), e.tasks = [];
+    }
+    function Ft(e) {
+      const i = e, { url: t, timeout: r, responseType: n } = i, a = re(i, ["url", "timeout", "responseType"]), s = new AbortController(), o = r ? setTimeout(() => s.abort(), r) : void 0;
+      return fetch(t, T({ signal: s.signal }, a)).then((l) => {
+        if (!l.ok)
+          throw new Error("Failed fetch, not 2xx response", { cause: l });
+        switch (n) {
+          case "dataUrl":
+            return l.blob().then(lt);
+          case "text":
+          default:
+            return l.text();
+        }
+      }).finally(() => clearTimeout(o));
+    }
+    function _(e, t) {
+      const { url: r, requestType: n = "text", responseType: a = "text", imageDom: s } = t;
+      let o = r;
+      const {
+        timeout: i,
+        acceptOfImage: l,
+        requests: u,
+        fetchFn: c,
+        fetch: {
+          requestInit: f,
+          bypassingCache: d,
+          placeholderImage: g
+        },
+        workers: h
+      } = e;
+      n === "image" && (L || X) && e.drawImageCount++;
+      let w = u.get(r);
+      if (!w) {
+        d && d instanceof RegExp && d.test(o) && (o += (/\?/.test(o) ? "&" : "?") + new Date().getTime());
+        const y = T({
+          url: o,
+          timeout: i,
+          responseType: a,
+          headers: n === "image" ? { accept: l } : void 0
+        }, f);
+        w = {
+          type: n,
+          resolve: void 0,
+          reject: void 0,
+          response: null
+        }, w.response = (() => S(this, null, function* () {
+          if (c && n === "image") {
+            const m = yield c(r);
+            if (m)
+              return m;
+          }
+          return !L && r.startsWith("http") && h.length ? new Promise((m, b) => {
+            h[u.size & h.length - 1].postMessage(T({ rawUrl: r }, y)), w.resolve = m, w.reject = b;
+          }) : Ft(y);
+        }))().catch((m) => {
+          if (u.delete(r), n === "image" && g)
+            return E("Failed to fetch image base64, trying to use placeholder image", o), typeof g == "string" ? g : g(s);
+          throw m;
+        }), u.set(r, w);
+      }
+      return w.response;
+    }
+    function ke(e, t, r, n) {
+      return S(this, null, function* () {
+        if (!Re(e))
+          return e;
+        for (const [a, s] of _t(e, t))
+          try {
+            const o = yield _(
+              r,
+              {
+                url: s,
+                requestType: n ? "image" : "text",
+                responseType: "dataUrl"
+              }
+            );
+            e = e.replace(Ut(a), `$1${o}$3`);
+          } catch (o) {
+            E("Failed to fetch css data url", a, o);
+          }
+        return e;
+      });
+    }
+    function Re(e) {
+      return /url\((['"]?)([^'"]+?)\1\)/.test(e);
+    }
+    const De = /url\((['"]?)([^'"]+?)\1\)/g;
+    function _t(e, t) {
+      const r = [];
+      return e.replace(De, (n, a, s) => (r.push([s, be(s, t)]), n)), r.filter(([n]) => !V(n));
+    }
+    function Ut(e) {
+      const t = e.replace(/([.*+?^${}()|\[\]\/\\])/g, "\\$1");
+      return new RegExp(`(url\\(['"]?)(${t})(['"]?\\))`, "g");
+    }
+    function Pt(e, t) {
+      return S(this, null, function* () {
+        const {
+          ownerDocument: r,
+          svgStyleElement: n,
+          fontFamilies: a,
+          fontCssTexts: s,
+          tasks: o,
+          font: i
+        } = t;
+        if (!(!r || !n || !a.size))
+          if (i && i.cssText) {
+            const l = ce(i.cssText, t);
+            n.appendChild(r.createTextNode(`${l}
+`));
+          } else {
+            const l = Array.from(r.styleSheets).filter((c) => {
+              try {
+                return "cssRules" in c && Boolean(c.cssRules.length);
+              } catch (f) {
+                return E(`Error while reading CSS rules from ${c.href}`, f), !1;
+              }
+            });
+            yield Promise.all(
+              l.flatMap((c) => Array.from(c.cssRules).map((f, d) => S(this, null, function* () {
+                if (Xe(f)) {
+                  let g = d + 1;
+                  const h = f.href;
+                  let w = "";
+                  try {
+                    w = yield _(t, {
+                      url: h,
+                      requestType: "text",
+                      responseType: "text"
+                    });
+                  } catch (m) {
+                    E(`Error fetch remote css import from ${h}`, m);
+                  }
+                  const y = w.replace(
+                    De,
+                    (m, b, p) => m.replace(p, be(p, h))
+                  );
+                  for (const m of Bt(y))
+                    try {
+                      c.insertRule(
+                        m,
+                        m.startsWith("@import") ? g += 1 : c.cssRules.length
+                      );
+                    } catch (b) {
+                      E("Error inserting rule from remote css import", { rule: m, error: b });
+                    }
+                }
+              })))
+            ), l.flatMap((c) => Array.from(c.cssRules)).filter((c) => {
+              var f;
+              return ze(c) && Re(c.style.getPropertyValue("src")) && ((f = Te(c.style.getPropertyValue("font-family"))) == null ? void 0 : f.some((d) => a.has(d)));
+            }).forEach((c) => {
+              const f = c, d = s.get(f.cssText);
+              d ? n.appendChild(r.createTextNode(`${d}
+`)) : o.push(
+                ke(
+                  f.cssText,
+                  f.parentStyleSheet ? f.parentStyleSheet.href : null,
+                  t
+                ).then((g) => {
+                  g = ce(g, t), s.set(f.cssText, g), n.appendChild(r.createTextNode(`${g}
+`));
+                })
+              );
+            });
+          }
+      });
+    }
+    const $t = /(\/\*[\s\S]*?\*\/)/gi, ie = /((@.*?keyframes [\s\S]*?){([\s\S]*?}\s*?)})/gi;
+    function Bt(e) {
+      if (e == null)
+        return [];
+      const t = [];
+      let r = e.replace($t, "");
+      for (; ; ) {
+        const s = ie.exec(r);
+        if (!s)
+          break;
+        t.push(s[0]);
+      }
+      r = r.replace(ie, "");
+      const n = /@import[\s\S]*?url\([^)]*\)[\s\S]*?;/gi, a = new RegExp(
+        "((\\s*?(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*?@media[\\s\\S]*?){([\\s\\S]*?)}\\s*?})|(([\\s\\S]*?){([\\s\\S]*?)})",
+        "gi"
+      );
+      for (; ; ) {
+        let s = n.exec(r);
+        if (s)
+          a.lastIndex = n.lastIndex;
+        else if (s = a.exec(r), s)
+          n.lastIndex = a.lastIndex;
+        else
+          break;
+        t.push(s[0]);
+      }
+      return t;
+    }
+    const Lt = /url\([^)]+\)\s*format\((["']?)([^"']+)\1\)/g, Mt = /src:\s*(?:url\([^)]+\)\s*format\([^)]+\)[,;]\s*)+/g;
+    function ce(e, t) {
+      const { font: r } = t, n = r ? r == null ? void 0 : r.preferredFormat : void 0;
+      return n ? e.replace(Mt, (a) => {
+        for (; ; ) {
+          const [s, , o] = Lt.exec(a) || [];
+          if (!o)
+            return "";
+          if (o === n)
+            return `src: ${s};`;
+        }
+      }) : e;
+    }
+    function Ot(e, t) {
+      if (D(e)) {
+        const r = e.currentSrc || e.src;
+        if (!V(r))
+          return [
+            _(t, {
+              url: r,
+              imageDom: e,
+              requestType: "image",
+              responseType: "dataUrl"
+            }).then((n) => {
+              n && (e.srcset = "", e.dataset.originalSrc = r, e.src = n || "");
+            })
+          ];
+        (L || X) && t.drawImageCount++;
+      } else if (U(e) && !V(e.href.baseVal)) {
+        const r = e.href.baseVal;
+        return [
+          _(t, {
+            url: r,
+            imageDom: e,
+            requestType: "image",
+            responseType: "dataUrl"
+          }).then((n) => {
+            n && (e.dataset.originalSrc = r, e.href.baseVal = n || "");
+          })
+        ];
+      }
+      return [];
+    }
+    const Wt = [
+      "background-image",
+      "border-image-source",
+      "-webkit-border-image",
+      "-webkit-mask-image",
+      "list-style-image"
+    ];
+    function qt(e, t) {
+      return Wt.map((r) => {
+        const n = e.getPropertyValue(r);
+        return !n || n === "none" ? null : ((L || X) && t.drawImageCount++, ke(n, null, t, !0).then((a) => {
+          !a || n === a || e.setProperty(
+            r,
+            a,
+            e.getPropertyPriority(r)
+          );
+        }));
+      }).filter(Boolean);
+    }
+    function jt(e, t) {
+      var i;
+      const { ownerDocument: r, svgDefsElement: n } = t, a = (i = e.getAttribute("href")) != null ? i : e.getAttribute("xlink:href");
+      if (!a)
+        return [];
+      const [s, o] = a.split("#");
+      if (o) {
+        const l = `#${o}`, u = r == null ? void 0 : r.querySelector(`svg ${l}`);
+        if (s && e.setAttribute("href", l), n != null && n.querySelector(l))
+          return [];
+        if (u)
+          return [
+            q(u, t).then((c) => {
+              n != null && n.querySelector(l) || n == null || n.appendChild(c);
+            })
+          ];
+        if (s)
+          return [
+            _(t, {
+              url: s,
+              responseType: "text"
+            }).then((c) => {
+              n == null || n.insertAdjacentHTML("beforeend", c);
+            })
+          ];
+      }
+      return [];
+    }
+    function Fe(e, t) {
+      const { tasks: r } = t;
+      A(e) && ((D(e) || ye(e)) && r.push(...Ot(e, t)), Ge(e) && r.push(...jt(e, t))), G(e) && r.push(...qt(e.style, t)), e.childNodes.forEach((n) => {
+        Fe(n, t);
+      });
+    }
+    function Vt(e, t) {
+      return S(this, null, function* () {
+        const r = yield N(e, t);
+        if (A(r.node) && U(r.node))
+          return r.node;
+        const {
+          ownerDocument: n,
+          log: a,
+          tasks: s,
+          svgStyleElement: o,
+          svgDefsElement: i,
+          svgStyles: l,
+          font: u,
+          progress: c,
+          autoDestruct: f,
+          onCloneNode: d,
+          onEmbedNode: g,
+          onCreateForeignObjectSvg: h
+        } = r;
+        a.time("clone node");
+        const w = yield q(r.node, r, !0);
+        if (o && n) {
+          let C = "";
+          l.forEach((v, I) => {
+            C += `${v.join(`,
+`)} {
+  ${I}
+}
+`;
+          }), o.appendChild(n.createTextNode(C));
+        }
+        a.timeEnd("clone node"), d == null || d(w), u !== !1 && A(w) && (a.time("embed web font"), yield Pt(w, r), a.timeEnd("embed web font")), a.time("embed node"), Fe(w, r);
+        const y = s.length;
+        let m = 0;
+        const b = () => S(this, null, function* () {
+          for (; ; ) {
+            const C = s.pop();
+            if (!C)
+              break;
+            try {
+              yield C;
+            } catch (v) {
+              E("Failed to run task", v);
+            }
+            c == null || c(++m, y);
+          }
+        });
+        c == null || c(m, y), yield Promise.all([...Array(4)].map(b)), a.timeEnd("embed node"), g == null || g(w);
+        const p = Ht(w, r);
+        return i && p.insertBefore(i, p.children[0]), o && p.insertBefore(o, p.children[0]), f && Dt(r), h == null || h(p), p;
+      });
+    }
+    function Ht(e, t) {
+      const { width: r, height: n } = t, a = Se(r, n, e.ownerDocument), s = a.ownerDocument.createElementNS(a.namespaceURI, "foreignObject");
+      return s.setAttributeNS(null, "x", "0%"), s.setAttributeNS(null, "y", "0%"), s.setAttributeNS(null, "width", "100%"), s.setAttributeNS(null, "height", "100%"), s.append(e), a.appendChild(s), a;
+    }
+    function Y(e, t) {
+      return S(this, null, function* () {
+        var o;
+        const r = yield N(e, t), n = yield Vt(r), a = Ee(n, r.isEnable("removeControlCharacter"));
+        r.autoDestruct || (r.svgStyleElement = Ae(r.ownerDocument), r.svgDefsElement = (o = r.ownerDocument) == null ? void 0 : o.createElementNS(W, "defs"), r.svgStyles.clear());
+        const s = k(a, n.ownerDocument);
+        return yield wt(s, r);
+      });
+    }
+    function Gt(e, t) {
+      return S(this, null, function* () {
+        const r = yield N(e, t), { log: n, type: a, quality: s, dpi: o } = r, i = yield Y(r);
+        n.time("canvas to blob");
+        const l = yield it(i, a, s);
+        if (["image/png", "image/jpeg"].includes(a) && o) {
+          const u = yield ut(l.slice(0, 33));
+          let c = new Uint8Array(u);
+          return a === "image/png" ? c = he(c, o) : a === "image/jpeg" && (c = ue(c, o)), n.timeEnd("canvas to blob"), new Blob([c, l.slice(33)], { type: a });
+        }
+        return n.timeEnd("canvas to blob"), l;
+      });
+    }
+
+    // MIDIFileHeader : Read and edit a MIDI header chunk in a given ArrayBuffer
+    function MIDIFileHeader(buffer) {
+      let a;
+      // No buffer creating him
+      if (!buffer) {
+        a = new Uint8Array(MIDIFileHeader.HEADER_LENGTH);
+        // Adding the header id (MThd)
+        a[0] = 0x4d;
+        a[1] = 0x54;
+        a[2] = 0x68;
+        a[3] = 0x64;
+        // Adding the header chunk size
+        a[4] = 0x00;
+        a[5] = 0x00;
+        a[6] = 0x00;
+        a[7] = 0x06;
+        // Adding the file format (1 here cause it's the most commonly used)
+        a[8] = 0x00;
+        a[9] = 0x01;
+        // Adding the track count (1 cause it's a new file)
+        a[10] = 0x00;
+        a[11] = 0x01;
+        // Adding the time division (192 ticks per beat)
+        a[12] = 0x00;
+        a[13] = 0xc0;
+        // saving the buffer
+        this.datas = new DataView(a.buffer, 0, MIDIFileHeader.HEADER_LENGTH);
+        // Parsing the given buffer
+      } else {
+        if (!(buffer instanceof ArrayBuffer)) {
+          throw Error('Invalid buffer received.');
+        }
+        this.datas = new DataView(buffer, 0, MIDIFileHeader.HEADER_LENGTH);
+        // Reading MIDI header chunk
+        if (
+          !(
+            'M' === String.fromCharCode(this.datas.getUint8(0)) &&
+            'T' === String.fromCharCode(this.datas.getUint8(1)) &&
+            'h' === String.fromCharCode(this.datas.getUint8(2)) &&
+            'd' === String.fromCharCode(this.datas.getUint8(3))
+          )
+        ) {
+          throw new Error('Invalid MIDIFileHeader : MThd prefix not found');
+        }
+        // Reading chunk length
+        if (6 !== this.datas.getUint32(4)) {
+          throw new Error('Invalid MIDIFileHeader : Chunk length must be 6');
+        }
+      }
+    }
+
+    // Static constants
+    MIDIFileHeader.HEADER_LENGTH = 14;
+    MIDIFileHeader.FRAMES_PER_SECONDS = 1;
+    MIDIFileHeader.TICKS_PER_BEAT = 2;
+
+    // MIDI file format
+    MIDIFileHeader.prototype.getFormat = function() {
+      const format = this.datas.getUint16(8);
+      if (0 !== format && 1 !== format && 2 !== format) {
+        throw new Error(
+          'Invalid MIDI file : MIDI format (' +
+            format +
+            '),' +
+            ' format can be 0, 1 or 2 only.'
+        );
+      }
+      return format;
+    };
+
+    MIDIFileHeader.prototype.setFormat = function(format) {
+      if (0 !== format && 1 !== format && 2 !== format) {
+        throw new Error(
+          'Invalid MIDI format given (' +
+            format +
+            '),' +
+            ' format can be 0, 1 or 2 only.'
+        );
+      }
+      this.datas.setUint16(8, format);
+    };
+
+    // Number of tracks
+    MIDIFileHeader.prototype.getTracksCount = function() {
+      return this.datas.getUint16(10);
+    };
+
+    MIDIFileHeader.prototype.setTracksCount = function(n) {
+      return this.datas.setUint16(10, n);
+    };
+
+    // Tick compute
+    MIDIFileHeader.prototype.getTickResolution = function(tempo) {
+      // Frames per seconds
+      if (this.datas.getUint16(12) & 0x8000) {
+        return 1000000 / (this.getSMPTEFrames() * this.getTicksPerFrame());
+        // Ticks per beat
+      }
+      // Default MIDI tempo is 120bpm, 500ms per beat
+      tempo = tempo || 500000;
+      return tempo / this.getTicksPerBeat();
+    };
+
+    // Time division type
+    MIDIFileHeader.prototype.getTimeDivision = function() {
+      if (this.datas.getUint16(12) & 0x8000) {
+        return MIDIFileHeader.FRAMES_PER_SECONDS;
+      }
+      return MIDIFileHeader.TICKS_PER_BEAT;
+    };
+
+    // Ticks per beat
+    MIDIFileHeader.prototype.getTicksPerBeat = function() {
+      var divisionWord = this.datas.getUint16(12);
+      if (divisionWord & 0x8000) {
+        throw new Error('Time division is not expressed as ticks per beat.');
+      }
+      return divisionWord;
+    };
+
+    MIDIFileHeader.prototype.setTicksPerBeat = function(ticksPerBeat) {
+      this.datas.setUint16(12, ticksPerBeat & 0x7fff);
+    };
+
+    // Frames per seconds
+    MIDIFileHeader.prototype.getSMPTEFrames = function() {
+      const divisionWord = this.datas.getUint16(12);
+      let smpteFrames;
+
+      if (!(divisionWord & 0x8000)) {
+        throw new Error('Time division is not expressed as frames per seconds.');
+      }
+      smpteFrames = divisionWord & 0x7f00;
+      if (-1 === [24, 25, 29, 30].indexOf(smpteFrames)) {
+        throw new Error('Invalid SMPTE frames value (' + smpteFrames + ').');
+      }
+      return 29 === smpteFrames ? 29.97 : smpteFrames;
+    };
+
+    MIDIFileHeader.prototype.getTicksPerFrame = function() {
+      const divisionWord = this.datas.getUint16(12);
+
+      if (!(divisionWord & 0x8000)) {
+        throw new Error('Time division is not expressed as frames per seconds.');
+      }
+      return divisionWord & 0x00ff;
+    };
+
+    MIDIFileHeader.prototype.setSMTPEDivision = function(
+      smpteFrames,
+      ticksPerFrame
+    ) {
+      if (29.97 === smpteFrames) {
+        smpteFrames = 29;
+      }
+      if (-1 === [24, 25, 29, 30].indexOf(smpteFrames)) {
+        throw new Error('Invalid SMPTE frames value given (' + smpteFrames + ').');
+      }
+      if (0 > ticksPerFrame || 0xff < ticksPerFrame) {
+        throw new Error(
+          'Invalid ticks per frame value given (' + smpteFrames + ').'
+        );
+      }
+      this.datas.setUint8(12, 0x80 | smpteFrames);
+      this.datas.setUint8(13, ticksPerFrame);
+    };
+
+    var MIDIFileHeader_1 = MIDIFileHeader;
+
+    // MIDIFileTrack : Read and edit a MIDI track chunk in a given ArrayBuffer
+    function MIDIFileTrack(buffer, start) {
+      let a;
+      let trackLength;
+
+      // no buffer, creating him
+      if (!buffer) {
+        a = new Uint8Array(12);
+        // Adding the empty track header (MTrk)
+        a[0] = 0x4d;
+        a[1] = 0x54;
+        a[2] = 0x72;
+        a[3] = 0x6b;
+        // Adding the empty track size (4)
+        a[4] = 0x00;
+        a[5] = 0x00;
+        a[6] = 0x00;
+        a[7] = 0x04;
+        // Adding the track end event
+        a[8] = 0x00;
+        a[9] = 0xff;
+        a[10] = 0x2f;
+        a[11] = 0x00;
+        // Saving the buffer
+        this.datas = new DataView(a.buffer, 0, MIDIFileTrack.HDR_LENGTH + 4);
+        // parsing the given buffer
+      } else {
+        if (!(buffer instanceof ArrayBuffer)) {
+          throw new Error('Invalid buffer received.');
+        }
+        // Buffer length must size at least like an  empty track (8+3bytes)
+        if (12 > buffer.byteLength - start) {
+          throw new Error(
+            'Invalid MIDIFileTrack (0x' +
+              start.toString(16) +
+              ') :' +
+              ' Buffer length must size at least 12bytes'
+          );
+        }
+        // Creating a temporary view to read the track header
+        this.datas = new DataView(buffer, start, MIDIFileTrack.HDR_LENGTH);
+        // Reading MIDI track header chunk
+        if (
+          !(
+            'M' === String.fromCharCode(this.datas.getUint8(0)) &&
+            'T' === String.fromCharCode(this.datas.getUint8(1)) &&
+            'r' === String.fromCharCode(this.datas.getUint8(2)) &&
+            'k' === String.fromCharCode(this.datas.getUint8(3))
+          )
+        ) {
+          throw new Error(
+            'Invalid MIDIFileTrack (0x' +
+              start.toString(16) +
+              ') :' +
+              ' MTrk prefix not found'
+          );
+        }
+        // Reading the track length
+        trackLength = this.getTrackLength();
+        if (buffer.byteLength - start < trackLength) {
+          throw new Error(
+            'Invalid MIDIFileTrack (0x' +
+              start.toString(16) +
+              ') :' +
+              ' The track size exceed the buffer length.'
+          );
+        }
+        // Creating the final DataView
+        this.datas = new DataView(
+          buffer,
+          start,
+          MIDIFileTrack.HDR_LENGTH + trackLength
+        );
+        // Trying to find the end of track event
+        if (
+          !(
+            0xff ===
+              this.datas.getUint8(MIDIFileTrack.HDR_LENGTH + (trackLength - 3)) &&
+            0x2f ===
+              this.datas.getUint8(MIDIFileTrack.HDR_LENGTH + (trackLength - 2)) &&
+            0x00 ===
+              this.datas.getUint8(MIDIFileTrack.HDR_LENGTH + (trackLength - 1))
+          )
+        ) {
+          throw new Error(
+            'Invalid MIDIFileTrack (0x' +
+              start.toString(16) +
+              ') :' +
+              ' No track end event found at the expected index' +
+              ' (' +
+              (MIDIFileTrack.HDR_LENGTH + (trackLength - 1)).toString(16) +
+              ').'
+          );
+        }
+      }
+    }
+
+    // Static constants
+    MIDIFileTrack.HDR_LENGTH = 8;
+
+    // Track length
+    MIDIFileTrack.prototype.getTrackLength = function() {
+      return this.datas.getUint32(4);
+    };
+
+    MIDIFileTrack.prototype.setTrackLength = function(trackLength) {
+      return this.datas.setUint32(4, trackLength);
+    };
+
+    // Read track contents
+    MIDIFileTrack.prototype.getTrackContent = function() {
+      return new DataView(
+        this.datas.buffer,
+        this.datas.byteOffset + MIDIFileTrack.HDR_LENGTH,
+        this.datas.byteLength - MIDIFileTrack.HDR_LENGTH
+      );
+    };
+
+    // Set track content
+    MIDIFileTrack.prototype.setTrackContent = function(dataView) {
+      let origin;
+      let destination;
+      let i;
+      let j;
+      // Calculating the track length
+      const trackLength = dataView.byteLength - dataView.byteOffset;
+
+      // Track length must size at least like an  empty track (4bytes)
+      if (4 > trackLength) {
+        throw new Error('Invalid track length, must size at least 4bytes');
+      }
+      this.datas = new DataView(
+        new Uint8Array(MIDIFileTrack.HDR_LENGTH + trackLength).buffer
+      );
+      // Adding the track header (MTrk)
+      this.datas.setUint8(0, 0x4d); // M
+      this.datas.setUint8(1, 0x54); // T
+      this.datas.setUint8(2, 0x72); // r
+      this.datas.setUint8(3, 0x6b); // k
+      // Adding the track size
+      this.datas.setUint32(4, trackLength);
+      // Copying the content
+      origin = new Uint8Array(
+        dataView.buffer,
+        dataView.byteOffset,
+        dataView.byteLength
+      );
+      destination = new Uint8Array(
+        this.datas.buffer,
+        MIDIFileTrack.HDR_LENGTH,
+        trackLength
+      );
+      for (i = 0, j = origin.length; i < j; i++) {
+        destination[i] = origin[i];
+      }
+    };
+
+    var MIDIFileTrack_1 = MIDIFileTrack;
+
+    // MIDIEvents : Read and edit events from various sources (ArrayBuffer, Stream)
+    function MIDIEvents() {
+      throw new Error('MIDIEvents function not intended to be run.');
+    }
+
+    // Static constants
+    // Event types
+    MIDIEvents.EVENT_META = 0xff;
+    MIDIEvents.EVENT_SYSEX = 0xf0;
+    MIDIEvents.EVENT_DIVSYSEX = 0xf7;
+    MIDIEvents.EVENT_MIDI = 0x8;
+    // Meta event types
+    MIDIEvents.EVENT_META_SEQUENCE_NUMBER = 0x00;
+    MIDIEvents.EVENT_META_TEXT = 0x01;
+    MIDIEvents.EVENT_META_COPYRIGHT_NOTICE = 0x02;
+    MIDIEvents.EVENT_META_TRACK_NAME = 0x03;
+    MIDIEvents.EVENT_META_INSTRUMENT_NAME = 0x04;
+    MIDIEvents.EVENT_META_LYRICS = 0x05;
+    MIDIEvents.EVENT_META_MARKER = 0x06;
+    MIDIEvents.EVENT_META_CUE_POINT = 0x07;
+    MIDIEvents.EVENT_META_MIDI_CHANNEL_PREFIX = 0x20;
+    MIDIEvents.EVENT_META_END_OF_TRACK = 0x2f;
+    MIDIEvents.EVENT_META_SET_TEMPO = 0x51;
+    MIDIEvents.EVENT_META_SMTPE_OFFSET = 0x54;
+    MIDIEvents.EVENT_META_TIME_SIGNATURE = 0x58;
+    MIDIEvents.EVENT_META_KEY_SIGNATURE = 0x59;
+    MIDIEvents.EVENT_META_SEQUENCER_SPECIFIC = 0x7f;
+    // MIDI event types
+    MIDIEvents.EVENT_MIDI_NOTE_OFF = 0x8;
+    MIDIEvents.EVENT_MIDI_NOTE_ON = 0x9;
+    MIDIEvents.EVENT_MIDI_NOTE_AFTERTOUCH = 0xa;
+    MIDIEvents.EVENT_MIDI_CONTROLLER = 0xb;
+    MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE = 0xc;
+    MIDIEvents.EVENT_MIDI_CHANNEL_AFTERTOUCH = 0xd;
+    MIDIEvents.EVENT_MIDI_PITCH_BEND = 0xe;
+    // MIDI event sizes
+    MIDIEvents.MIDI_1PARAM_EVENTS = [
+      MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE,
+      MIDIEvents.EVENT_MIDI_CHANNEL_AFTERTOUCH,
+    ];
+    MIDIEvents.MIDI_2PARAMS_EVENTS = [
+      MIDIEvents.EVENT_MIDI_NOTE_OFF,
+      MIDIEvents.EVENT_MIDI_NOTE_ON,
+      MIDIEvents.EVENT_MIDI_NOTE_AFTERTOUCH,
+      MIDIEvents.EVENT_MIDI_CONTROLLER,
+      MIDIEvents.EVENT_MIDI_PITCH_BEND,
+    ];
+
+    // Create an event stream parser
+    MIDIEvents.createParser = function midiEventsCreateParser(
+      stream,
+      startAt,
+      strictMode
+    ) {
+      // Private vars
+      // Common vars
+      var eventTypeByte;
+      var event;
+      // MIDI events vars
+      var MIDIEventType;
+      var MIDIEventChannel;
+      var MIDIEventParam1;
+
+      // Wrap DataView into a data stream
+      if (stream instanceof DataView) {
+        stream = {
+          position: startAt || 0,
+          buffer: stream,
+          readUint8: function() {
+            return this.buffer.getUint8(this.position++);
+          },
+          readUint16: function() {
+            var v = this.buffer.getUint16(this.position);
+            this.position = this.position + 2;
+            return v;
+          },
+          readUint32: function() {
+            var v = this.buffer.getUint16(this.position);
+            this.position = this.position + 2;
+            return v;
+          },
+          readVarInt: function() {
+            var v = 0;
+            var i = 0;
+            var b;
+
+            while (4 > i++) {
+              b = this.readUint8();
+
+              if (b & 0x80) {
+                v += b & 0x7f;
+                v <<= 7;
+              } else {
+                return v + b;
+              }
+            }
+            throw new Error(
+              '0x' +
+                this.position.toString(16) +
+                ':' +
+                ' Variable integer length cannot exceed 4 bytes'
+            );
+          },
+          readBytes: function(length) {
+            var bytes = [];
+
+            for (; 0 < length; length--) {
+              bytes.push(this.readUint8());
+            }
+            return bytes;
+          },
+          pos: function() {
+            return '0x' + (this.buffer.byteOffset + this.position).toString(16);
+          },
+          end: function() {
+            return this.position === this.buffer.byteLength;
+          },
+        };
+        startAt = 0;
+      }
+      // Consume stream till not at start index
+      if (0 < startAt) {
+        while (startAt--) {
+          stream.readUint8();
+        }
+      }
+      // creating the parser object
+      return {
+        // Read the next event
+        next: function() {
+          // Check available datas
+          if (stream.end()) {
+            return null;
+          }
+          // Creating the event
+          event = {
+            // Memoize the event index
+            index: stream.pos(),
+            // Read the delta time
+            delta: stream.readVarInt(),
+          };
+          // Read the eventTypeByte
+          eventTypeByte = stream.readUint8();
+          if (0xf0 === (eventTypeByte & 0xf0)) {
+            // Meta events
+            if (eventTypeByte === MIDIEvents.EVENT_META) {
+              event.type = MIDIEvents.EVENT_META;
+              event.subtype = stream.readUint8();
+              event.length = stream.readVarInt();
+              switch (event.subtype) {
+                case MIDIEvents.EVENT_META_SEQUENCE_NUMBER:
+                  if (strictMode && 2 !== event.length) {
+                    throw new Error(stream.pos() + ' Bad metaevent length.');
+                  }
+                  event.msb = stream.readUint8();
+                  event.lsb = stream.readUint8();
+                  return event;
+                case MIDIEvents.EVENT_META_TEXT:
+                case MIDIEvents.EVENT_META_COPYRIGHT_NOTICE:
+                case MIDIEvents.EVENT_META_TRACK_NAME:
+                case MIDIEvents.EVENT_META_INSTRUMENT_NAME:
+                case MIDIEvents.EVENT_META_LYRICS:
+                case MIDIEvents.EVENT_META_MARKER:
+                case MIDIEvents.EVENT_META_CUE_POINT:
+                  event.data = stream.readBytes(event.length);
+                  return event;
+                case MIDIEvents.EVENT_META_MIDI_CHANNEL_PREFIX:
+                  if (strictMode && 1 !== event.length) {
+                    throw new Error(stream.pos() + ' Bad metaevent length.');
+                  }
+                  event.prefix = stream.readUint8();
+                  return event;
+                case MIDIEvents.EVENT_META_END_OF_TRACK:
+                  if (strictMode && 0 !== event.length) {
+                    throw new Error(stream.pos() + ' Bad metaevent length.');
+                  }
+                  return event;
+                case MIDIEvents.EVENT_META_SET_TEMPO:
+                  if (strictMode && 3 !== event.length) {
+                    throw new Error(
+                      stream.pos() + ' Tempo meta event length must be 3.'
+                    );
+                  }
+                  event.tempo =
+                    (stream.readUint8() << 16) +
+                    (stream.readUint8() << 8) +
+                    stream.readUint8();
+                  event.tempoBPM = 60000000 / event.tempo;
+                  return event;
+                case MIDIEvents.EVENT_META_SMTPE_OFFSET:
+                  if (strictMode && 5 !== event.length) {
+                    throw new Error(stream.pos() + ' Bad metaevent length.');
+                  }
+                  event.hour = stream.readUint8();
+                  if (strictMode && 23 < event.hour) {
+                    throw new Error(
+                      stream.pos() +
+                        ' SMTPE offset hour value must' +
+                        ' be part of 0-23.'
+                    );
+                  }
+                  event.minutes = stream.readUint8();
+                  if (strictMode && 59 < event.minutes) {
+                    throw new Error(
+                      stream.pos() +
+                        ' SMTPE offset minutes value' +
+                        ' must be part of 0-59.'
+                    );
+                  }
+                  event.seconds = stream.readUint8();
+                  if (strictMode && 59 < event.seconds) {
+                    throw new Error(
+                      stream.pos() +
+                        ' SMTPE offset seconds value' +
+                        ' must be part of 0-59.'
+                    );
+                  }
+                  event.frames = stream.readUint8();
+                  if (strictMode && 30 < event.frames) {
+                    throw new Error(
+                      stream.pos() +
+                        ' SMTPE offset frames value must' +
+                        ' be part of 0-30.'
+                    );
+                  }
+                  event.subframes = stream.readUint8();
+                  if (strictMode && 99 < event.subframes) {
+                    throw new Error(
+                      stream.pos() +
+                        ' SMTPE offset subframes value' +
+                        ' must be part of 0-99.'
+                    );
+                  }
+                  return event;
+                case MIDIEvents.EVENT_META_KEY_SIGNATURE:
+                  if (strictMode && 2 !== event.length) {
+                    throw new Error(stream.pos() + ' Bad metaevent length.');
+                  }
+                  event.key = stream.readUint8();
+                  if (strictMode && (-7 > event.key || 7 < event.key)) {
+                    throw new Error(stream.pos() + ' Bad metaevent length.');
+                  }
+                  event.scale = stream.readUint8();
+                  if (strictMode && 0 !== event.scale && 1 !== event.scale) {
+                    throw new Error(
+                      stream.pos() +
+                        ' Key signature scale value must' +
+                        ' be 0 or 1.'
+                    );
+                  }
+                  return event;
+                case MIDIEvents.EVENT_META_TIME_SIGNATURE:
+                  if (strictMode && 4 !== event.length) {
+                    throw new Error(stream.pos() + ' Bad metaevent length.');
+                  }
+                  event.data = stream.readBytes(event.length);
+                  event.param1 = event.data[0];
+                  event.param2 = event.data[1];
+                  event.param3 = event.data[2];
+                  event.param4 = event.data[3];
+                  return event;
+                case MIDIEvents.EVENT_META_SEQUENCER_SPECIFIC:
+                  event.data = stream.readBytes(event.length);
+                  return event;
+                default:
+                  if (strictMode) {
+                    throw new Error(
+                      stream.pos() +
+                        ' Unknown meta event type ' +
+                        '(' +
+                        event.subtype.toString(16) +
+                        ').'
+                    );
+                  }
+                  event.data = stream.readBytes(event.length);
+                  return event;
+              }
+              // System events
+            } else if (
+              eventTypeByte === MIDIEvents.EVENT_SYSEX ||
+              eventTypeByte === MIDIEvents.EVENT_DIVSYSEX
+            ) {
+              event.type = eventTypeByte;
+              event.length = stream.readVarInt();
+              event.data = stream.readBytes(event.length);
+              return event;
+              // Unknown event, assuming it's system like event
+            } else {
+              if (strictMode) {
+                throw new Error(
+                  stream.pos() +
+                    ' Unknown event type ' +
+                    eventTypeByte.toString(16) +
+                    ', Delta: ' +
+                    event.delta +
+                    '.'
+                );
+              }
+              event.type = eventTypeByte;
+              event.badsubtype = stream.readVarInt();
+              event.length = stream.readUint8();
+              event.data = stream.readBytes(event.length);
+              return event;
+            }
+            // MIDI eventsdestination[index++]
+          } else {
+            // running status
+            if (0 === (eventTypeByte & 0x80)) {
+              if (!MIDIEventType) {
+                throw new Error(
+                  stream.pos() + ' Running status without previous event'
+                );
+              }
+              MIDIEventParam1 = eventTypeByte;
+            } else {
+              MIDIEventType = eventTypeByte >> 4;
+              MIDIEventChannel = eventTypeByte & 0x0f;
+              MIDIEventParam1 = stream.readUint8();
+            }
+            event.type = MIDIEvents.EVENT_MIDI;
+            event.subtype = MIDIEventType;
+            event.channel = MIDIEventChannel;
+            event.param1 = MIDIEventParam1;
+            switch (MIDIEventType) {
+              case MIDIEvents.EVENT_MIDI_NOTE_OFF:
+                event.param2 = stream.readUint8();
+                return event;
+              case MIDIEvents.EVENT_MIDI_NOTE_ON:
+                event.param2 = stream.readUint8();
+
+                // If velocity is 0, it's a note off event in fact
+                if (!event.param2) {
+                  event.subtype = MIDIEvents.EVENT_MIDI_NOTE_OFF;
+                  event.param2 = 127; // Find a standard telling what to do here
+                }
+                return event;
+              case MIDIEvents.EVENT_MIDI_NOTE_AFTERTOUCH:
+                event.param2 = stream.readUint8();
+                return event;
+              case MIDIEvents.EVENT_MIDI_CONTROLLER:
+                event.param2 = stream.readUint8();
+                return event;
+              case MIDIEvents.EVENT_MIDI_PROGRAM_CHANGE:
+                return event;
+              case MIDIEvents.EVENT_MIDI_CHANNEL_AFTERTOUCH:
+                return event;
+              case MIDIEvents.EVENT_MIDI_PITCH_BEND:
+                event.param2 = stream.readUint8();
+                return event;
+              default:
+                if (strictMode) {
+                  throw new Error(
+                    stream.pos() +
+                      ' Unknown MIDI event type ' +
+                      '(' +
+                      MIDIEventType.toString(16) +
+                      ').'
+                  );
+                }
+                return event;
+            }
+          }
+        },
+      };
+    };
+
+    // Return the buffer length needed to encode the given events
+    MIDIEvents.writeToTrack = function midiEventsWriteToTrack(
+      events,
+      destination,
+      strictMode
+    ) {
+      var index = 0;
+      var i;
+      var j;
+      var k;
+      var l;
+
+      // Converting each event to binary MIDI datas
+      for (i = 0, j = events.length; i < j; i++) {
+        // Writing delta value
+        if (events[i].delta >>> 28) {
+          throw Error(
+            'Event #' +
+              i +
+              ': Maximum delta time value reached (' +
+              events[i].delta +
+              '/134217728 max)'
+          );
+        }
+        if (events[i].delta >>> 21) {
+          destination[index++] = ((events[i].delta >>> 21) & 0x7f) | 0x80;
+        }
+        if (events[i].delta >>> 14) {
+          destination[index++] = ((events[i].delta >>> 14) & 0x7f) | 0x80;
+        }
+        if (events[i].delta >>> 7) {
+          destination[index++] = ((events[i].delta >>> 7) & 0x7f) | 0x80;
+        }
+        destination[index++] = events[i].delta & 0x7f;
+        // MIDI Events encoding
+        if (events[i].type === MIDIEvents.EVENT_MIDI) {
+          // Adding the byte of subtype + channel
+          destination[index++] = (events[i].subtype << 4) + events[i].channel;
+          // Adding the byte of the first params
+          destination[index++] = events[i].param1;
+          // Adding a byte for the optionnal second param
+          if (-1 !== MIDIEvents.MIDI_2PARAMS_EVENTS.indexOf(events[i].subtype)) {
+            destination[index++] = events[i].param2;
+          }
+          // META / SYSEX events encoding
+        } else {
+          // Adding the event type byte
+          destination[index++] = events[i].type;
+          // Adding the META event subtype byte
+          if (events[i].type === MIDIEvents.EVENT_META) {
+            destination[index++] = events[i].subtype;
+          }
+          // Writing the event length bytes
+          if (events[i].length >>> 28) {
+            throw Error(
+              'Event #' +
+                i +
+                ': Maximum length reached (' +
+                events[i].length +
+                '/134217728 max)'
+            );
+          }
+          if (events[i].length >>> 21) {
+            destination[index++] = ((events[i].length >>> 21) & 0x7f) | 0x80;
+          }
+          if (events[i].length >>> 14) {
+            destination[index++] = ((events[i].length >>> 14) & 0x7f) | 0x80;
+          }
+          if (events[i].length >>> 7) {
+            destination[index++] = ((events[i].length >>> 7) & 0x7f) | 0x80;
+          }
+          destination[index++] = events[i].length & 0x7f;
+          if (events[i].type === MIDIEvents.EVENT_META) {
+            switch (events[i].subtype) {
+              case MIDIEvents.EVENT_META_SEQUENCE_NUMBER:
+                destination[index++] = events[i].msb;
+                destination[index++] = events[i].lsb;
+                break;
+              case MIDIEvents.EVENT_META_TEXT:
+              case MIDIEvents.EVENT_META_COPYRIGHT_NOTICE:
+              case MIDIEvents.EVENT_META_TRACK_NAME:
+              case MIDIEvents.EVENT_META_INSTRUMENT_NAME:
+              case MIDIEvents.EVENT_META_LYRICS:
+              case MIDIEvents.EVENT_META_MARKER:
+              case MIDIEvents.EVENT_META_CUE_POINT:
+                for (k = 0, l = events[i].length; k < l; k++) {
+                  destination[index++] = events[i].data[k];
+                }
+                break;
+              case MIDIEvents.EVENT_META_MIDI_CHANNEL_PREFIX:
+                destination[index++] = events[i].prefix;
+                break;
+              case MIDIEvents.EVENT_META_END_OF_TRACK:
+                break;
+              case MIDIEvents.EVENT_META_SET_TEMPO:
+                destination[index++] = events[i].tempo >> 16;
+                destination[index++] = (events[i].tempo >> 8) & 0xff;
+                destination[index++] = events[i].tempo & 0xff;
+                break;
+              case MIDIEvents.EVENT_META_SMTPE_OFFSET:
+                if (strictMode && 23 < events[i].hour) {
+                  throw new Error(
+                    'Event #' +
+                      i +
+                      ': SMTPE offset hour value must be' +
+                      ' part of 0-23.'
+                  );
+                }
+                destination[index++] = events[i].hour;
+                if (strictMode && 59 < events[i].minutes) {
+                  throw new Error(
+                    'Event #' +
+                      i +
+                      ': SMTPE offset minutes value must' +
+                      ' be part of 0-59.'
+                  );
+                }
+                destination[index++] = events[i].minutes;
+                if (strictMode && 59 < events[i].seconds) {
+                  throw new Error(
+                    'Event #' +
+                      i +
+                      ': SMTPE offset seconds value must' +
+                      ' be part of 0-59.'
+                  );
+                }
+                destination[index++] = events[i].seconds;
+                if (strictMode && 30 < events[i].frames) {
+                  throw new Error(
+                    'Event #' +
+                      i +
+                      ': SMTPE offset frames amount must' +
+                      ' be part of 0-30.'
+                  );
+                }
+                destination[index++] = events[i].frames;
+                if (strictMode && 99 < events[i].subframes) {
+                  throw new Error(
+                    'Event #' +
+                      i +
+                      ': SMTPE offset subframes amount' +
+                      ' must be part of 0-99.'
+                  );
+                }
+                destination[index++] = events[i].subframes;
+                break;
+              case MIDIEvents.EVENT_META_KEY_SIGNATURE:
+                if (
+                  'number' != typeof events[i].key ||
+                  -7 > events[i].key ||
+                  7 < events[i].scale
+                ) {
+                  throw new Error(
+                    'Event #' +
+                      i +
+                      ':The key signature key must be' +
+                      ' between -7 and 7'
+                  );
+                }
+                if (
+                  'number' !== typeof events[i].scale ||
+                  0 > events[i].scale ||
+                  1 < events[i].scale
+                ) {
+                  throw new Error(
+                    'Event #' + i + ':' + 'The key signature scale must be 0 or 1'
+                  );
+                }
+                destination[index++] = events[i].key;
+                destination[index++] = events[i].scale;
+                break;
+              // Not implemented
+              case MIDIEvents.EVENT_META_TIME_SIGNATURE:
+              case MIDIEvents.EVENT_META_SEQUENCER_SPECIFIC:
+              default:
+                for (k = 0, l = events[i].length; k < l; k++) {
+                  destination[index++] = events[i].data[k];
+                }
+                break;
+            }
+            // Adding bytes corresponding to the sysex event datas
+          } else {
+            for (k = 0, l = events[i].length; k < l; k++) {
+              destination[index++] = events[i].data[k];
+            }
+          }
+        }
+      }
+    };
+
+    // Return the buffer length needed to encode the given events
+    MIDIEvents.getRequiredBufferLength = function(events) {
+      var bufferLength = 0;
+      var i = 0;
+      var j;
+
+      // Calculating the track size by adding events lengths
+      for (i = 0, j = events.length; i < j; i++) {
+        // Computing necessary bytes to encode the delta value
+        bufferLength +=
+          events[i].delta >>> 21
+            ? 4
+            : events[i].delta >>> 14
+              ? 3
+              : events[i].delta >>> 7
+                ? 2
+                : 1;
+        // MIDI Events have various fixed lengths
+        if (events[i].type === MIDIEvents.EVENT_MIDI) {
+          // Adding a byte for subtype + channel
+          bufferLength++;
+          // Adding a byte for the first params
+          bufferLength++;
+          // Adding a byte for the optionnal second param
+          if (-1 !== MIDIEvents.MIDI_2PARAMS_EVENTS.indexOf(events[i].subtype)) {
+            bufferLength++;
+          }
+          // META / SYSEX events lengths are self defined
+        } else {
+          // Adding a byte for the event type
+          bufferLength++;
+          // Adding a byte for META events subtype
+          if (events[i].type === MIDIEvents.EVENT_META) {
+            bufferLength++;
+          }
+          // Adding necessary bytes to encode the length
+          bufferLength +=
+            events[i].length >>> 21
+              ? 4
+              : events[i].length >>> 14
+                ? 3
+                : events[i].length >>> 7
+                  ? 2
+                  : 1;
+          // Adding bytes corresponding to the event length
+          bufferLength += events[i].length;
+        }
+      }
+      return bufferLength;
+    };
+
+    var MIDIEvents_1 = MIDIEvents;
+
+    var UTF8 = {
+      isNotUTF8: isNotUTF8,
+      getCharLength: getCharLength,
+      getCharCode: getCharCode,
+      getStringFromBytes: getStringFromBytes,
+      getBytesForCharCode: getBytesForCharCode,
+      setBytesFromCharCode: setBytesFromCharCode,
+      setBytesFromString: setBytesFromString,
+    };
+
+    // non UTF8 encoding detection (cf README file for details)
+    function isNotUTF8(bytes, byteOffset, byteLength) {
+      try {
+        getStringFromBytes(bytes, byteOffset, byteLength, true);
+      } catch (e) {
+        return true;
+      }
+      return false;
+    }
+
+    function getCharLength(theByte) {
+      // 4 bytes encoded char (mask 11110000)
+      if (0xf0 == (theByte & 0xf0)) {
+        return 4;
+        // 3 bytes encoded char (mask 11100000)
+      } else if (0xe0 == (theByte & 0xe0)) {
+        return 3;
+        // 2 bytes encoded char (mask 11000000)
+      } else if (0xc0 == (theByte & 0xc0)) {
+        return 2;
+        // 1 bytes encoded char
+      } else if (theByte == (theByte & 0x7f)) {
+        return 1;
+      }
+      return 0;
+    }
+
+    // UTF8 decoding functions
+    function getCharCode(bytes, byteOffset, charLength) {
+      var charCode = 0,
+        mask = '';
+      byteOffset = byteOffset || 0;
+      // validate that the array has at least one byte in it
+      if (bytes.length - byteOffset <= 0) {
+        throw new Error('No more characters remaining in array.');
+      }
+      // Retrieve charLength if not given
+      charLength = charLength || getCharLength(bytes[byteOffset]);
+      if (charLength == 0) {
+        throw new Error(
+          bytes[byteOffset].toString(2) +
+            ' is not a significative' +
+            ' byte (offset:' +
+            byteOffset +
+            ').'
+        );
+      }
+      // Return byte value if charlength is 1
+      if (1 === charLength) {
+        return bytes[byteOffset];
+      }
+      // validate that the array has enough bytes to make up this character
+      if (bytes.length - byteOffset < charLength) {
+        throw new Error(
+          'Expected at least ' + charLength + ' bytes remaining in array.'
+        );
+      }
+      // Test UTF8 integrity
+      mask = '00000000'.slice(0, charLength) + 1 + '00000000'.slice(charLength + 1);
+      if (bytes[byteOffset] & parseInt(mask, 2)) {
+        throw Error(
+          'Index ' +
+            byteOffset +
+            ': A ' +
+            charLength +
+            ' bytes' +
+            ' encoded char' +
+            ' cannot encode the ' +
+            (charLength + 1) +
+            'th rank bit to 1.'
+        );
+      }
+      // Reading the first byte
+      mask = '0000'.slice(0, charLength + 1) + '11111111'.slice(charLength + 1);
+      charCode += (bytes[byteOffset] & parseInt(mask, 2)) << (--charLength * 6);
+      // Reading the next bytes
+      while (charLength) {
+        if (
+          0x80 !== (bytes[byteOffset + 1] & 0x80) ||
+          0x40 === (bytes[byteOffset + 1] & 0x40)
+        ) {
+          throw Error(
+            'Index ' +
+              (byteOffset + 1) +
+              ': Next bytes of encoded char' +
+              ' must begin with a "10" bit sequence.'
+          );
+        }
+        charCode += (bytes[++byteOffset] & 0x3f) << (--charLength * 6);
+      }
+      return charCode;
+    }
+
+    function getStringFromBytes(bytes, byteOffset, byteLength, strict) {
+      var charLength,
+        chars = [];
+      byteOffset = byteOffset | 0;
+      byteLength =
+        'number' === typeof byteLength
+          ? byteLength
+          : bytes.byteLength || bytes.length;
+      for (; byteOffset < byteLength; byteOffset++) {
+        charLength = getCharLength(bytes[byteOffset]);
+        if (byteOffset + charLength > byteLength) {
+          if (strict) {
+            throw Error(
+              'Index ' +
+                byteOffset +
+                ': Found a ' +
+                charLength +
+                ' bytes encoded char declaration but only ' +
+                (byteLength - byteOffset) +
+                ' bytes are available.'
+            );
+          }
+        } else {
+          chars.push(
+            String.fromCodePoint(getCharCode(bytes, byteOffset, charLength))
+          );
+        }
+        byteOffset += charLength - 1;
+      }
+      return chars.join('');
+    }
+
+    // UTF8 encoding functions
+    function getBytesForCharCode(charCode) {
+      if (charCode < 128) {
+        return 1;
+      } else if (charCode < 2048) {
+        return 2;
+      } else if (charCode < 65536) {
+        return 3;
+      } else if (charCode < 2097152) {
+        return 4;
+      }
+      throw new Error('CharCode ' + charCode + ' cannot be encoded with UTF8.');
+    }
+
+    function setBytesFromCharCode(charCode, bytes, byteOffset, neededBytes) {
+      charCode = charCode | 0;
+      bytes = bytes || [];
+      byteOffset = byteOffset | 0;
+      neededBytes = neededBytes || getBytesForCharCode(charCode);
+      // Setting the charCode as it to bytes if the byte length is 1
+      if (1 == neededBytes) {
+        bytes[byteOffset] = charCode;
+      } else {
+        // Computing the first byte
+        bytes[byteOffset++] =
+          (parseInt('1111'.slice(0, neededBytes), 2) << (8 - neededBytes)) +
+          (charCode >>> (--neededBytes * 6));
+        // Computing next bytes
+        for (; neededBytes > 0; ) {
+          bytes[byteOffset++] = ((charCode >>> (--neededBytes * 6)) & 0x3f) | 0x80;
+        }
+      }
+      return bytes;
+    }
+
+    function setBytesFromString(string, bytes, byteOffset, byteLength, strict) {
+      string = string || '';
+      bytes = bytes || [];
+      byteOffset = byteOffset | 0;
+      byteLength =
+        'number' === typeof byteLength ? byteLength : bytes.byteLength || Infinity;
+      for (var i = 0, j = string.length; i < j; i++) {
+        var neededBytes = getBytesForCharCode(string[i].codePointAt(0));
+        if (strict && byteOffset + neededBytes > byteLength) {
+          throw new Error(
+            'Not enought bytes to encode the char "' +
+              string[i] +
+              '" at the offset "' +
+              byteOffset +
+              '".'
+          );
+        }
+        setBytesFromCharCode(
+          string[i].codePointAt(0),
+          bytes,
+          byteOffset,
+          neededBytes);
+        byteOffset += neededBytes;
+      }
+      return bytes;
+    }
+
+    // MIDIFile : Read (and soon edit) a MIDI file in a given ArrayBuffer
+
+    // Dependencies
+
+
+
+
+
+    function ensureArrayBuffer(buf) {
+      if (buf) {
+        if (buf instanceof ArrayBuffer) {
+          return buf;
+        }
+        if (buf instanceof Uint8Array) {
+          // Copy/convert to standard Uint8Array, because derived classes like
+          // node.js Buffers might have unexpected data in the .buffer property.
+          return new Uint8Array(buf).buffer;
+        }
+      }
+      throw new Error('Unsupported buffer type, need ArrayBuffer or Uint8Array');
+    }
+
+    // Constructor
+    function MIDIFile(buffer, strictMode) {
+      var track;
+      var curIndex;
+      var i;
+      var j;
+
+      // If not buffer given, creating a new MIDI file
+      if (!buffer) {
+        // Creating the content
+        this.header = new MIDIFileHeader_1();
+        this.tracks = [new MIDIFileTrack_1()];
+        // if a buffer is provided, parsing him
+      } else {
+        buffer = ensureArrayBuffer(buffer);
+        // Minimum MIDI file size is a headerChunk size (14bytes)
+        // and an empty track (8+3bytes)
+        if (25 > buffer.byteLength) {
+          throw new Error(
+            'A buffer of a valid MIDI file must have, at least, a' +
+              ' size of 25bytes.'
+          );
+        }
+        // Reading header
+        this.header = new MIDIFileHeader_1(buffer);
+        this.tracks = [];
+        curIndex = MIDIFileHeader_1.HEADER_LENGTH;
+        // Reading tracks
+        for (i = 0, j = this.header.getTracksCount(); i < j; i++) {
+          // Testing the buffer length
+          if (strictMode && curIndex >= buffer.byteLength - 1) {
+            throw new Error(
+              "Couldn't find datas corresponding to the track #" + i + '.'
+            );
+          }
+          // Creating the track object
+          track = new MIDIFileTrack_1(buffer, curIndex);
+          this.tracks.push(track);
+          // Updating index to the track end
+          curIndex += track.getTrackLength() + 8;
+        }
+        // Testing integrity : curIndex should be at the end of the buffer
+        if (strictMode && curIndex !== buffer.byteLength) {
+          throw new Error('It seems that the buffer contains too much datas.');
+        }
+      }
+    }
+
+    // Events reading helpers
+    MIDIFile.prototype.getEvents = function(type, subtype) {
+      var events;
+      var event;
+      var playTime = 0;
+      var filteredEvents = [];
+      var format = this.header.getFormat();
+      var tickResolution = this.header.getTickResolution();
+      var i;
+      var j;
+      var trackParsers;
+      var smallestDelta;
+
+      // Reading events
+      // if the read is sequential
+      if (1 !== format || 1 === this.tracks.length) {
+        for (i = 0, j = this.tracks.length; i < j; i++) {
+          // reset playtime if format is 2
+          playTime = 2 === format && playTime ? playTime : 0;
+          events = MIDIEvents_1.createParser(
+            this.tracks[i].getTrackContent(),
+            0,
+            false
+          );
+          // loooping through events
+          event = events.next();
+          while (event) {
+            playTime += event.delta ? event.delta * tickResolution / 1000 : 0;
+            if (event.type === MIDIEvents_1.EVENT_META) {
+              // tempo change events
+              if (event.subtype === MIDIEvents_1.EVENT_META_SET_TEMPO) {
+                tickResolution = this.header.getTickResolution(event.tempo);
+              }
+            }
+            // push the asked events
+            if (
+              (!type || event.type === type) &&
+              (!subtype || (event.subtype && event.subtype === subtype))
+            ) {
+              event.playTime = playTime;
+              filteredEvents.push(event);
+            }
+            event = events.next();
+          }
+        }
+        // the read is concurrent
+      } else {
+        trackParsers = [];
+        smallestDelta = -1;
+
+        // Creating parsers
+        for (i = 0, j = this.tracks.length; i < j; i++) {
+          trackParsers[i] = {};
+          trackParsers[i].parser = MIDIEvents_1.createParser(
+            this.tracks[i].getTrackContent(),
+            0,
+            false
+          );
+          trackParsers[i].curEvent = trackParsers[i].parser.next();
+        }
+        // Filling events
+        do {
+          smallestDelta = -1;
+          // finding the smallest event
+          for (i = 0, j = trackParsers.length; i < j; i++) {
+            if (trackParsers[i].curEvent) {
+              if (
+                -1 === smallestDelta ||
+                trackParsers[i].curEvent.delta <
+                  trackParsers[smallestDelta].curEvent.delta
+              ) {
+                smallestDelta = i;
+              }
+            }
+          }
+          if (-1 !== smallestDelta) {
+            // removing the delta of previous events
+            for (i = 0, j = trackParsers.length; i < j; i++) {
+              if (i !== smallestDelta && trackParsers[i].curEvent) {
+                trackParsers[i].curEvent.delta -=
+                  trackParsers[smallestDelta].curEvent.delta;
+              }
+            }
+            // filling values
+            event = trackParsers[smallestDelta].curEvent;
+            playTime += event.delta ? event.delta * tickResolution / 1000 : 0;
+            if (event.type === MIDIEvents_1.EVENT_META) {
+              // tempo change events
+              if (event.subtype === MIDIEvents_1.EVENT_META_SET_TEMPO) {
+                tickResolution = this.header.getTickResolution(event.tempo);
+              }
+            }
+            // push midi events
+            if (
+              (!type || event.type === type) &&
+              (!subtype || (event.subtype && event.subtype === subtype))
+            ) {
+              event.playTime = playTime;
+              event.track = smallestDelta;
+              filteredEvents.push(event);
+            }
+            // getting next event
+            trackParsers[smallestDelta].curEvent = trackParsers[
+              smallestDelta
+            ].parser.next();
+          }
+        } while (-1 !== smallestDelta);
+      }
+      return filteredEvents;
+    };
+
+    MIDIFile.prototype.getMidiEvents = function() {
+      return this.getEvents(MIDIEvents_1.EVENT_MIDI);
+    };
+
+    MIDIFile.prototype.getLyrics = function() {
+      var events = this.getEvents(MIDIEvents_1.EVENT_META);
+      var texts = [];
+      var lyrics = [];
+      var event;
+      var i;
+      var j;
+
+      for (i = 0, j = events.length; i < j; i++) {
+        event = events[i];
+        // Lyrics
+        if (event.subtype === MIDIEvents_1.EVENT_META_LYRICS) {
+          lyrics.push(event);
+          // Texts
+        } else if (event.subtype === MIDIEvents_1.EVENT_META_TEXT) {
+          // Ignore special texts
+          if ('@' === String.fromCharCode(event.data[0])) {
+            if ('T' === String.fromCharCode(event.data[1])) ; else if ('I' === String.fromCharCode(event.data[1])) ; else if ('L' === String.fromCharCode(event.data[1])) ;
+            // karaoke text follows, remove all previous text
+          } else if (
+            0 === String.fromCharCode.apply(String, event.data).indexOf('words')
+          ) {
+            texts.length = 0;
+            // console.log('Word marker found');
+            // Karaoke texts
+            // If playtime is greater than 0
+          } else if (0 !== event.playTime) {
+            texts.push(event);
+          }
+        }
+      }
+      // Choosing the right lyrics
+      if (2 < lyrics.length) {
+        texts = lyrics;
+      } else if (!texts.length) {
+        texts = [];
+      }
+      // Convert texts and detect encoding
+      try {
+        texts.forEach(function(event) {
+          event.text = UTF8.getStringFromBytes(event.data, 0, event.length, true);
+        });
+      } catch (e) {
+        texts.forEach(function(event) {
+          event.text = event.data
+            .map(function(c) {
+              return String.fromCharCode(c);
+            })
+            .join('');
+        });
+      }
+      return texts;
+    };
+
+    // Basic events reading
+    MIDIFile.prototype.getTrackEvents = function(index) {
+      var event;
+      var events = [];
+      var parser;
+      if (index > this.tracks.length || 0 > index) {
+        throw Error('Invalid track index (' + index + ')');
+      }
+      parser = MIDIEvents_1.createParser(
+        this.tracks[index].getTrackContent(),
+        0,
+        false
+      );
+      event = parser.next();
+      do {
+        events.push(event);
+        event = parser.next();
+      } while (event);
+      return events;
+    };
+
+    // Basic events writting
+    MIDIFile.prototype.setTrackEvents = function(index, events) {
+      var bufferLength;
+      var destination;
+
+      if (index > this.tracks.length || 0 > index) {
+        throw Error('Invalid track index (' + index + ')');
+      }
+      if (!events || !events.length) {
+        throw Error('A track must contain at least one event, none given.');
+      }
+      bufferLength = MIDIEvents_1.getRequiredBufferLength(events);
+      destination = new Uint8Array(bufferLength);
+      MIDIEvents_1.writeToTrack(events, destination);
+      this.tracks[index].setTrackContent(destination);
+    };
+
+    // Remove a track
+    MIDIFile.prototype.deleteTrack = function(index) {
+      if (index > this.tracks.length || 0 > index) {
+        throw Error('Invalid track index (' + index + ')');
+      }
+      this.tracks.splice(index, 1);
+      this.header.setTracksCount(this.tracks.length);
+    };
+
+    // Add a track
+    MIDIFile.prototype.addTrack = function(index) {
+      var track;
+
+      if (index > this.tracks.length || 0 > index) {
+        throw Error('Invalid track index (' + index + ')');
+      }
+      track = new MIDIFileTrack_1();
+      if (index === this.tracks.length) {
+        this.tracks.push(track);
+      } else {
+        this.tracks.splice(index, 0, track);
+      }
+      this.header.setTracksCount(this.tracks.length);
+    };
+
+    // Retrieve the content in a buffer
+    MIDIFile.prototype.getContent = function() {
+      var bufferLength;
+      var destination;
+      var origin;
+      var i;
+      var j;
+      var k;
+      var l;
+      var m;
+      var n;
+
+      // Calculating the buffer content
+      // - initialize with the header length
+      bufferLength = MIDIFileHeader_1.HEADER_LENGTH;
+      // - add tracks length
+      for (i = 0, j = this.tracks.length; i < j; i++) {
+        bufferLength += this.tracks[i].getTrackLength() + 8;
+      }
+      // Creating the destination buffer
+      destination = new Uint8Array(bufferLength);
+      // Adding header
+      origin = new Uint8Array(
+        this.header.datas.buffer,
+        this.header.datas.byteOffset,
+        MIDIFileHeader_1.HEADER_LENGTH
+      );
+      for (i = 0, j = MIDIFileHeader_1.HEADER_LENGTH; i < j; i++) {
+        destination[i] = origin[i];
+      }
+      // Adding tracks
+      for (k = 0, l = this.tracks.length; k < l; k++) {
+        origin = new Uint8Array(
+          this.tracks[k].datas.buffer,
+          this.tracks[k].datas.byteOffset,
+          this.tracks[k].datas.byteLength
+        );
+        for (m = 0, n = this.tracks[k].datas.byteLength; m < n; m++) {
+          destination[i++] = origin[m];
+        }
+      }
+      return destination.buffer;
+    };
+
+    // Exports Track/Header constructors
+    MIDIFile.Header = MIDIFileHeader_1;
+    MIDIFile.Track = MIDIFileTrack_1;
+
+    var MIDIFile_1 = MIDIFile;
+
+    function getMIDIFileFromArrayBuffer(array_buffer) {
+        return new MIDIFile_1(array_buffer)
+    }
+
+    function getTempo(MIDIObject) {
+        if (MIDIObject.header.getTimeDivision() === MIDIFile_1.Header.TICKS_PER_BEAT) {
+            return { ticksPerBeat: MIDIObject.header.getTicksPerBeat() }
+        } else {
+            return { 
+                SMPTEFrames:   MIDIObject.header.getSMPTEFrames(),
+                ticksPerFrame: MIDIObject.header.getTicksPerFrame() 
+            }
+        }
+    }
+
+    function getEvents(MIDIObject, tracks) {
+        let totalEvents = [];
+
+        let events = MIDIObject.getEvents();
+
+        events.forEach((event) => {
+            if (event.subtype == MIDIEvents_1.EVENT_META_SET_TEMPO)
+                totalEvents.push(event);
+
+            if (event.subtype != MIDIEvents_1.EVENT_MIDI_NOTE_ON) return
+
+            if(!event.track && tracks[0] === true) { // Only one track
+                totalEvents.push(event);
+                return
+            }
+
+            if ((tracks[event.track] === true)) {
+                totalEvents.push(event);
+            }
+        });
+
+        return totalEvents
+    }
+
+    const firstPossibleNote  =  21;
+    const lastPossibleNote   =  108;
+
+    const capitalNotes = "!@#$%^&*()QWERTYUIOPASDFGHJKLZXCBVNM";
+
+    class Note {
+        constructor(value, playTime, tempo, BPM, delta, shifts='keep', oors='keep') {
+            this.value      =  value;
+            this.playTime   =  playTime;
+            this.delta      =  delta;
+            this.char       =  vpScale[value - firstPossibleNote];
+            this.tempo      =  tempo;
+            this.BPM        =  BPM;
+
+            this.valid      = (value >= 21 && value <= 108);
+            this.outOfRange = (value <= 35 || value >=  97);
+
+            // Make sure that capital notes go before lowercase ones
+            if (capitalNotes.includes(this.char)) {
+                if (shifts === 'Start') this.displayValue = value - lastPossibleNote;
+                else if (shifts == 'End') this.displayValue = value + lastPossibleNote;
+            }
+            else if (this.outOfRange) {
+                if (oors === 'Start') this.displayValue = value - 1024;
+                else if (oors == 'End') this.displayValue = value + 1024;
+            }
+            else this.displayValue = value;
+        }
+    }
+
+    class Chord {
+        constructor(notes, sequentialQuantize = true) {
+            let is_quantized = false;
+            let previous_note = notes[0];
+            for (let note of notes) {
+                if (note.playTime != previous_note.playTime) {
+                    is_quantized = true;
+                    break
+                }
+                previous_note = note;
+            }
+            this.is_quantized = is_quantized;
+
+            if (!is_quantized) {
+                let values = [];
+                let no_dupes = [];
+                notes.forEach(note => {
+                    if (!(values.includes(note.value))) {
+                        values.push(note.value);
+                        no_dupes.push(note);
+                    }
+                });
+                this.notes = no_dupes.sort((a, b) => { return a.displayValue - b.displayValue });
+            } else {
+                if (sequentialQuantize)
+                    this.notes = notes;
+                else
+                    this.notes = notes.sort((a, b) => { return a.displayValue - b.displayValue });
+            }
+        }
+    }
+
+    class Sheet {
+        constructor(chords) { this.chords = chords; }
+
+        transpose(by, shifts='Start', oors='Start', sequentialQuantize=true) { /* Does not mutate */
+            if (!this.chords) return
+            let newChords = [];
+            this.chords.forEach((chord) => {
+                let newChord = [];
+                chord.notes.forEach((note) => {
+                    newChord.push(new Note(note.value + by, note.playTime, note.tempo, note.BPM, note.delta, shifts, oors));
+                });
+                newChords.push(new Chord(newChord, sequentialQuantize));
+            });
+            return new Sheet(newChords)
+        }
+
+        countNotes() {
+            let notes = 0;
+            for (let chord of this.chords) {
+                for (let _ of chord.notes)
+                    notes++;
+            }
+            return notes
+        }
+
+        text() {
+            let result = ''; 
+
+            let chords = this.chords;
+            for (let i = 0; i < chords.length; i++) {
+                if (!chords) { result += '[no-chords] '; continue }
+
+                const chord = chords[i];
+
+                let isChord = (chord.notes.length > 1 && chord.notes.find(note => note.valid === true));
+                if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
+                    isChord = false;
+
+                if (isChord) result += '[';
+
+                for (const note of chord.notes) {
+                    result += note.char;
+                } 
+
+                if (isChord) result += ']';
+
+                result += ' ';
+            }
+            return result
+        }
+    }
+
+    // Takes NOTE_ON and SET_TEMPO events
+    function generateSheet(events, quantize = 100, shifts = 'Start', oors = 'Start', sequentialQuantize = true) /* -> Sheet */ { 
+        // console.log({ quantize, shifts, oors, sequentialQuantize })
+
+        let chords = [];
+        let currentChord = [];
+        let lastPlaytime = events[0].playTime ?? 0.0;
+
+        // default tempo
+        let nextBPM = 120;
+        let nextTempo = 500000;
+
+        // Generate chords
+        events.forEach(element => {
+            const isNoteSpeedValid = element.tempo && element.tempoBPM && element.tempo !== 0 && element.tempoBPM !== 0;
+            if(isNoteSpeedValid && element.subtype == 0x51) { // SET TEMPO META EVENT
+                nextTempo = element.tempo;
+                nextBPM = element.tempoBPM;
+                return
+            } // else NOTE_ON
+            const key       =  element.param1;
+            const playtime  =  element.playTime;
+            const delta     =  element.delta;
+            if(Math.abs(playtime - lastPlaytime) < quantize) {
+                currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors));
+                lastPlaytime = playtime;
+            } else { // Submit the chord
+                chords.push(new Chord(currentChord, sequentialQuantize));
+                currentChord = [];
+                currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors)); // Add the note as first if it's different
+                lastPlaytime = playtime;
+            }
+        });
+
+        chords.push(new Chord(currentChord));
+        return new Sheet(chords)
+    }
+
+    const vpScale =
+        `1234567890qwert` +
+
+        `1!2@34$5%6^78*9(0` +
+        `qQwWeErtTyYuiIoOpP` +
+         `asSdDfgGhHjJklL` +
+          `zZxcCvVbBnm` +
+
+        `yuiopasdfghj`;
+
+    const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm';
+
+    /** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least lowercase letters */
+    function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {
+        if(!sheet?.chords) return stickTo
+        function countLowercases(sheet) {
+            let monochord = [];
+            for (let chord of sheet.chords) {
+                for (let note of chord.notes)
+                    monochord.push({ char: note.char, oor: note.outOfRange, valid: note.valid });
+            }
+            // return monochord.filter(note => lowercases.includes(note.char) && note.oor === false && note.valid === true).length
+            let all = monochord.filter(note => note.oor === false && note.valid === true);
+            let lowercaseCount = all.filter(note => lowercases.includes(note.char));
+            let uppercaseCount = all.filter(note => !(lowercases.includes(note.char)));
+            return Math.abs(uppercaseCount.length-lowercaseCount.length)
+        }
+
+        let sticks = countLowercases(sheet.transpose(stickTo));
+
+        let most = sticks;
+        let best = stickTo;
+
+        function consider(deviation) {
+            let contender = sheet.transpose(deviation);
+            let lowercases = countLowercases(contender);
+            // console.log([`stickTo: ${stickTo}`,
+            //              `Most: ${most}`,
+            //              `Original: ${sheet.text()}`,
+            //              `Stuck: ${sheet.transpose(stickTo).text()}`,
+            //              `Transposed by ${deviation}: ${sheet.transpose(deviation).text()}`,
+            //              `Gained: ${lowercases - most}`].join('\n'))
+            if (lowercases > most) {
+                if (!strict) {
+                    let difference = lowercases - most;
+                    if (difference < atLeast) { // Minimal lowercase gain, not worth it, don't consider
+                        return
+                    }
+                }
+                // console.log(`Good to go with ${most}, transposed by ${deviation}, sheet: ${sheet.text()}`)
+                most = lowercases;
+                best = deviation;
+            }
+        }
+
+        // Run from stickTo to -deviation, then from stickTo to +deviation
+        for (let i = startFrom; i <= deviation; i++) {
+            consider(stickTo - i);
+            consider(stickTo + i);
+        }
+
+        // console.log(`Giving back ${best}`)
+        return best
+    }
+
+    function separator(beat, difference) {
+        if (difference < beat / 4)
+            return '-'
+        if (difference < beat / 2)
+            return ' '
+        if (difference < beat) // Or equal to a beat
+            return ' - '
+        if (difference < beat * 2)
+            return ', '
+        if (difference < beat * 2.5)
+            return '. '
+        if (difference < beat * 3)
+            return '.. '
+        if (difference < beat * 4)
+            return '... '
+        else return '\n' // Long pause
+    }
+
+    /* src\components\SheetOptions.svelte generated by Svelte v3.55.1 */
+    const file$3 = "src\\components\\SheetOptions.svelte";
+
+    function get_each_context$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[18] = list[i];
+    	return child_ctx;
+    }
+
+    // (25:0) {#if show}
+    function create_if_block$2(ctx) {
+    	let div0;
+    	let label0;
+    	let t1;
+    	let input0;
+    	let t2;
+    	let button0;
+    	let t4;
+    	let div1;
+    	let button1;
+    	let t6;
+    	let label1;
+    	let t8;
+    	let input1;
+    	let t9;
+    	let span0;
+    	let t10_value = /*settings*/ ctx[0].lbauto_atleast + "";
+    	let t10;
+    	let t11;
+    	let div7;
+    	let div2;
+    	let label2;
+    	let t13;
+    	let select0;
+    	let option0;
+    	let option1;
+    	let t16;
+    	let div3;
+    	let label3;
+    	let t18;
+    	let select1;
+    	let option2;
+    	let option3;
+    	let t21;
+    	let div4;
+    	let label4;
+    	let t23;
+    	let select2;
+    	let t24;
+    	let div5;
+    	let label5;
+    	let t26;
+    	let input2;
+    	let t27;
+    	let span1;
+    	let t28;
+
+    	let t29_value = (/*settings*/ ctx[0].beats == 1
+    	? "1 beat"
+    	: `${/*settings*/ ctx[0].beats} beats`) + "";
+
+    	let t29;
+    	let t30;
+    	let div6;
+    	let label6;
+    	let t32;
+    	let input3;
+    	let t33;
+    	let span2;
+    	let t34_value = /*settings*/ ctx[0].quantize + "";
+    	let t34;
+    	let t35;
+    	let t36;
+    	let label7;
+    	let input4;
+    	let t37;
+    	let t38;
+    	let label8;
+    	let input5;
+    	let t39;
+    	let t40;
+    	let label9;
+    	let input6;
+    	let t41;
+    	let t42;
+    	let button2;
+    	let button2_disabled_value;
+    	let t43;
+    	let t44;
+    	let style;
+    	let mounted;
+    	let dispose;
+    	let each_value = /*fonts*/ ctx[3];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
+    	}
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*settings*/ ctx[0].capturingImage) return create_if_block_3;
+    		return create_else_block_1;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block0 = current_block_type(ctx);
+    	let if_block1 = typeof ClipboardItem !== "undefined" && create_if_block_1$1(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div0 = element("div");
+    			label0 = element("label");
+    			label0.textContent = "Transpose (sheet) by:";
+    			t1 = space();
+    			input0 = element("input");
+    			t2 = space();
+    			button0 = element("button");
+    			button0.textContent = "Auto-transpose";
+    			t4 = space();
+    			div1 = element("div");
+    			button1 = element("button");
+    			button1.textContent = "Line-based auto-transpose";
+    			t6 = space();
+    			label1 = element("label");
+    			label1.textContent = "Resilience (?):";
+    			t8 = space();
+    			input1 = element("input");
+    			t9 = space();
+    			span0 = element("span");
+    			t10 = text(t10_value);
+    			t11 = space();
+    			div7 = element("div");
+    			div2 = element("div");
+    			label2 = element("label");
+    			label2.textContent = "Place shifted notes at:";
+    			t13 = space();
+    			select0 = element("select");
+    			option0 = element("option");
+    			option0.textContent = "Start";
+    			option1 = element("option");
+    			option1.textContent = "End";
+    			t16 = space();
+    			div3 = element("div");
+    			label3 = element("label");
+    			label3.textContent = "Place out of range notes at:";
+    			t18 = space();
+    			select1 = element("select");
+    			option2 = element("option");
+    			option2.textContent = "Start";
+    			option3 = element("option");
+    			option3.textContent = "End";
+    			t21 = space();
+    			div4 = element("div");
+    			label4 = element("label");
+    			label4.textContent = "Font:";
+    			t23 = space();
+    			select2 = element("select");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t24 = space();
+    			div5 = element("div");
+    			label5 = element("label");
+    			label5.textContent = "Break lines:";
+    			t26 = space();
+    			input2 = element("input");
+    			t27 = space();
+    			span1 = element("span");
+    			t28 = text("Every ");
+    			t29 = text(t29_value);
+    			t30 = space();
+    			div6 = element("div");
+    			label6 = element("label");
+    			label6.textContent = "Quantize:";
+    			t32 = space();
+    			input3 = element("input");
+    			t33 = space();
+    			span2 = element("span");
+    			t34 = text(t34_value);
+    			t35 = text(" miliseconds");
+    			t36 = space();
+    			label7 = element("label");
+    			input4 = element("input");
+    			t37 = text("\n        Sequential quantizes");
+    			t38 = space();
+    			label8 = element("label");
+    			input5 = element("input");
+    			t39 = text("\n        Include out of range (ctrl) notes");
+    			t40 = space();
+    			label9 = element("label");
+    			input6 = element("input");
+    			t41 = text("\n        Show tempo marks");
+    			t42 = space();
+    			button2 = element("button");
+    			if_block0.c();
+    			t43 = space();
+    			if (if_block1) if_block1.c();
+    			t44 = space();
+    			style = element("style");
+    			style.textContent = "label {\n        max-width: fit-content;\n        text-align: center;\n    }\n\n    .select-div {\n        display: flex;\n        flex-direction: row;\n        align-items: center;\n        text-align: center;\n    }\n\n    select {\n        height: auto;\n        margin-left: 0.4em;\n        margin-top: 0.2em;\n        margin-bottom: 0;\n    }\n\n    input[type=\"checkbox\"] {\n        display: inline-block;\n        vertical-align: middle;\n    }\n\n    input[type=\"range\"] {\n        margin-left: 0.4em;\n        margin-right: 0.4em;\n        margin-bottom: 0;\n    }\n\n    input[type=\"file\"] {\n        margin-bottom: 0;\n    }\n\n    input[type=\"text\"] {\n        margin-bottom: 0;\n    }\n    \n    .beats, .quantize, .select-label {\n        display: flex;\n        flex-direction: row;\n    }";
+    			attr_dev(label0, "for", "transpose");
+    			add_location(label0, file$3, 26, 1, 624);
+    			attr_dev(input0, "id", "transpose");
+    			attr_dev(input0, "type", "number");
+    			attr_dev(input0, "min", "-24");
+    			attr_dev(input0, "max", "24");
+    			add_location(input0, file$3, 27, 1, 678);
+    			add_location(button0, file$3, 28, 4, 770);
+    			set_style(div0, "display", "inline-block");
+    			add_location(div0, file$3, 25, 0, 587);
+    			set_style(button1, "margin-bottom", "0");
+    			add_location(button1, file$3, 32, 4, 875);
+    			set_style(label1, "margin-left", "0.5em");
+    			set_style(label1, "display", "flex");
+    			set_style(label1, "align-items", "center");
+    			attr_dev(label1, "title", "Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)");
+    			attr_dev(label1, "for", "atleast");
+    			attr_dev(label1, "class", "slider-label");
+    			add_location(label1, file$3, 33, 4, 994);
+    			attr_dev(input1, "id", "atleast");
+    			attr_dev(input1, "type", "range");
+    			attr_dev(input1, "min", "1");
+    			attr_dev(input1, "max", "24");
+    			add_location(input1, file$3, 36, 4, 1305);
+    			set_style(span0, "display", "flex");
+    			set_style(span0, "align-items", "center");
+    			add_location(span0, file$3, 37, 4, 1393);
+    			attr_dev(div1, "class", "quantize");
+    			add_location(div1, file$3, 31, 0, 848);
+    			attr_dev(label2, "for", "shifts-position");
+    			add_location(label2, file$3, 42, 8, 1525);
+    			option0.__value = "Start";
+    			option0.value = option0.__value;
+    			add_location(option0, file$3, 44, 12, 1689);
+    			option1.__value = "End";
+    			option1.value = option1.__value;
+    			add_location(option1, file$3, 45, 12, 1738);
+    			attr_dev(select0, "name", "shifts-position");
+    			attr_dev(select0, "id", "shifts-position");
+    			if (/*settings*/ ctx[0].pShifts === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[8].call(select0));
+    			add_location(select0, file$3, 43, 8, 1594);
+    			attr_dev(div2, "class", "select-div");
+    			add_location(div2, file$3, 41, 4, 1492);
+    			attr_dev(label3, "for", "oors-position");
+    			add_location(label3, file$3, 50, 8, 1838);
+    			option2.__value = "Start";
+    			option2.value = option2.__value;
+    			add_location(option2, file$3, 52, 12, 1999);
+    			option3.__value = "End";
+    			option3.value = option3.__value;
+    			add_location(option3, file$3, 53, 12, 2048);
+    			attr_dev(select1, "name", "oors-position");
+    			attr_dev(select1, "id", "oors-position");
+    			if (/*settings*/ ctx[0].pOors === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[9].call(select1));
+    			add_location(select1, file$3, 51, 8, 1910);
+    			attr_dev(div3, "class", "select-div");
+    			add_location(div3, file$3, 49, 4, 1805);
+    			attr_dev(label4, "for", "font");
+    			add_location(label4, file$3, 58, 8, 2148);
+    			attr_dev(select2, "name", "font");
+    			attr_dev(select2, "id", "font");
+    			if (/*settings*/ ctx[0].font === void 0) add_render_callback(() => /*select2_change_handler*/ ctx[10].call(select2));
+    			add_location(select2, file$3, 59, 8, 2188);
+    			attr_dev(div4, "class", "select-div");
+    			add_location(div4, file$3, 57, 4, 2115);
+    			attr_dev(label5, "class", "slider-label");
+    			attr_dev(label5, "for", "beats-for-newline");
+    			add_location(label5, file$3, 67, 8, 2415);
+    			attr_dev(input2, "type", "range");
+    			attr_dev(input2, "id", "beats-for-newline");
+    			attr_dev(input2, "min", "1");
+    			attr_dev(input2, "max", "32");
+    			add_location(input2, file$3, 68, 8, 2497);
+    			add_location(span1, file$3, 69, 8, 2590);
+    			attr_dev(div5, "class", "beats");
+    			add_location(div5, file$3, 66, 4, 2387);
+    			attr_dev(label6, "class", "slider-label");
+    			attr_dev(label6, "for", "quantize-prompt");
+    			add_location(label6, file$3, 73, 8, 2717);
+    			attr_dev(input3, "type", "range");
+    			attr_dev(input3, "id", "quantize-prompt");
+    			attr_dev(input3, "min", "1");
+    			attr_dev(input3, "max", "100");
+    			add_location(input3, file$3, 74, 8, 2794);
+    			add_location(span2, file$3, 75, 8, 2889);
+    			attr_dev(div6, "class", "quantize");
+    			add_location(div6, file$3, 72, 4, 2686);
+    			attr_dev(input4, "type", "checkbox");
+    			attr_dev(input4, "id", "order-quantizes");
+    			add_location(input4, file$3, 79, 8, 2988);
+    			attr_dev(label7, "for", "order-quantizes");
+    			add_location(label7, file$3, 78, 4, 2950);
+    			attr_dev(input5, "type", "checkbox");
+    			attr_dev(input5, "id", "out-of-range");
+    			add_location(input5, file$3, 84, 8, 3158);
+    			attr_dev(label8, "for", "out-of-range");
+    			add_location(label8, file$3, 83, 4, 3123);
+    			attr_dev(input6, "type", "checkbox");
+    			attr_dev(input6, "id", "tempo-checkbox");
+    			add_location(input6, file$3, 89, 8, 3326);
+    			attr_dev(label9, "for", "tempo-checkbox");
+    			add_location(label9, file$3, 88, 4, 3289);
+    			button2.disabled = button2_disabled_value = /*settings*/ ctx[0].capturingImage;
+    			add_location(button2, file$3, 93, 4, 3448);
+    			add_location(div7, file$3, 40, 0, 1482);
+    			add_location(style, file$3, 119, 0, 4138);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div0, anchor);
+    			append_dev(div0, label0);
+    			append_dev(div0, t1);
+    			append_dev(div0, input0);
+    			set_input_value(input0, /*settings*/ ctx[0].transposition);
+    			append_dev(div0, t2);
+    			append_dev(div0, button0);
+    			insert_dev(target, t4, anchor);
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, button1);
+    			append_dev(div1, t6);
+    			append_dev(div1, label1);
+    			append_dev(div1, t8);
+    			append_dev(div1, input1);
+    			set_input_value(input1, /*settings*/ ctx[0].lbauto_atleast);
+    			append_dev(div1, t9);
+    			append_dev(div1, span0);
+    			append_dev(span0, t10);
+    			insert_dev(target, t11, anchor);
+    			insert_dev(target, div7, anchor);
+    			append_dev(div7, div2);
+    			append_dev(div2, label2);
+    			append_dev(div2, t13);
+    			append_dev(div2, select0);
+    			append_dev(select0, option0);
+    			append_dev(select0, option1);
+    			select_option(select0, /*settings*/ ctx[0].pShifts);
+    			append_dev(div7, t16);
+    			append_dev(div7, div3);
+    			append_dev(div3, label3);
+    			append_dev(div3, t18);
+    			append_dev(div3, select1);
+    			append_dev(select1, option2);
+    			append_dev(select1, option3);
+    			select_option(select1, /*settings*/ ctx[0].pOors);
+    			append_dev(div7, t21);
+    			append_dev(div7, div4);
+    			append_dev(div4, label4);
+    			append_dev(div4, t23);
+    			append_dev(div4, select2);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(select2, null);
+    			}
+
+    			select_option(select2, /*settings*/ ctx[0].font);
+    			append_dev(div7, t24);
+    			append_dev(div7, div5);
+    			append_dev(div5, label5);
+    			append_dev(div5, t26);
+    			append_dev(div5, input2);
+    			set_input_value(input2, /*settings*/ ctx[0].beats);
+    			append_dev(div5, t27);
+    			append_dev(div5, span1);
+    			append_dev(span1, t28);
+    			append_dev(span1, t29);
+    			append_dev(div7, t30);
+    			append_dev(div7, div6);
+    			append_dev(div6, label6);
+    			append_dev(div6, t32);
+    			append_dev(div6, input3);
+    			set_input_value(input3, /*settings*/ ctx[0].quantize);
+    			append_dev(div6, t33);
+    			append_dev(div6, span2);
+    			append_dev(span2, t34);
+    			append_dev(span2, t35);
+    			append_dev(div7, t36);
+    			append_dev(div7, label7);
+    			append_dev(label7, input4);
+    			input4.checked = /*settings*/ ctx[0].sequentialQuantize;
+    			append_dev(label7, t37);
+    			append_dev(div7, t38);
+    			append_dev(div7, label8);
+    			append_dev(label8, input5);
+    			input5.checked = /*settings*/ ctx[0].oors;
+    			append_dev(label8, t39);
+    			append_dev(div7, t40);
+    			append_dev(div7, label9);
+    			append_dev(label9, input6);
+    			input6.checked = /*settings*/ ctx[0].tempoMarks;
+    			append_dev(label9, t41);
+    			append_dev(div7, t42);
+    			append_dev(div7, button2);
+    			if_block0.m(button2, null);
+    			append_dev(div7, t43);
+    			if (if_block1) if_block1.m(div7, null);
+    			insert_dev(target, t44, anchor);
+    			insert_dev(target, style, anchor);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[4]),
+    					listen_dev(button0, "click", /*click_handler*/ ctx[5], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_1*/ ctx[6], false, false, false),
+    					listen_dev(input1, "change", /*input1_change_input_handler*/ ctx[7]),
+    					listen_dev(input1, "input", /*input1_change_input_handler*/ ctx[7]),
+    					listen_dev(select0, "change", /*select0_change_handler*/ ctx[8]),
+    					listen_dev(select1, "change", /*select1_change_handler*/ ctx[9]),
+    					listen_dev(select2, "change", /*select2_change_handler*/ ctx[10]),
+    					listen_dev(input2, "change", /*input2_change_input_handler*/ ctx[11]),
+    					listen_dev(input2, "input", /*input2_change_input_handler*/ ctx[11]),
+    					listen_dev(input3, "change", /*input3_change_input_handler*/ ctx[12]),
+    					listen_dev(input3, "input", /*input3_change_input_handler*/ ctx[12]),
+    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[13]),
+    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[14]),
+    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[15]),
+    					listen_dev(button2, "click", /*click_handler_2*/ ctx[16], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*settings*/ 1 && to_number(input0.value) !== /*settings*/ ctx[0].transposition) {
+    				set_input_value(input0, /*settings*/ ctx[0].transposition);
+    			}
+
+    			if (dirty & /*settings*/ 1) {
+    				set_input_value(input1, /*settings*/ ctx[0].lbauto_atleast);
+    			}
+
+    			if (dirty & /*settings*/ 1 && t10_value !== (t10_value = /*settings*/ ctx[0].lbauto_atleast + "")) set_data_dev(t10, t10_value);
+
+    			if (dirty & /*settings*/ 1) {
+    				select_option(select0, /*settings*/ ctx[0].pShifts);
+    			}
+
+    			if (dirty & /*settings*/ 1) {
+    				select_option(select1, /*settings*/ ctx[0].pOors);
+    			}
+
+    			if (dirty & /*fonts*/ 8) {
+    				each_value = /*fonts*/ ctx[3];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$1(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$1(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(select2, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+
+    			if (dirty & /*settings*/ 1) {
+    				select_option(select2, /*settings*/ ctx[0].font);
+    			}
+
+    			if (dirty & /*settings*/ 1) {
+    				set_input_value(input2, /*settings*/ ctx[0].beats);
+    			}
+
+    			if (dirty & /*settings*/ 1 && t29_value !== (t29_value = (/*settings*/ ctx[0].beats == 1
+    			? "1 beat"
+    			: `${/*settings*/ ctx[0].beats} beats`) + "")) set_data_dev(t29, t29_value);
+
+    			if (dirty & /*settings*/ 1) {
+    				set_input_value(input3, /*settings*/ ctx[0].quantize);
+    			}
+
+    			if (dirty & /*settings*/ 1 && t34_value !== (t34_value = /*settings*/ ctx[0].quantize + "")) set_data_dev(t34, t34_value);
+
+    			if (dirty & /*settings*/ 1) {
+    				input4.checked = /*settings*/ ctx[0].sequentialQuantize;
+    			}
+
+    			if (dirty & /*settings*/ 1) {
+    				input5.checked = /*settings*/ ctx[0].oors;
+    			}
+
+    			if (dirty & /*settings*/ 1) {
+    				input6.checked = /*settings*/ ctx[0].tempoMarks;
+    			}
+
+    			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
+    				if_block0.d(1);
+    				if_block0 = current_block_type(ctx);
+
+    				if (if_block0) {
+    					if_block0.c();
+    					if_block0.m(button2, null);
+    				}
+    			}
+
+    			if (dirty & /*settings*/ 1 && button2_disabled_value !== (button2_disabled_value = /*settings*/ ctx[0].capturingImage)) {
+    				prop_dev(button2, "disabled", button2_disabled_value);
+    			}
+
+    			if (typeof ClipboardItem !== "undefined") if_block1.p(ctx, dirty);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div0);
+    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(div1);
+    			if (detaching) detach_dev(t11);
+    			if (detaching) detach_dev(div7);
+    			destroy_each(each_blocks, detaching);
+    			if_block0.d();
+    			if (if_block1) if_block1.d();
+    			if (detaching) detach_dev(t44);
+    			if (detaching) detach_dev(style);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$2.name,
+    		type: "if",
+    		source: "(25:0) {#if show}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (61:12) {#each fonts as font}
+    function create_each_block$1(ctx) {
+    	let option;
+    	let t_value = /*font*/ ctx[18] + "";
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			option = element("option");
+    			t = text(t_value);
+    			option.__value = /*font*/ ctx[18];
+    			option.value = option.__value;
+    			add_location(option, file$3, 61, 16, 2296);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, option, anchor);
+    			append_dev(option, t);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(option);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$1.name,
+    		type: "each",
+    		source: "(61:12) {#each fonts as font}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (100:8) {:else}
+    function create_else_block_1(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Download Image");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_1.name,
+    		type: "else",
+    		source: "(100:8) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (98:8) {#if settings.capturingImage}
+    function create_if_block_3(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Please Wait...");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_3.name,
+    		type: "if",
+    		source: "(98:8) {#if settings.capturingImage}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (105:4) {#if typeof ClipboardItem !== "undefined"}
+    function create_if_block_1$1(ctx) {
+    	let button;
+    	let button_disabled_value;
+    	let mounted;
+    	let dispose;
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*settings*/ ctx[0].capturingImage) return create_if_block_2;
+    		return create_else_block$1;
+    	}
+
+    	let current_block_type = select_block_type_1(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			button = element("button");
+    			if_block.c();
+    			button.disabled = button_disabled_value = /*settings*/ ctx[0].capturingImage;
+    			add_location(button, file$3, 106, 8, 3822);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, button, anchor);
+    			if_block.m(button, null);
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", /*click_handler_3*/ ctx[17], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (current_block_type !== (current_block_type = select_block_type_1(ctx))) {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(button, null);
+    				}
+    			}
+
+    			if (dirty & /*settings*/ 1 && button_disabled_value !== (button_disabled_value = /*settings*/ ctx[0].capturingImage)) {
+    				prop_dev(button, "disabled", button_disabled_value);
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(button);
+    			if_block.d();
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$1.name,
+    		type: "if",
+    		source: "(105:4) {#if typeof ClipboardItem !== \\\"undefined\\\"}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (113:12) {:else}
+    function create_else_block$1(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Copy Image");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block$1.name,
+    		type: "else",
+    		source: "(113:12) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (111:12) {#if settings.capturingImage}
+    function create_if_block_2(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Please Wait...");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(111:12) {#if settings.capturingImage}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$3(ctx) {
+    	let if_block_anchor;
+    	let if_block = /*show*/ ctx[1] && create_if_block$2(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if (if_block) if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			if (if_block) if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (/*show*/ ctx[1]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block$2(ctx);
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$3.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$3($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('SheetOptions', slots, []);
+    	let dispatch = createEventDispatcher();
+    	let { show } = $$props;
+
+    	let fonts = [
+    		'Verdana',
+    		'Tahoma',
+    		'Dejavu Sans',
+    		'Segoe UI',
+    		'Gill Sans',
+    		'Helvetica',
+    		'Lucida Sans',
+    		'Century Gothic'
+    	];
+
+    	let { settings = {
+    		beats: 4,
+    		quantize: 35,
+    		sequentialQuantize: false,
+    		pShifts: 'Start',
+    		pOors: 'Start',
+    		oors: true,
+    		tempoMarks: false,
+    		transposition: 0,
+    		lbauto_atleast: 4,
+    		font: fonts[0],
+    		capturingImage: false
+    	} } = $$props;
+
+    	$$self.$$.on_mount.push(function () {
+    		if (show === undefined && !('show' in $$props || $$self.$$.bound[$$self.$$.props['show']])) {
+    			console.warn("<SheetOptions> was created without expected prop 'show'");
+    		}
+    	});
+
+    	const writable_props = ['show', 'settings'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<SheetOptions> was created with unknown prop '${key}'`);
+    	});
+
+    	function input0_input_handler() {
+    		settings.transposition = to_number(this.value);
+    		$$invalidate(0, settings);
+    	}
+
+    	const click_handler = () => {
+    		dispatch('auto');
+    	};
+
+    	const click_handler_1 = () => {
+    		dispatch('lineBasedAuto');
+    	};
+
+    	function input1_change_input_handler() {
+    		settings.lbauto_atleast = to_number(this.value);
+    		$$invalidate(0, settings);
+    	}
+
+    	function select0_change_handler() {
+    		settings.pShifts = select_value(this);
+    		$$invalidate(0, settings);
+    	}
+
+    	function select1_change_handler() {
+    		settings.pOors = select_value(this);
+    		$$invalidate(0, settings);
+    	}
+
+    	function select2_change_handler() {
+    		settings.font = select_value(this);
+    		$$invalidate(0, settings);
+    	}
+
+    	function input2_change_input_handler() {
+    		settings.beats = to_number(this.value);
+    		$$invalidate(0, settings);
+    	}
+
+    	function input3_change_input_handler() {
+    		settings.quantize = to_number(this.value);
+    		$$invalidate(0, settings);
+    	}
+
+    	function input4_change_handler() {
+    		settings.sequentialQuantize = this.checked;
+    		$$invalidate(0, settings);
+    	}
+
+    	function input5_change_handler() {
+    		settings.oors = this.checked;
+    		$$invalidate(0, settings);
+    	}
+
+    	function input6_change_handler() {
+    		settings.tempoMarks = this.checked;
+    		$$invalidate(0, settings);
+    	}
+
+    	const click_handler_2 = () => dispatch("captureSheetAsImage", { mode: "download" });
+    	const click_handler_3 = () => dispatch("captureSheetAsImage", { mode: "copy" });
+
+    	$$self.$$set = $$props => {
+    		if ('show' in $$props) $$invalidate(1, show = $$props.show);
+    		if ('settings' in $$props) $$invalidate(0, settings = $$props.settings);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		createEventDispatcher,
+    		dispatch,
+    		show,
+    		fonts,
+    		settings
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('dispatch' in $$props) $$invalidate(2, dispatch = $$props.dispatch);
+    		if ('show' in $$props) $$invalidate(1, show = $$props.show);
+    		if ('fonts' in $$props) $$invalidate(3, fonts = $$props.fonts);
+    		if ('settings' in $$props) $$invalidate(0, settings = $$props.settings);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		settings,
+    		show,
+    		dispatch,
+    		fonts,
+    		input0_input_handler,
+    		click_handler,
+    		click_handler_1,
+    		input1_change_input_handler,
+    		select0_change_handler,
+    		select1_change_handler,
+    		select2_change_handler,
+    		input2_change_input_handler,
+    		input3_change_input_handler,
+    		input4_change_handler,
+    		input5_change_handler,
+    		input6_change_handler,
+    		click_handler_2,
+    		click_handler_3
+    	];
+    }
+
+    class SheetOptions extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { show: 1, settings: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "SheetOptions",
+    			options,
+    			id: create_fragment$3.name
+    		});
+    	}
+
+    	get show() {
+    		throw new Error("<SheetOptions>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set show(value) {
+    		throw new Error("<SheetOptions>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get settings() {
+    		throw new Error("<SheetOptions>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set settings(value) {
+    		throw new Error("<SheetOptions>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\components\Track.svelte generated by Svelte v3.55.1 */
+
+    const file$2 = "src\\components\\Track.svelte";
+
+    function create_fragment$2(ctx) {
+    	let div;
+    	let input;
+    	let t0;
+    	let t1;
+    	let t2;
+    	let t3_value = /*track*/ ctx[1].getTrackLength() + "";
+    	let t3;
+    	let t4;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			input = element("input");
+    			t0 = text("\n    Track ");
+    			t1 = text(/*idx*/ ctx[2]);
+    			t2 = text(" - ");
+    			t3 = text(t3_value);
+    			t4 = text(" events");
+    			attr_dev(input, "type", "checkbox");
+    			add_location(input, file$2, 6, 4, 101);
+    			attr_dev(div, "id", "track");
+    			add_location(div, file$2, 5, 0, 80);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, input);
+    			input.checked = /*selected*/ ctx[0];
+    			append_dev(div, t0);
+    			append_dev(div, t1);
+    			append_dev(div, t2);
+    			append_dev(div, t3);
+    			append_dev(div, t4);
+
+    			if (!mounted) {
+    				dispose = listen_dev(input, "change", /*input_change_handler*/ ctx[3]);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*selected*/ 1) {
+    				input.checked = /*selected*/ ctx[0];
+    			}
+
+    			if (dirty & /*idx*/ 4) set_data_dev(t1, /*idx*/ ctx[2]);
+    			if (dirty & /*track*/ 2 && t3_value !== (t3_value = /*track*/ ctx[1].getTrackLength() + "")) set_data_dev(t3, t3_value);
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$2.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$2($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('Track', slots, []);
+    	let { track, idx } = $$props;
+    	let { selected = false } = $$props;
+
+    	$$self.$$.on_mount.push(function () {
+    		if (track === undefined && !('track' in $$props || $$self.$$.bound[$$self.$$.props['track']])) {
+    			console.warn("<Track> was created without expected prop 'track'");
+    		}
+
+    		if (idx === undefined && !('idx' in $$props || $$self.$$.bound[$$self.$$.props['idx']])) {
+    			console.warn("<Track> was created without expected prop 'idx'");
+    		}
+    	});
+
+    	const writable_props = ['track', 'idx', 'selected'];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Track> was created with unknown prop '${key}'`);
+    	});
+
+    	function input_change_handler() {
+    		selected = this.checked;
+    		$$invalidate(0, selected);
+    	}
+
+    	$$self.$$set = $$props => {
+    		if ('track' in $$props) $$invalidate(1, track = $$props.track);
+    		if ('idx' in $$props) $$invalidate(2, idx = $$props.idx);
+    		if ('selected' in $$props) $$invalidate(0, selected = $$props.selected);
+    	};
+
+    	$$self.$capture_state = () => ({ track, idx, selected });
+
+    	$$self.$inject_state = $$props => {
+    		if ('track' in $$props) $$invalidate(1, track = $$props.track);
+    		if ('idx' in $$props) $$invalidate(2, idx = $$props.idx);
+    		if ('selected' in $$props) $$invalidate(0, selected = $$props.selected);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [selected, track, idx, input_change_handler];
+    }
+
+    class Track extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { track: 1, idx: 2, selected: 0 });
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Track",
+    			options,
+    			id: create_fragment$2.name
+    		});
+    	}
+
+    	get track() {
+    		throw new Error("<Track>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set track(value) {
+    		throw new Error("<Track>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get idx() {
+    		throw new Error("<Track>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set idx(value) {
+    		throw new Error("<Track>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get selected() {
+    		throw new Error("<Track>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set selected(value) {
+    		throw new Error("<Track>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    const colors = {
+        long: 'white',
+        quadruple: '#a3f0a3',
+        whole: '#74da74',
+        half: '#9ada5a',
+        quarter: '#c0c05a',
+        eighth: '#da7e5a',
+        sixteenth: '#daa6a6',
+        thirtysecond: '#ff1900',
+        sixtyfourth: '#9c0f00'
+    };
+
+    function colored_string(s, color) {
+        return `<span style="color:${color}">${s}</span>`
+    }
+
+    /* src\components\Line.svelte generated by Svelte v3.55.1 */
+    const file$1 = "src\\components\\Line.svelte";
+
+    // (156:8) {:else}
+    function create_else_block(ctx) {
+    	let html_tag;
+    	let raw_value = /*render*/ ctx[6](/*sheet*/ ctx[4]) + "";
+    	let html_anchor;
+
+    	const block = {
+    		c: function create() {
+    			html_tag = new HtmlTag(false);
+    			html_anchor = empty();
+    			html_tag.a = html_anchor;
+    		},
+    		m: function mount(target, anchor) {
+    			html_tag.m(raw_value, target, anchor);
+    			insert_dev(target, html_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*sheet*/ 16 && raw_value !== (raw_value = /*render*/ ctx[6](/*sheet*/ ctx[4]) + "")) html_tag.p(raw_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(html_anchor);
+    			if (detaching) html_tag.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(156:8) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (150:8) {#if (comment || comment == '')}
+    function create_if_block$1(ctx) {
+    	let span;
+    	let t;
+    	let mounted;
+    	let dispose;
+
+    	const block = {
+    		c: function create() {
+    			span = element("span");
+    			t = text(/*comment*/ ctx[0]);
+    			attr_dev(span, "autofocus", "");
+    			attr_dev(span, "contenteditable", "true");
+    			attr_dev(span, "class", "comment svelte-jszitz");
+    			if (/*comment*/ ctx[0] === void 0) add_render_callback(() => /*span_input_handler*/ ctx[13].call(span));
+    			add_location(span, file$1, 151, 12, 5591);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, span, anchor);
+    			append_dev(span, t);
+
+    			if (/*comment*/ ctx[0] !== void 0) {
+    				span.textContent = /*comment*/ ctx[0];
+    			}
+
+    			span.focus();
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(span, "focusout", /*updateComment*/ ctx[7], false, false, false),
+    					listen_dev(span, "input", /*span_input_handler*/ ctx[13])
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*comment*/ 1) set_data_dev(t, /*comment*/ ctx[0]);
+
+    			if (dirty & /*comment*/ 1 && /*comment*/ ctx[0] !== span.textContent) {
+    				span.textContent = /*comment*/ ctx[0];
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(span);
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$1.name,
+    		type: "if",
+    		source: "(150:8) {#if (comment || comment == '')}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$1(ctx) {
+    	let div1;
+    	let div0;
+    	let mounted;
+    	let dispose;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*comment*/ ctx[0] || /*comment*/ ctx[0] == '') return create_if_block$1;
+    		return create_else_block;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			div0 = element("div");
+    			if_block.c();
+    			attr_dev(div0, "class", "line svelte-jszitz");
+    			add_location(div0, file$1, 130, 4, 4577);
+    			attr_dev(div1, "class", "viewer svelte-jszitz");
+    			set_style(div1, "font-family", /*settings*/ ctx[2].font);
+    			add_location(div1, file$1, 129, 0, 4485);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, div0);
+    			if_block.m(div0, null);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(div0, "mousedown", /*mousedown_handler*/ ctx[14], false, false, false),
+    					listen_dev(div0, "contextmenu", prevent_default(/*contextmenu_handler_1*/ ctx[12]), false, true, false),
+    					listen_dev(div1, "contextmenu", prevent_default(/*contextmenu_handler*/ ctx[11]), false, true, false)
+    				];
+
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, [dirty]) {
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(div0, null);
+    				}
+    			}
+
+    			if (dirty & /*settings*/ 4) {
+    				set_style(div1, "font-family", /*settings*/ ctx[2].font);
+    			}
+    		},
+    		i: noop,
+    		o: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    			if_block.d();
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$1.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$1($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('Line', slots, []);
+    	let dispatch = createEventDispatcher();
+    	let { index } = $$props; /* ID */
+    	let { comment = undefined } = $$props;
+    	let { line } = $$props; /* Sheet-like */
+    	let { passedNext } = $$props; // Next note for coloring purposes
+    	let originalSheet = new Sheet(line.chords);
+    	let sheet = originalSheet;
+    	let { sameTranspositionAsPrevious = false } = $$props;
+    	let { settings } = $$props;
+    	let penalty = 0.000;
+    	let previousChord = { notes: [{ playTime: -999999 }] };
+
+    	function colored_chord(chord, color) {
+    		let res = `<span style="color:${color}">`;
+    		let isChord = chord.notes.length > 1 && chord.notes.find(note => note.valid === true);
+    		if (settings.oors === false) if (chord.notes.filter(note => note.outOfRange === false).length <= 1) isChord = false;
+    		if (isChord) res += '[';
+
+    		for (const note of chord.notes) {
+    			if (!note.valid) {
+    				res += '_';
+    				continue;
+    			}
+
+    			if (note.outOfRange === true) {
+    				if (settings.oors === true) res += `<span style="display:inline-block; border-bottom: 2px solid ${color}">${note.char}</span>`;
+    			} else res += note.char;
+    		}
+
+    		if (isChord) res += ']';
+    		return res + '</span>';
+    	}
+
+    	function render(sheet) {
+    		const negtransposition = -line.transposition;
+    		let result = '';
+
+    		if (!sameTranspositionAsPrevious) {
+    			result += colored_string(`Transpose by: ${negtransposition > 0 ? '+' : ''}${negtransposition}`, 'white');
+    			if (line.difference) result += colored_string(` (${-line.difference > 0 ? '+' : ''}${-line.difference})`, 'white');
+    			result += '\n';
+    		}
+
+    		let chords = sheet.chords;
+
+    		for (let i = 0; i < chords.length; i++) {
+    			if (!chords) {
+    				result += '[bad-midi-file!]<br>';
+    				continue;
+    			}
+
+    			const current = { chord: chords[i] };
+    			current.note = current.chord?.notes[0];
+    			const next = { chord: chords[i + 1] };
+    			next.note = next.chord?.notes[0];
+
+    			if (!current.note) {
+    				continue;
+    			}
+
+    			if (!next.note) {
+    				if (passedNext) {
+    					next.note = passedNext;
+    				} else {
+    					result += colored_chord(current.chord, 'white');
+    					continue;
+    				}
+    			}
+
+    			let beat = current.note.tempo / 1000;
+    			let difference = next.note.playTime - current.note.playTime;
+    			if (current.chord.is_quantized) difference = next.note.playTime - current.chord.notes.slice(-1)[0].playTime;
+    			difference -= 0.5;
+    			let color = colors.long;
+    			if (difference < beat / 16) color = colors.sixtyfourth; else if (difference < beat / 8) color = colors.thirtysecond; else if (difference < beat / 4) color = colors.sixteenth; else if (difference < beat / 2) color = colors.eighth; else if (difference < beat) color = colors.quarter; else if (difference < beat * 2) color = colors.half; else if (difference < beat * 4) color = colors.whole; else if (difference < beat * 8) color = colors.quadruple; else if (difference < beat * 16) color = colors.long; // Or equal to a beat
+    			result += colored_chord(current.chord, color);
+
+    			result += settings.tempoMarks
+    			? colored_string(separator(beat, difference), color)
+    			: ' ';
+    		}
+
+    		return result;
+    	}
+
+    	function updateComment() {
+    		if (comment == '' || comment == '<br>') dispatch('comment', { action: 'remove', index: +index }); else dispatch('comment', { index: +index, action: 'update', comment });
+    	}
+
+    	$$self.$$.on_mount.push(function () {
+    		if (index === undefined && !('index' in $$props || $$self.$$.bound[$$self.$$.props['index']])) {
+    			console.warn("<Line> was created without expected prop 'index'");
+    		}
+
+    		if (line === undefined && !('line' in $$props || $$self.$$.bound[$$self.$$.props['line']])) {
+    			console.warn("<Line> was created without expected prop 'line'");
+    		}
+
+    		if (passedNext === undefined && !('passedNext' in $$props || $$self.$$.bound[$$self.$$.props['passedNext']])) {
+    			console.warn("<Line> was created without expected prop 'passedNext'");
+    		}
+
+    		if (settings === undefined && !('settings' in $$props || $$self.$$.bound[$$self.$$.props['settings']])) {
+    			console.warn("<Line> was created without expected prop 'settings'");
+    		}
+    	});
+
+    	const writable_props = [
+    		'index',
+    		'comment',
+    		'line',
+    		'passedNext',
+    		'sameTranspositionAsPrevious',
+    		'settings'
+    	];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Line> was created with unknown prop '${key}'`);
+    	});
+
+    	function contextmenu_handler(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	function contextmenu_handler_1(event) {
+    		bubble.call(this, $$self, event);
+    	}
+
+    	function span_input_handler() {
+    		comment = this.textContent;
+    		$$invalidate(0, comment);
+    	}
+
+    	const mousedown_handler = e => {
+    		switch (e.button) {
+    			case 0:
+    				// Left
+    				if (comment) return;
+    				if (e.ctrlKey) dispatch('comment', { action: 'add', index: +index }); else dispatch('transpose', { index: +index, by: 1 });
+    				break;
+    			case 1:
+    				// Middle
+    				dispatch('auto', {
+    					index: +index,
+    					sheet: originalSheet,
+    					keepGoing: e.ctrlKey
+    				});
+    				e.preventDefault();
+    				break;
+    			case 2:
+    				// Right
+    				if (e.ctrlKey && comment) dispatch('comment', { action: 'remove', index: +index }); else dispatch('transpose', { index: +index, by: -1 });
+    				break;
+    		}
+    	};
+
+    	$$self.$$set = $$props => {
+    		if ('index' in $$props) $$invalidate(1, index = $$props.index);
+    		if ('comment' in $$props) $$invalidate(0, comment = $$props.comment);
+    		if ('line' in $$props) $$invalidate(8, line = $$props.line);
+    		if ('passedNext' in $$props) $$invalidate(9, passedNext = $$props.passedNext);
+    		if ('sameTranspositionAsPrevious' in $$props) $$invalidate(10, sameTranspositionAsPrevious = $$props.sameTranspositionAsPrevious);
+    		if ('settings' in $$props) $$invalidate(2, settings = $$props.settings);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		colors,
+    		colored_string,
+    		separator,
+    		Sheet,
+    		createEventDispatcher,
+    		dispatch,
+    		index,
+    		comment,
+    		line,
+    		passedNext,
+    		originalSheet,
+    		sheet,
+    		sameTranspositionAsPrevious,
+    		settings,
+    		penalty,
+    		previousChord,
+    		colored_chord,
+    		render,
+    		updateComment
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('dispatch' in $$props) $$invalidate(5, dispatch = $$props.dispatch);
+    		if ('index' in $$props) $$invalidate(1, index = $$props.index);
+    		if ('comment' in $$props) $$invalidate(0, comment = $$props.comment);
+    		if ('line' in $$props) $$invalidate(8, line = $$props.line);
+    		if ('passedNext' in $$props) $$invalidate(9, passedNext = $$props.passedNext);
+    		if ('originalSheet' in $$props) $$invalidate(3, originalSheet = $$props.originalSheet);
+    		if ('sheet' in $$props) $$invalidate(4, sheet = $$props.sheet);
+    		if ('sameTranspositionAsPrevious' in $$props) $$invalidate(10, sameTranspositionAsPrevious = $$props.sameTranspositionAsPrevious);
+    		if ('settings' in $$props) $$invalidate(2, settings = $$props.settings);
+    		if ('penalty' in $$props) penalty = $$props.penalty;
+    		if ('previousChord' in $$props) previousChord = $$props.previousChord;
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*line, originalSheet, settings*/ 268) {
+    			{
+    				previousChord = { notes: [{ playTime: -999999 }] };
+    				$$invalidate(8, line.originalSheet = $$invalidate(3, originalSheet = new Sheet(line.chords)), line);
+    				$$invalidate(4, sheet = originalSheet.transpose(line.transposition, settings.pShifts, settings.pOors, settings.sequentialQuantize));
+    				penalty = 0.000;
+    			}
+    		}
+    	};
+
+    	return [
+    		comment,
+    		index,
+    		settings,
+    		originalSheet,
+    		sheet,
+    		dispatch,
+    		render,
+    		updateComment,
+    		line,
+    		passedNext,
+    		sameTranspositionAsPrevious,
+    		contextmenu_handler,
+    		contextmenu_handler_1,
+    		span_input_handler,
+    		mousedown_handler
+    	];
+    }
+
+    class Line extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, {
+    			index: 1,
+    			comment: 0,
+    			line: 8,
+    			passedNext: 9,
+    			sameTranspositionAsPrevious: 10,
+    			settings: 2
+    		});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Line",
+    			options,
+    			id: create_fragment$1.name
+    		});
+    	}
+
+    	get index() {
+    		throw new Error("<Line>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set index(value) {
+    		throw new Error("<Line>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get comment() {
+    		throw new Error("<Line>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set comment(value) {
+    		throw new Error("<Line>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get line() {
+    		throw new Error("<Line>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set line(value) {
+    		throw new Error("<Line>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get passedNext() {
+    		throw new Error("<Line>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set passedNext(value) {
+    		throw new Error("<Line>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get sameTranspositionAsPrevious() {
+    		throw new Error("<Line>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set sameTranspositionAsPrevious(value) {
+    		throw new Error("<Line>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get settings() {
+    		throw new Error("<Line>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set settings(value) {
+    		throw new Error("<Line>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    /* src\App.svelte generated by Svelte v3.55.1 */
+
+    const { Object: Object_1, console: console_1, document: document_1 } = globals;
+    const file = "src\\App.svelte";
+
+    function get_each_context(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[34] = list[i][0];
+    	child_ctx[35] = list[i][1];
+    	return child_ctx;
+    }
+
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[38] = list[i];
+    	child_ctx[39] = list;
+    	child_ctx[40] = i;
+    	return child_ctx;
+    }
+
+    // (290:0) {#if trackSelection}
+    function create_if_block_1(ctx) {
+    	let section;
+    	let div;
+    	let t0;
+    	let button;
+    	let current;
+    	let mounted;
+    	let dispose;
+    	let each_value_1 = /*tracks*/ ctx[5];
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
+    	const block = {
+    		c: function create() {
+    			section = element("section");
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t0 = space();
+    			button = element("button");
+    			button.textContent = "Import selected tracks";
+    			attr_dev(div, "id", "tracks");
+    			add_location(div, file, 291, 4, 9175);
+    			add_location(button, file, 297, 4, 9352);
+    			attr_dev(section, "id", "track-chooser");
+    			add_location(section, file, 290, 0, 9142);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, section, anchor);
+    			append_dev(section, div);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
+
+    			append_dev(section, t0);
+    			append_dev(section, button);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", /*click_handler*/ ctx[23], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*tracks, selectedTracks*/ 96) {
+    				each_value_1 = /*tracks*/ ctx[5];
+    				validate_each_argument(each_value_1);
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block_1(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(div, null);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value_1.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(section);
+    			destroy_each(each_blocks, detaching);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(290:0) {#if trackSelection}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (293:8) {#each tracks as track, idx}
+    function create_each_block_1(ctx) {
+    	let track;
+    	let updating_selected;
+    	let current;
+
+    	function track_selected_binding(value) {
+    		/*track_selected_binding*/ ctx[22](value, /*idx*/ ctx[40]);
+    	}
+
+    	let track_props = {
+    		track: /*track*/ ctx[38],
+    		idx: /*idx*/ ctx[40] + 1
+    	};
+
+    	if (/*selectedTracks*/ ctx[6][/*idx*/ ctx[40]] !== void 0) {
+    		track_props.selected = /*selectedTracks*/ ctx[6][/*idx*/ ctx[40]];
+    	}
+
+    	track = new Track({ props: track_props, $$inline: true });
+    	binding_callbacks.push(() => bind(track, 'selected', track_selected_binding));
+
+    	const block = {
+    		c: function create() {
+    			create_component(track.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(track, target, anchor);
+    			current = true;
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+    			const track_changes = {};
+    			if (dirty[0] & /*tracks*/ 32) track_changes.track = /*track*/ ctx[38];
+
+    			if (!updating_selected && dirty[0] & /*selectedTracks*/ 64) {
+    				updating_selected = true;
+    				track_changes.selected = /*selectedTracks*/ ctx[6][/*idx*/ ctx[40]];
+    				add_flush_callback(() => updating_selected = false);
+    			}
+
+    			track.$set(track_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(track.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(track.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(track, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(293:8) {#each tracks as track, idx}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (302:0) {#if sheetReady}
+    function create_if_block(ctx) {
+    	let div1;
+    	let div0;
+    	let div0_resize_listener;
+    	let current;
+    	let each_value = Object.entries(/*lines*/ ctx[1]);
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+    	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
+    	const block = {
+    		c: function create() {
+    			div1 = element("div");
+    			div0 = element("div");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			set_style(div0, "width", "max-content");
+    			add_render_callback(() => /*div0_elementresize_handler*/ ctx[24].call(div0));
+    			add_location(div0, file, 303, 8, 9543);
+    			set_style(div1, "background", "#2D2A32");
+    			add_location(div1, file, 302, 4, 9479);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, div0);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div0, null);
+    			}
+
+    			div0_resize_listener = add_resize_listener(div0, /*div0_elementresize_handler*/ ctx[24].bind(div0));
+    			/*div1_binding*/ ctx[25](div1);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty[0] & /*lines, settings, stap, lineTransposed, autoLine, comment*/ 221187) {
+    				each_value = Object.entries(/*lines*/ ctx[1]);
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(div0, null);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+
+    			for (let i = 0; i < each_value.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div1);
+    			destroy_each(each_blocks, detaching);
+    			div0_resize_listener();
+    			/*div1_binding*/ ctx[25](null);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(302:0) {#if sheetReady}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (305:12) {#each Object.entries(lines) as [ index, line ]}
+    function create_each_block(ctx) {
+    	let line;
+    	let current;
+
+    	line = new Line({
+    			props: {
+    				line: /*line*/ ctx[35],
+    				index: /*index*/ ctx[34],
+    				settings: /*settings*/ ctx[0],
+    				comment: /*line*/ ctx[35].comment,
+    				passedNext: /*line*/ ctx[35].continuation,
+    				sameTranspositionAsPrevious: /*stap*/ ctx[17](/*index*/ ctx[34])
+    			},
+    			$$inline: true
+    		});
+
+    	line.$on("transpose", /*lineTransposed*/ ctx[13]);
+    	line.$on("auto", /*autoLine*/ ctx[14]);
+    	line.$on("comment", /*comment*/ ctx[16]);
+
+    	const block = {
+    		c: function create() {
+    			create_component(line.$$.fragment);
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(line, target, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const line_changes = {};
+    			if (dirty[0] & /*lines*/ 2) line_changes.line = /*line*/ ctx[35];
+    			if (dirty[0] & /*lines*/ 2) line_changes.index = /*index*/ ctx[34];
+    			if (dirty[0] & /*settings*/ 1) line_changes.settings = /*settings*/ ctx[0];
+    			if (dirty[0] & /*lines*/ 2) line_changes.comment = /*line*/ ctx[35].comment;
+    			if (dirty[0] & /*lines*/ 2) line_changes.passedNext = /*line*/ ctx[35].continuation;
+    			if (dirty[0] & /*lines*/ 2) line_changes.sameTranspositionAsPrevious = /*stap*/ ctx[17](/*index*/ ctx[34]);
+    			line.$set(line_changes);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(line.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(line.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(line, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block.name,
+    		type: "each",
+    		source: "(305:12) {#each Object.entries(lines) as [ index, line ]}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment(ctx) {
+    	let t0;
+    	let div;
+    	let label;
+    	let t1;
+    	let a;
+    	let t3;
+    	let input;
+    	let t4;
+    	let sheetoptions;
+    	let updating_settings;
+    	let t5;
+    	let t6;
+    	let if_block1_anchor;
+    	let current;
+
+    	function sheetoptions_settings_binding(value) {
+    		/*sheetoptions_settings_binding*/ ctx[20](value);
+    	}
+
+    	let sheetoptions_props = { show: /*sheetReady*/ ctx[4] };
+
+    	if (/*settings*/ ctx[0] !== void 0) {
+    		sheetoptions_props.settings = /*settings*/ ctx[0];
+    	}
+
+    	sheetoptions = new SheetOptions({
+    			props: sheetoptions_props,
+    			$$inline: true
+    		});
+
+    	binding_callbacks.push(() => bind(sheetoptions, 'settings', sheetoptions_settings_binding));
+    	sheetoptions.$on("auto", /*auto*/ ctx[11]);
+    	sheetoptions.$on("lineBasedAuto", /*lineBasedAuto_handler*/ ctx[21]);
+    	sheetoptions.$on("captureSheetAsImage", /*handleCaptureSheetAsImage*/ ctx[15]);
+    	let if_block0 = /*trackSelection*/ ctx[3] && create_if_block_1(ctx);
+    	let if_block1 = /*sheetReady*/ ctx[4] && create_if_block(ctx);
+
+    	const block = {
+    		c: function create() {
+    			t0 = space();
+    			div = element("div");
+    			label = element("label");
+    			t1 = text("Please import a MIDI file:\n        ");
+    			a = element("a");
+    			a.textContent = "How do I use this?";
+    			t3 = space();
+    			input = element("input");
+    			t4 = space();
+    			create_component(sheetoptions.$$.fragment);
+    			t5 = space();
+    			if (if_block0) if_block0.c();
+    			t6 = space();
+    			if (if_block1) if_block1.c();
+    			if_block1_anchor = empty();
+    			document_1.title = "MIDI Converter";
+    			attr_dev(a, "href", "https://github.com/ArijanJ/midi-converter/wiki/Usage");
+    			add_location(a, file, 276, 8, 8767);
+    			attr_dev(label, "for", "file");
+    			add_location(label, file, 274, 4, 8705);
+    			attr_dev(input, "type", "file");
+    			attr_dev(input, "accept", ".mid,.midi");
+    			add_location(input, file, 278, 4, 8870);
+    			set_style(div, "display", "inline-block");
+    			add_location(div, file, 273, 0, 8665);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, div, anchor);
+    			append_dev(div, label);
+    			append_dev(label, t1);
+    			append_dev(label, a);
+    			append_dev(div, t3);
+    			append_dev(div, input);
+    			/*input_binding*/ ctx[19](input);
+    			insert_dev(target, t4, anchor);
+    			mount_component(sheetoptions, target, anchor);
+    			insert_dev(target, t5, anchor);
+    			if (if_block0) if_block0.m(target, anchor);
+    			insert_dev(target, t6, anchor);
+    			if (if_block1) if_block1.m(target, anchor);
+    			insert_dev(target, if_block1_anchor, anchor);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			const sheetoptions_changes = {};
+    			if (dirty[0] & /*sheetReady*/ 16) sheetoptions_changes.show = /*sheetReady*/ ctx[4];
+
+    			if (!updating_settings && dirty[0] & /*settings*/ 1) {
+    				updating_settings = true;
+    				sheetoptions_changes.settings = /*settings*/ ctx[0];
+    				add_flush_callback(() => updating_settings = false);
+    			}
+
+    			sheetoptions.$set(sheetoptions_changes);
+
+    			if (/*trackSelection*/ ctx[3]) {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+
+    					if (dirty[0] & /*trackSelection*/ 8) {
+    						transition_in(if_block0, 1);
+    					}
+    				} else {
+    					if_block0 = create_if_block_1(ctx);
+    					if_block0.c();
+    					transition_in(if_block0, 1);
+    					if_block0.m(t6.parentNode, t6);
+    				}
+    			} else if (if_block0) {
+    				group_outros();
+
+    				transition_out(if_block0, 1, 1, () => {
+    					if_block0 = null;
+    				});
+
+    				check_outros();
+    			}
+
+    			if (/*sheetReady*/ ctx[4]) {
+    				if (if_block1) {
+    					if_block1.p(ctx, dirty);
+
+    					if (dirty[0] & /*sheetReady*/ 16) {
+    						transition_in(if_block1, 1);
+    					}
+    				} else {
+    					if_block1 = create_if_block(ctx);
+    					if_block1.c();
+    					transition_in(if_block1, 1);
+    					if_block1.m(if_block1_anchor.parentNode, if_block1_anchor);
+    				}
+    			} else if (if_block1) {
+    				group_outros();
+
+    				transition_out(if_block1, 1, 1, () => {
+    					if_block1 = null;
+    				});
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(sheetoptions.$$.fragment, local);
+    			transition_in(if_block0);
+    			transition_in(if_block1);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(sheetoptions.$$.fragment, local);
+    			transition_out(if_block0);
+    			transition_out(if_block1);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(div);
+    			/*input_binding*/ ctx[19](null);
+    			if (detaching) detach_dev(t4);
+    			destroy_component(sheetoptions, detaching);
+    			if (detaching) detach_dev(t5);
+    			if (if_block0) if_block0.d(detaching);
+    			if (detaching) detach_dev(t6);
+    			if (if_block1) if_block1.d(detaching);
+    			if (detaching) detach_dev(if_block1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function copyCapturedImage(blob) {
+    	// note: ClipboardItem is not supported by mozilla
+    	try {
+    		navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+    	} catch(err) {
+    		console.error(err);
+    	}
+    }
+
+    function instance($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('App', slots, []);
+    	let fileInput;
+    	let trackSelection = false;
+    	let sheetReady = false;
+    	let MIDIObject;
+    	let tracks;
+
+    	// VP.js/Sheet
+    	let originalSheet;
+
+    	// [true, true, false, true, ...]
+    	let selectedTracks;
+
+    	// For line break calculations
+    	let penalty = 0.000;
+
+    	let error_range = 0.5;
+    	let container;
+    	let notesContainerWidth;
+
+    	onMount(() => {
+    		fileInput.addEventListener(
+    			'change',
+    			async () => {
+    				await fileInput.files[0].arrayBuffer().then(arrbuf => {
+    					MIDIObject = getMIDIFileFromArrayBuffer(arrbuf);
+    					if (!getTempo(MIDIObject).ticksPerBeat) console.error("No ticksPerBeat in this midi file");
+    					$$invalidate(5, tracks = MIDIObject.tracks);
+    					$$invalidate(6, selectedTracks = tracks.map(() => true));
+    					$$invalidate(3, trackSelection = true);
+    					$$invalidate(4, sheetReady = false);
+    					penalty = 0.000;
+    				});
+    			},
+    			false
+    		);
+    	});
+
+    	function shouldBreak(note) {
+    		if (!note) return false;
+    		let tempo_ms = note.tempo / 1000; // Turn 652174 into 652.174
+    		let goal = tempo_ms * settings.beats;
+    		let normalizedPlayTime = note.playTime - penalty;
+
+    		if (normalizedPlayTime + error_range >= goal) {
+    			penalty += normalizedPlayTime;
+    			return true;
+    		}
+    	}
+
+    	let saveSheet = () => {
+    		originalSheet = generateSheet(getEvents(MIDIObject, selectedTracks), settings.quantize, settings.pShifts, settings.pOors, settings.sequentialQuantize);
+    	};
+
+    	let createLines = () => {
+    		$$invalidate(4, sheetReady = false);
+    		if (!originalSheet) return;
+    		const chords = originalSheet.chords;
+    		penalty = 0.000;
+    		$$invalidate(1, lines = []);
+    		let acc = []; // Chord[]
+
+    		for (let i = 0; i <= chords.length; i++) {
+    			const current = { chord: chords[i] };
+    			current.note = current.chord?.notes[0];
+    			const next = { chord: chords[i + 1] };
+    			next.note = next.chord?.notes[0];
+
+    			if (!current.note) {
+    				continue;
+    			}
+
+    			if (shouldBreak(current.note)) {
+    				lines.push({
+    					chords: acc,
+    					transposition: settings.transposition,
+    					continuation: current.note
+    				});
+
+    				acc = [];
+    			}
+
+    			acc.push(current.chord);
+    		}
+
+    		lines.push({
+    			chords: acc,
+    			transposition: 0,
+    			continuation: undefined
+    		}); /* Push the leftovers */
+
+    		$$invalidate(4, sheetReady = true);
+
+    		// Hide TrackChooser
+    		$$invalidate(3, trackSelection = false);
+
+    		(((($$invalidate(1, lines), $$invalidate(18, oldSettings)), $$invalidate(0, settings)), $$invalidate(10, createLines)), $$invalidate(9, saveSheet));
+    	};
+
+    	let oldSettings;
+    	let settings;
+
+    	let auto = () => {
+    		$$invalidate(0, settings.transposition = bestTransposition(originalSheet, 11), settings);
+    		for (let i = 0; i < lines.length; i++) setLineTransposition(i, settings.transposition);
+    	};
+
+    	let lineBasedAuto = (fromLine = 0) => {
+    		let previous = bestTransposition(lines[fromLine].originalSheet, 11, 0, true);
+
+    		for (let index = fromLine; index <= lines.length; index++) {
+    			const line = lines[index];
+    			if (!line) continue;
+
+    			if (index == 0 && fromLine == 0) {
+    				setLineTransposition(0, previous);
+    				continue;
+    			}
+
+    			if (index < fromLine) continue;
+    			const newTransposition = bestTransposition(line.originalSheet, 8, previous, false, settings.lbauto_atleast, previous);
+
+    			// console.log(`Calculating ${line.originalSheet.text()} with previous: ${previous}, got back ${newTransposition}`)
+    			setLineTransposition(index, newTransposition);
+
+    			previous = newTransposition;
+    		}
+
+    		(((($$invalidate(1, lines), $$invalidate(18, oldSettings)), $$invalidate(0, settings)), $$invalidate(10, createLines)), $$invalidate(9, saveSheet));
+    	};
+
+    	let lines = []; // [{ chords: Chord[], transposition?, continuation: undefined, comment: false }, ...]
+
+    	function setLineTransposition(idx, transposition) {
+    		let index = +idx;
+    		$$invalidate(1, lines[index].transposition = transposition, lines);
+    		if (lines[index - 1]) $$invalidate(1, lines[index].difference = lines[index].transposition - lines[index - 1].transposition, lines);
+    		if (lines[index + 1]) $$invalidate(1, lines[index + 1].difference = lines[index + 1].transposition - lines[index].transposition, lines);
+    	}
+
+    	let lineTransposed = e => {
+    		const index = e.detail.index;
+    		const by = e.detail.by;
+
+    		setTimeout(
+    			() => {
+    				setLineTransposition(index, lines[index].transposition + by);
+    			},
+    			0
+    		);
+    	};
+
+    	let autoLine = e => {
+    		const keepGoing = e.detail.keepGoing;
+    		const index = e.detail.index;
+    		const sheet = e.detail.sheet;
+    		let previous = lines[index - 1]?.transposition ?? 0;
+    		setLineTransposition(index, bestTransposition(sheet, 11, previous, 0, 0));
+
+    		if (keepGoing) {
+    			// Transpose all the way down
+    			lineBasedAuto(index);
+    		}
+    	};
+
+    	/**
+     * Takes an image of the sheet, which can then be either copied/downloaded.
+     * The image should be cropped to the maximum measure length via the value notesContainerWidth.
+     * It's value depends on the max-content width of the div where notesContainerWidth is set.
+     * @param {string} mode - A string indicating how the user wants to retrieve the image.
+     * @enum {string} ["download", "copy"]
+     */
+    	function captureSheetAsImage(mode) {
+    		$$invalidate(0, settings.capturingImage = true, settings);
+
+    		setTimeout(
+    			() => Gt(container, { width: notesContainerWidth, scale: 2 }).then(blob => {
+    				if (mode === "copy") {
+    					copyCapturedImage(blob);
+    				} else {
+    					downloadCapturedImage(blob);
+    				}
+
+    				$$invalidate(0, settings.capturingImage = false, settings);
+    			}),
+    			250
+    		);
+    	}
+
+    	function handleCaptureSheetAsImage(event) {
+    		captureSheetAsImage(event.detail.mode);
+    	}
+
+    	function downloadCapturedImage(blob) {
+    		const url = URL.createObjectURL(blob);
+
+    		// create a temporary element to download the image
+    		let filename = fileInput.files[0].name.split(".");
+
+    		filename.pop();
+    		filename = filename.join(".") + ".png";
+    		let linkEl = document.createElement("a");
+    		linkEl.href = url;
+    		linkEl.download = filename;
+    		document.body.appendChild(linkEl);
+    		linkEl.click();
+    		URL.revokeObjectURL(url);
+    		document.body.removeChild(linkEl);
+    	}
+
+    	function comment(e) {
+    		const index = e.detail.index;
+    		const action = e.detail.action;
+    		const comment = e.detail.comment;
+
+    		switch (action) {
+    			case "add":
+    				{
+    					setTimeout(
+    						() => {
+    							// Make sure previous comment, if it exists, gets to update
+    							if (lines[index - 1]?.comment) return;
+
+    							lines.splice(index, 0, { comment: "Add a comment..." });
+    							(((($$invalidate(1, lines), $$invalidate(18, oldSettings)), $$invalidate(0, settings)), $$invalidate(10, createLines)), $$invalidate(9, saveSheet));
+    						},
+    						0
+    					);
+
+    					break;
+    				}
+    			case "remove":
+    				{
+    					lines.splice(index, 1);
+    					(((($$invalidate(1, lines), $$invalidate(18, oldSettings)), $$invalidate(0, settings)), $$invalidate(10, createLines)), $$invalidate(9, saveSheet));
+    					break;
+    				}
+    			case "update":
+    				{
+    					$$invalidate(1, lines[index].comment = comment, lines);
+    				}
+    		}
+    	}
+
+    	/** Checks if a line at index has same transposition as previous non-comment line */
+    	function stap(index) {
+    		const line = lines[index];
+
+    		for (let i = index - 1; i >= 0; i--) {
+    			const previous = lines[i];
+    			if (previous.comment) continue;
+    			return previous.transposition == line.transposition;
+    		}
+    	}
+
+    	const writable_props = [];
+
+    	Object_1.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<App> was created with unknown prop '${key}'`);
+    	});
+
+    	function input_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			fileInput = $$value;
+    			$$invalidate(2, fileInput);
+    		});
+    	}
+
+    	function sheetoptions_settings_binding(value) {
+    		settings = value;
+    		$$invalidate(0, settings);
+    	}
+
+    	const lineBasedAuto_handler = () => {
+    		lineBasedAuto();
+    	};
+
+    	function track_selected_binding(value, idx) {
+    		if ($$self.$$.not_equal(selectedTracks[idx], value)) {
+    			selectedTracks[idx] = value;
+    			$$invalidate(6, selectedTracks);
+    		}
+    	}
+
+    	const click_handler = () => {
+    		saveSheet();
+    		createLines();
+    	};
+
+    	function div0_elementresize_handler() {
+    		notesContainerWidth = this.clientWidth;
+    		$$invalidate(8, notesContainerWidth);
+    	}
+
+    	function div1_binding($$value) {
+    		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
+    			container = $$value;
+    			$$invalidate(7, container);
+    		});
+    	}
+
+    	$$self.$capture_state = () => ({
+    		domToBlob: Gt,
+    		getMIDIFileFromArrayBuffer,
+    		getEvents,
+    		getTempo,
+    		generateSheet,
+    		bestTransposition,
+    		SheetOptions,
+    		Track,
+    		Line,
+    		onMount,
+    		fileInput,
+    		trackSelection,
+    		sheetReady,
+    		MIDIObject,
+    		tracks,
+    		originalSheet,
+    		selectedTracks,
+    		penalty,
+    		error_range,
+    		container,
+    		notesContainerWidth,
+    		shouldBreak,
+    		saveSheet,
+    		createLines,
+    		oldSettings,
+    		settings,
+    		auto,
+    		lineBasedAuto,
+    		lines,
+    		setLineTransposition,
+    		lineTransposed,
+    		autoLine,
+    		captureSheetAsImage,
+    		handleCaptureSheetAsImage,
+    		copyCapturedImage,
+    		downloadCapturedImage,
+    		comment,
+    		stap
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('fileInput' in $$props) $$invalidate(2, fileInput = $$props.fileInput);
+    		if ('trackSelection' in $$props) $$invalidate(3, trackSelection = $$props.trackSelection);
+    		if ('sheetReady' in $$props) $$invalidate(4, sheetReady = $$props.sheetReady);
+    		if ('MIDIObject' in $$props) MIDIObject = $$props.MIDIObject;
+    		if ('tracks' in $$props) $$invalidate(5, tracks = $$props.tracks);
+    		if ('originalSheet' in $$props) originalSheet = $$props.originalSheet;
+    		if ('selectedTracks' in $$props) $$invalidate(6, selectedTracks = $$props.selectedTracks);
+    		if ('penalty' in $$props) penalty = $$props.penalty;
+    		if ('error_range' in $$props) error_range = $$props.error_range;
+    		if ('container' in $$props) $$invalidate(7, container = $$props.container);
+    		if ('notesContainerWidth' in $$props) $$invalidate(8, notesContainerWidth = $$props.notesContainerWidth);
+    		if ('saveSheet' in $$props) $$invalidate(9, saveSheet = $$props.saveSheet);
+    		if ('createLines' in $$props) $$invalidate(10, createLines = $$props.createLines);
+    		if ('oldSettings' in $$props) $$invalidate(18, oldSettings = $$props.oldSettings);
+    		if ('settings' in $$props) $$invalidate(0, settings = $$props.settings);
+    		if ('auto' in $$props) $$invalidate(11, auto = $$props.auto);
+    		if ('lineBasedAuto' in $$props) $$invalidate(12, lineBasedAuto = $$props.lineBasedAuto);
+    		if ('lines' in $$props) $$invalidate(1, lines = $$props.lines);
+    		if ('lineTransposed' in $$props) $$invalidate(13, lineTransposed = $$props.lineTransposed);
+    		if ('autoLine' in $$props) $$invalidate(14, autoLine = $$props.autoLine);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty[0] & /*oldSettings, settings, lines*/ 262147) {
+    			$: {
+    				if (!oldSettings) {
+    					$$invalidate(18, oldSettings = { ...settings });
+    					break $;
+    				}
+
+    				if (oldSettings.transposition != settings.transposition) {
+    					for (let line of lines) {
+    						line.transposition = settings.transposition;
+    					}
+
+    					(((($$invalidate(1, lines), $$invalidate(18, oldSettings)), $$invalidate(0, settings)), $$invalidate(10, createLines)), $$invalidate(9, saveSheet));
+    				} else if (oldSettings.beats != settings.beats) {
+    					createLines();
+    				} else if (oldSettings.quantize != settings.quantize || oldSettings.sequentialQuantize != settings.sequentialQuantize) {
+    					saveSheet();
+    					createLines();
+    					(((($$invalidate(1, lines), $$invalidate(18, oldSettings)), $$invalidate(0, settings)), $$invalidate(10, createLines)), $$invalidate(9, saveSheet));
+    				}
+
+    				$$invalidate(18, oldSettings = { ...settings });
+    			}
+    		}
+    	};
+
+    	return [
+    		settings,
+    		lines,
+    		fileInput,
+    		trackSelection,
+    		sheetReady,
+    		tracks,
+    		selectedTracks,
+    		container,
+    		notesContainerWidth,
+    		saveSheet,
+    		createLines,
+    		auto,
+    		lineBasedAuto,
+    		lineTransposed,
+    		autoLine,
+    		handleCaptureSheetAsImage,
+    		comment,
+    		stap,
+    		oldSettings,
+    		input_binding,
+    		sheetoptions_settings_binding,
+    		lineBasedAuto_handler,
+    		track_selected_binding,
+    		click_handler,
+    		div0_elementresize_handler,
+    		div1_binding
+    	];
+    }
+
+    class App extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance, create_fragment, safe_not_equal, {}, null, [-1, -1]);
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "App",
+    			options,
+    			id: create_fragment.name
+    		});
+    	}
+    }
+
+    var app = new App({
+    	target: document.body
+    });
+
+    return app;
+
+})();
 //# sourceMappingURL=bundle.js.map

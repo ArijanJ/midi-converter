@@ -120,12 +120,14 @@ function generateSheet(events, quantize = 100, shifts = 'Start', oors = 'Start',
     let currentChord = []
     let lastPlaytime = events[0].playTime ?? 0.0
 
-    let nextBPM = 0
-    let nextTempo = 0
+    // default tempo
+    let nextBPM = 120
+    let nextTempo = 500000
 
     // Generate chords
     events.forEach(element => {
-        if(element.subtype == 0x51) { // SET TEMPO META EVENT
+        const isNoteSpeedValid = element.tempo && element.tempoBPM && element.tempo !== 0 && element.tempoBPM !== 0
+        if(isNoteSpeedValid && element.subtype == 0x51) { // SET TEMPO META EVENT
             nextTempo = element.tempo
             nextBPM = element.tempoBPM
             return
