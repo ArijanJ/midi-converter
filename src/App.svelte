@@ -59,7 +59,8 @@
     }
 
     let saveSheet = () => {
-		originalSheet = generateSheet(getEvents(MIDIObject, selectedTracks), settings.quantize, settings.pShifts, settings.pOors, settings.sequentialQuantize)
+		originalSheet = generateSheet(getEvents(MIDIObject, selectedTracks), settings.quantize, settings.pShifts, settings.pOors, settings.sequentialQuantize, settings.bpm)
+        settings.missingTempo = originalSheet.missingTempo
     }
 
 	let createLines = () => {
@@ -114,6 +115,10 @@
             saveSheet()
             createLines()
             lines = lines
+        }
+        else if (oldSettings.bpm != settings.bpm) {
+            saveSheet()
+            createLines()
         }
         oldSettings = { ...settings }
 	}

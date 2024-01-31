@@ -18,7 +18,9 @@
         transposition: 0,
         lbauto_atleast: 4,
         font: fonts[0],
-        capturingImage: false
+        capturingImage: false,
+        missingTempo: false,
+        bpm: 120
     }
 </script>
 
@@ -69,6 +71,16 @@
         <input type='range' id='beats-for-newline' min=1 max=32 bind:value={settings.beats}>
         <span>Every {settings.beats == 1 ? "1 beat" : `${settings.beats} beats`}</span>
     </div>
+
+    {#if settings.missingTempo == true}
+        <div class='tempo'>
+            <label class='slider-label' for='tempo'
+                title="You're able to change this because your MIDI file doesn't have tempo/BPM.">
+                    BPM (?): </label>
+            <input type='range' id='tempo' min=1 max=300 bind:value={settings.bpm}>
+            <span>{settings.bpm}</span>
+        </div>
+    {/if}
 
     <div class='quantize'>
         <label class='slider-label' for='quantize-prompt'>Quantize: </label>
@@ -156,7 +168,7 @@
         margin-bottom: 0;
     }
     
-    .beats, .quantize, .select-label {
+    .beats, .quantize, .select-label, .tempo {
         display: flex;
         flex-direction: row;
     }
