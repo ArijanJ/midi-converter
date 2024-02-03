@@ -178,7 +178,7 @@ const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
 /** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least lowercase letters */
 function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {
     if(!sheet?.chords) return stickTo
-    function countLowercases(sheet) {
+    function calculateScore(sheet) {
         let monochord = []
         for (let chord of sheet.chords) {
             for (let note of chord.notes)
@@ -191,35 +191,37 @@ function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeas
         return Math.abs(uppercaseCount.length-lowercaseCount.length)
     }
 
-    let sticks = countLowercases(sheet.transpose(stickTo))
+    let stickScore = calculateScore(sheet.transpose(stickTo))
 
-    let most = sticks
+    let most = stickScore
     let best = stickTo
 
     function consider(deviation) {
         let contender = sheet.transpose(deviation)
-        let lowercases = countLowercases(contender)
+        let score = calculateScore(contender)
+        // console.log('atleast:', atLeast)
         // console.log([`stickTo: ${stickTo}`,
         //              `Most: ${most}`,
         //              `Original: ${sheet.text()}`,
         //              `Stuck: ${sheet.transpose(stickTo).text()}`,
         //              `Transposed by ${deviation}: ${sheet.transpose(deviation).text()}`,
-        //              `Gained: ${lowercases - most}`].join('\n'))
-        if (lowercases > most) {
+        //              `Score: ${score}`,
+        //              `StartFrom: ${startFrom}`,
+        //              `Gained: ${score - most}`].join('\n'))
+        if (score > most) {
             if (!strict) {
-                let difference = lowercases - most
-                if (difference < atLeast) { // Minimal lowercase gain, not worth it, don't consider
+                let difference = score - most
+                if (difference <= atLeast) { // Minimal lowercase gain, not worth it, don't consider
                     return
                 }
             }
             // console.log(`Good to go with ${most}, transposed by ${deviation}, sheet: ${sheet.text()}`)
-            most = lowercases
+            most = score
             best = deviation
         }
     }
 
-    // Run from stickTo to -deviation, then from stickTo to +deviation
-    for (let i = startFrom; i <= deviation; i++) {
+    for (let i = 0; i <= deviation; i++) {
         consider(stickTo - i)
         consider(stickTo + i)
     }
