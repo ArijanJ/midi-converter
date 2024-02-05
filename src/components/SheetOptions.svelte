@@ -10,6 +10,7 @@
     export let settings = {
         beats: 4,
         quantize: 35,
+        classicChordOrder: true,
         sequentialQuantize: false,
         pShifts: 'Start',
         pOors: 'Start',
@@ -43,7 +44,7 @@
 <div>
     <div class='select-div'>
         <label for='shifts-position'>Place shifted notes at:</label>
-        <select name='shifts-position' id='shifts-position' bind:value={settings.pShifts}>
+        <select disabled={settings.classicChordOrder} name='shifts-position' id='shifts-position' bind:value={settings.pShifts}>
             <option value='Start'>Start</option>
             <option value='End'>End</option>
         </select>
@@ -87,6 +88,11 @@
         <input type='range' id="quantize-prompt" min=1 max=100 bind:value={settings.quantize}>
         <span>{settings.quantize} miliseconds</span>
     </div>
+
+    <label for='classic-chord-order'>
+        <input type='checkbox' id="classic-chord-order" bind:checked={settings.classicChordOrder}>
+        Classic chord order
+    </label>
 
     <label for='order-quantizes'>
         <input type='checkbox' id="order-quantizes" bind:checked={settings.sequentialQuantize}>

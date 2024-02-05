@@ -29,7 +29,7 @@ class Note {
 }
 
 class Chord {
-    constructor(notes, sequentialQuantize = true) {
+    constructor(notes, classicChordOrder = true, sequentialQuantize = true) {
         let is_quantized = false
         let previous_note = notes[0]
         for (let note of notes) {
@@ -50,20 +50,78 @@ class Chord {
                     no_dupes.push(note)
                 }
             })
-            this.notes = no_dupes.sort((a, b) => { return a.displayValue - b.displayValue })
+
+            this.notes = this.#sortChord(no_dupes, classicChordOrder);
         } else {
             if (sequentialQuantize)
                 this.notes = notes
-            else
-                this.notes = notes.sort((a, b) => { return a.displayValue - b.displayValue })
+            else {
+                this.notes = this.#sortChord(notes, classicChordOrder);
+            }
         }
+    }
+
+    #sortChord(notes, classicChordOrder) {
+        return classicChordOrder ? this.#classicChordOrderSort(notes) : notes.sort((a, b) => a.displayValue - b.displayValue);
+    }
+
+    // ordering notes in chords based off the first vp converter created
+    #classicChordOrderSort(notes) {
+        let sortedKeys = [];
+        let numericNotes = [];
+        let upperNotes = [];
+        let lowerNotes = [];
+
+        let startOors = [];
+        let endOors = [];
+
+        let lastNonOorNote;
+
+        // sort by midi value instead of display value first
+        notes = notes.sort((a, b) => a.value - b.value);
+
+        // split-up notes into categories, also find the last non-oor note
+        for (const note of notes) {
+            if (note.outOfRange) {
+                if (note.value - 1024 === note.displayValue) {
+                    startOors.push(note);
+                }
+                else if (note.value + 1024 === note.displayValue) {
+                    endOors.push(note);
+                }
+            }
+            else {
+                if (!isNaN(note.char)) {
+                    numericNotes.push(note);
+                }
+                else if (capitalNotes.includes(note.char)) {
+                    upperNotes.push(note);
+                }
+                else {
+                    lowerNotes.push(note);
+                }
+
+                lastNonOorNote = note;
+            }
+        }
+
+        // determine the order based on the last non-oor note, if any
+        if (lastNonOorNote) {
+            sortedKeys = capitalNotes.includes(lastNonOorNote.char)
+                ?
+                [...numericNotes, ...lowerNotes, ...upperNotes]
+                :
+                [...upperNotes, ...numericNotes, ...lowerNotes]
+        }
+
+        return [...startOors, ...sortedKeys, ...endOors];
     }
 }
 
 class Sheet {
     constructor(chords) { this.chords = chords; this.missingTempo = false }
 
-    transpose(by, shifts='Start', oors='Start', sequentialQuantize=true) { /* Does not mutate */
+    transpose(by, shifts='Start', oors='Start', classicChordOrder =true, sequentialQuantize=true) { /* Does not mutate */
         if (!this.chords) return
         let newChords = []
         this.chords.forEach((chord) => {
@@ -71,7 +129,7 @@ class Sheet {
             chord.notes.forEach((note) => {
                 newChord.push(new Note(note.value + by, note.playTime, note.tempo, note.BPM, note.delta, shifts, oors))
             })
-            newChords.push(new Chord(newChord, sequentialQuantize))
+            newChords.push(new Chord(newChord, classicChordOrder, sequentialQuantize))
         })
         return new Sheet(newChords)
     }
@@ -117,7 +175,7 @@ function validNoteSpeed(event) {
 }
 
 // Takes NOTE_ON and SET_TEMPO events
-function generateSheet(events, quantize = 100, shifts = 'Start', oors = 'Start', sequentialQuantize = true, bpm = 120) /* -> Sheet */ { 
+function generateSheet(events, quantize = 100, shifts = 'Start', oors = 'Start', classicChordOrder = true, sequentialQuantize = true, bpm = 120) /* -> Sheet */ {
     // console.log({ quantize, shifts, oors, sequentialQuantize })
 
     let chords = []
@@ -145,14 +203,14 @@ function generateSheet(events, quantize = 100, shifts = 'Start', oors = 'Start',
             currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
             lastPlaytime = playtime
         } else { // Submit the chord
-            chords.push(new Chord(currentChord, sequentialQuantize))
+            chords.push(new Chord(currentChord, classicChordOrder, sequentialQuantize))
             currentChord = []
             currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors)) // Add the note as first if it's different
             lastPlaytime = playtime
         }
     })
 
-    chords.push(new Chord(currentChord))
+    chords.push(new Chord(currentChord, classicChordOrder))
 
     let resultingSheet = new Sheet(chords)
 
