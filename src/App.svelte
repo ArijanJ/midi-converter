@@ -59,7 +59,7 @@
     }
 
     let saveSheet = () => {
-		originalSheet = generateSheet(getEvents(MIDIObject, selectedTracks), settings.quantize, settings.pShifts, settings.pOors, settings.sequentialQuantize, settings.bpm)
+		originalSheet = generateSheet(getEvents(MIDIObject, selectedTracks), settings.quantize, settings.pShifts, settings.pOors, settings.classicChordOrder, settings.sequentialQuantize, settings.bpm)
         settings.missingTempo = originalSheet.missingTempo
     }
 
@@ -111,7 +111,8 @@
             createLines()
         }
         else if (oldSettings.quantize != settings.quantize ||
-                 oldSettings.sequentialQuantize != settings.sequentialQuantize) {
+                 oldSettings.sequentialQuantize != settings.sequentialQuantize ||
+                 oldSettings.classicChordOrder != settings.classicChordOrder) {
             saveSheet()
             createLines()
             lines = lines
