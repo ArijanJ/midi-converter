@@ -59,7 +59,8 @@
     }
 
     let saveSheet = () => {
-		originalSheet = generateSheet(getEvents(MIDIObject, selectedTracks), settings.quantize, settings.pShifts, settings.pOors, settings.classicChordOrder, settings.sequentialQuantize, settings.bpm)
+        let events = getEvents(MIDIObject, selectedTracks)
+		originalSheet = generateSheet(events, settings)
         settings.missingTempo = originalSheet.missingTempo
     }
 
@@ -81,8 +82,9 @@
                 chord: chords[i+1],
             }; next.note = next.chord?.notes[0]
 
-            if (!current.note) { continue }
-            if (shouldBreak(current.note)) {
+            if (!current.note || !current.chord) continue
+
+            if (shouldBreak(current.note) && acc.length > 0) {
                 lines.push({ chords: acc, transposition: settings.transposition, continuation: current.note })
                 acc = []
             }
@@ -134,14 +136,15 @@
         let previous = bestTransposition(lines[fromLine].originalSheet, 11, 0, true)
 
         for (let index = fromLine; index <= lines.length; index++) {
-            const line = lines[index]; if (!line) continue
-            if (index == 0 && fromLine == 0) { setLineTransposition(0, previous); continue }
-            if (index < fromLine) continue
+            const line = lines[index]
+            if (!line) continue
+
             const newTransposition = bestTransposition(line.originalSheet, 8, previous, false, settings.lbauto_atleast, previous)
-            // console.log(`Calculating ${line.originalSheet.text()} with previous: ${previous}, got back ${newTransposition}`)
             setLineTransposition(index, newTransposition)
+
             previous = newTransposition
         }
+        
         lines = lines
     }
 

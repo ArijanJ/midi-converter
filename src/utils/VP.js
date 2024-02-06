@@ -32,6 +32,7 @@ class Chord {
     constructor(notes, classicChordOrder = true, sequentialQuantize = true) {
         let is_quantized = false
         let previous_note = notes[0]
+
         for (let note of notes) {
             if (note.playTime != previous_note.playTime) {
                 is_quantized = true
@@ -44,6 +45,7 @@ class Chord {
         if (!is_quantized) {
             let values = []
             let no_dupes = []
+
             notes.forEach(note => {
                 if (!(values.includes(note.value))) {
                     values.push(note.value)
@@ -52,7 +54,7 @@ class Chord {
             })
 
             this.notes = this.#sortChord(no_dupes, classicChordOrder);
-        } else {
+        } else if (is_quantized) {
             if (sequentialQuantize)
                 this.notes = notes
             else {
@@ -121,14 +123,17 @@ class Chord {
 class Sheet {
     constructor(chords) { this.chords = chords; this.missingTempo = false }
 
-    transpose(by, shifts='Start', oors='Start', classicChordOrder =true, sequentialQuantize=true) { /* Does not mutate */
+    transpose(by, shifts='Start', oors='Start', classicChordOrder=true, sequentialQuantize=true) { /* Returns a new sheet */
         if (!this.chords) return
         let newChords = []
+
         this.chords.forEach((chord) => {
             let newChord = []
+
             chord.notes.forEach((note) => {
                 newChord.push(new Note(note.value + by, note.playTime, note.tempo, note.BPM, note.delta, shifts, oors))
             })
+
             newChords.push(new Chord(newChord, classicChordOrder, sequentialQuantize))
         })
         return new Sheet(newChords)
@@ -143,6 +148,7 @@ class Sheet {
         return notes
     }
 
+    /** Returns the approximate text representation of the sheet for debugging purposes */
     text() {
         let result = '' 
 
@@ -174,49 +180,68 @@ function validNoteSpeed(event) {
     return event.tempo && event.tempoBPM && event.tempo !== 0 && event.tempoBPM !== 0
 }
 
-// Takes NOTE_ON and SET_TEMPO events
-function generateSheet(events, quantize = 100, shifts = 'Start', oors = 'Start', classicChordOrder = true, sequentialQuantize = true, bpm = 120) /* -> Sheet */ {
-    // console.log({ quantize, shifts, oors, sequentialQuantize })
+function generateSheet(events /* Only NOTE_ON & SET_TEMPO events */, settings) /* -> Sheet */ {
+    let quantize = settings.quantize
+    let shifts = settings.pShifts
+    let oors = settings.pOors
+    let classicChordOrder = settings.classicChordOrder
+    let sequentialQuantize = settings.sequentialQuantize
+    let bpm = settings.bpm
 
     let chords = []
     let currentChord = []
-    let lastPlaytime = events[0].playTime ?? 0.0
+    let lastPlaytime = undefined
 
     let hasTempo = false
-    // default tempo
+
     let nextBPM = bpm
     let nextTempo = bpm*4166.66 // Magic number
-    // let nextTempo = 500000
 
     // Generate chords
     events.forEach(element => {
-        if(element.subtype == 0x51 && validNoteSpeed(element)) { // SET TEMPO META EVENT
+        // if event is SET_TEMPO
+        if (element.subtype == 0x51 && validNoteSpeed(element)) {
             hasTempo = true
             nextTempo = element.tempo
             nextBPM = element.tempoBPM
             return
-        } // else NOTE_ON
+        } 
+        // event is NOTE_ON
         const key       =  element.param1
         const playtime  =  element.playTime
         const delta     =  element.delta
-        if(Math.abs(playtime - lastPlaytime) < quantize) {
+
+        if (!lastPlaytime) lastPlaytime = playtime
+
+        if (Math.abs(playtime - lastPlaytime) < quantize) {
             currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
             lastPlaytime = playtime
-        } else { // Submit the chord
+        } else {
+            if (currentChord.length == 0) {
+                lastPlaytime = undefined
+                currentChord = []
+                return
+            }
+
+            // Submit the chord and start the next one
             chords.push(new Chord(currentChord, classicChordOrder, sequentialQuantize))
+
             currentChord = []
-            currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors)) // Add the note as first if it's different
+            currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
+
             lastPlaytime = playtime
         }
     })
 
+    // Final chord insertion to make sure no notes are left
     chords.push(new Chord(currentChord, classicChordOrder))
 
     let resultingSheet = new Sheet(chords)
 
-    if (!hasTempo) { 
+    if (!hasTempo)
         console.log(`No tempo found in sheet, set to ${nextBPM}/${nextTempo}`); 
-    }; resultingSheet.missingTempo = !hasTempo
+
+    resultingSheet.missingTempo = !hasTempo
 
     return resultingSheet
 }
@@ -233,9 +258,10 @@ const vpScale =
 
 const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
 
-/** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least lowercase letters */
+/** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least "effort" to shift */
 function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {
     if(!sheet?.chords) return stickTo
+
     function calculateScore(sheet) {
         let monochord = []
         for (let chord of sheet.chords) {
@@ -283,8 +309,6 @@ function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeas
         consider(stickTo - i)
         consider(stickTo + i)
     }
-
-    // console.log(`Giving back ${best}`)
     return best
 }
 
