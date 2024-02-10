@@ -211,16 +211,15 @@ function generateSheet(events /* Only NOTE_ON & SET_TEMPO events */, settings) /
         const playtime = element.playTime
         const delta    = element.delta
 
-        console.log(quantize)
-        if (!lastPlaytime) lastPlaytime = 0
+        if (lastPlaytime == undefined)
+            lastPlaytime = playtime
 
         if (Math.abs(playtime - lastPlaytime) < quantize) {
             currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
             lastPlaytime = playtime
         } else {
             if (currentChord.length == 0) {
-                lastPlaytime = undefined
-                currentChord = []
+                lastPlaytime = playtime
                 return
             }
 
@@ -262,8 +261,6 @@ const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
 /** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least "effort" to shift */
 function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {
     if(!sheet?.chords) return stickTo
-
-    console.log(sheet.chords)
 
     function calculateScore(sheet) {
         let monochord = []
