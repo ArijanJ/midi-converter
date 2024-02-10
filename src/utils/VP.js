@@ -190,7 +190,7 @@ function generateSheet(events /* Only NOTE_ON & SET_TEMPO events */, settings) /
 
     let chords = []
     let currentChord = []
-    let lastPlaytime = 0
+    let lastPlaytime = undefined
 
     let hasTempo = false
 
