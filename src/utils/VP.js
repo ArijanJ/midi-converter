@@ -190,7 +190,7 @@ function generateSheet(events /* Only NOTE_ON & SET_TEMPO events */, settings) /
 
     let chords = []
     let currentChord = []
-    let lastPlaytime = undefined
+    let lastPlaytime = 0
 
     let hasTempo = false
 
@@ -207,11 +207,12 @@ function generateSheet(events /* Only NOTE_ON & SET_TEMPO events */, settings) /
             return
         } 
         // event is NOTE_ON
-        const key       =  element.param1
-        const playtime  =  element.playTime
-        const delta     =  element.delta
+        const key      = element.param1
+        const playtime = element.playTime
+        const delta    = element.delta
 
-        if (!lastPlaytime) lastPlaytime = playtime
+        console.log(quantize)
+        if (!lastPlaytime) lastPlaytime = 0
 
         if (Math.abs(playtime - lastPlaytime) < quantize) {
             currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
@@ -261,6 +262,8 @@ const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
 /** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least "effort" to shift */
 function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {
     if(!sheet?.chords) return stickTo
+
+    console.log(sheet.chords)
 
     function calculateScore(sheet) {
         let monochord = []
@@ -321,13 +324,11 @@ function separator(beat, difference) {
         return ' - '
     if (difference < beat * 2)
         return ', '
-    if (difference < beat * 2.5)
-        return '. '
     if (difference < beat * 3)
-        return '.. '
-    if (difference < beat * 4)
         return '... '
-    else return '\n' // Long pause
+    if (difference < beat * 4)
+        return '.... '
+    else return '...... '
 }
 
 export { vpScale, Sheet, Note, Chord, generateSheet, bestTransposition, separator }

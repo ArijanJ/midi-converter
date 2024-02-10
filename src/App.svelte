@@ -293,6 +293,18 @@
     on:auto={auto}
     on:lineBasedAuto={() => { lineBasedAuto() }}
     on:captureSheetAsImage={handleCaptureSheetAsImage}
+    on:copyText={() => {
+        settings.tempoMarks = true
+        setTimeout(() => {
+            let text = ''
+            let linesElement = container.querySelector('div.viewer').parentElement
+            for (let line of linesElement.children) {
+                if (!line?.innerText) continue
+                text += line.children[0]?.innerText + '\n'
+            }
+            navigator.clipboard.writeText(text)
+        }, 0)
+    }}
     bind:settings
 />
 

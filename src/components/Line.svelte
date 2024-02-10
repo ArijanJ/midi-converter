@@ -48,8 +48,12 @@
             if (!note.valid) { res += '_'; continue }
 
             if (note.outOfRange === true) {
-                if (settings.oors === true)
-                res += `<span style="display:inline-block; border-bottom: 2px solid ${color}">${note.char}</span>`
+                if (settings.oors === true) {
+                    if (settings.tempoMarks)
+                        res += colored_string(`${settings.oorPrefix}${note.char}`, color)
+                    else
+                        res += `<span style="display:inline-block; border-bottom: 2px solid ${color}">${note.char}</span>`
+                }
             } else res += note.char
         }
 
@@ -63,9 +67,9 @@
 
         let result = '' 
         if (!sameTranspositionAsPrevious) {
-            result += colored_string(`Transpose by: ${negtransposition > 0 ? '+' : ''}${negtransposition}`, 'white')
-            if (line.difference) result += colored_string(` (${-line.difference > 0 ? '+' : ''}${-line.difference})`, 'white')
-            result += '\n'
+            let text = `Transpose by: ${negtransposition > 0 ? '+' : ''}${negtransposition}`
+            if (line.difference) text += ` (${-line.difference > 0 ? '+' : ''}${-line.difference})`
+            result += colored_string(text + '\n', 'white')
         }
 
         let chords = sheet.chords

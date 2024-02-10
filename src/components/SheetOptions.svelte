@@ -16,6 +16,7 @@
         pOors: 'Start',
         oors: true,
         tempoMarks: false,
+        oorPrefix: '\\',
         transposition: 0,
         lbauto_atleast: 4,
         font: fonts[0],
@@ -108,6 +109,17 @@
         <input type='checkbox' id="tempo-checkbox" bind:checked={settings.tempoMarks}>
         Show tempo marks
     </label>
+
+    {#if settings.tempoMarks}
+    <div>
+        <label for="oor-prefix">Out-of-range prefix:</label>
+        <input type='text' id="oor-prefix" bind:value={settings.oorPrefix}>
+    </div>
+    {/if}
+
+    <button on:click={ () => dispatch("copyText") }>
+        Copy Text
+    </button>
 
     <button
         disabled={settings.capturingImage}
