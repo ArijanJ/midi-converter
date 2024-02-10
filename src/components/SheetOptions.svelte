@@ -110,7 +110,7 @@
         Show tempo marks
     </label>
 
-    {#if settings.tempoMarks}
+    {#if settings.oors && settings.tempoMarks}
     <div>
         <label for="oor-prefix">Out-of-range prefix:</label>
         <input type='text' id="oor-prefix" bind:value={settings.oorPrefix}>
