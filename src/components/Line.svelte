@@ -34,13 +34,13 @@
     let penalty = 0.000
     let previousChord = { notes: [{ playTime: -999999 }] }
 
-    function colored_chord(chord, color) {
+    function colored_chord(chord, color, separator = ' ') {
         let res = `<span style="color:${color}">`
 
         let isChord = (chord.notes.length > 1 && chord.notes.find(note => note.valid === true))
         if (settings.oors === false)
-        if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
-            isChord = false
+            if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
+                isChord = false
 
         if (isChord) res += '['
 
@@ -49,10 +49,7 @@
 
             if (note.outOfRange === true) {
                 if (settings.oors === true) {
-                    if (settings.tempoMarks)
-                        res += colored_string(`${settings.oorPrefix}${note.char}`, color)
-                    else
-                        res += `<span style="display:inline-block; border-bottom: 2px solid ${color}">${note.char}</span>`
+                    res += `<span style="display:inline-block; border-bottom: 2px solid ${color}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}</span>`
                 }
             } else res += note.char
         }
@@ -120,7 +117,15 @@
                 color = colors.long
 
             result += colored_chord(current.chord, color)
-            result += (settings.tempoMarks ? colored_string(separator(beat, difference), color) : ' ')
+
+            if (settings.tempoMarks) { // what a mess
+                if (!settings.oors)
+                    if (current.chord.notes.some(note => note.outOfRange == false))
+                        result += colored_string(separator(beat, difference), color)
+                    else result += ' '
+                else result += colored_string(separator(beat, difference), color)
+            } else 
+                result += ' '
         }
         return result
     }
