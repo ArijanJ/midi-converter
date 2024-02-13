@@ -121,6 +121,10 @@
         Copy Text
     </button>
 
+    <button on:click={ () => dispatch("copyTransposes") }>
+        Copy Transposes
+    </button>
+
     <button
         disabled={settings.capturingImage}
         on:click={() => dispatch("captureSheetAsImage", {mode: "download"})}

@@ -179,6 +179,23 @@
         }
     }
 
+    let getTransposesOfSheet = () => {
+        let transposes = lines.reduce((acc, line, i) => {
+            if (i === 0 || (lines[i-1]?.transposition ?? 0) !== line.transposition) {
+                acc.push(-line.transposition);
+            }
+
+            return acc;
+        }, []);
+
+        return transposes
+    }
+
+    let copyTransposes = () => {
+        let transposes = getTransposesOfSheet();
+        navigator.clipboard.writeText(transposes.join(" "));
+    }
+
     /**
      * Takes an image of the sheet, which can then be either copied/downloaded.
      * The image should be cropped to the maximum measure length via the value notesContainerWidth.
@@ -305,6 +322,7 @@
             navigator.clipboard.writeText(text)
         }, 0)
     }}
+    on:copyTransposes={copyTransposes}
     bind:settings
 />
 
