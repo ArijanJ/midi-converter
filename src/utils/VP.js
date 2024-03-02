@@ -15,6 +15,10 @@ class Note {
         this.valid      = (value >= 21 && value <= 108)
         this.outOfRange = (value <= 35 || value >=  97)
 
+        if (this.outOfRange) {
+            this.char = oorUnicodeEqMap[this.char]
+        }
+
         // Make sure that capital notes go before lowercase ones
         if (capitalNotes.includes(this.char)) {
             if (shifts === 'Start') this.displayValue = value - lastPossibleNote
@@ -257,6 +261,38 @@ const vpScale =
     `yuiopasdfghj`
 
 const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
+
+const lowerOorScale = lowercases.slice(0, 15)
+const upperOorScale = lowercases.slice(15, 27)
+const oorUnicodeEqMap = {
+    "1": "𝟏",
+    "2": "𝟐",
+    "3": "𝟑",
+    "4": "𝟒",
+    "5": "𝟓",
+    "6": "𝟔",
+    "7": "𝟕",
+    "8": "𝟴",
+    "9": "𝟵",
+    "0": "ʘ",
+    "q": "𝑸",
+    "w": "𝑾",
+    "e": "𝑬",
+    "r": "𝓡",
+    "t": "𝑻",
+    "y": '𝒀',
+    "u": '𝑼',
+    "i": 'ꀤ',
+    "o": '𝑶',
+    "p": '𝑷',
+    "a": '𝘼',
+    "s": '𝑺',
+    "d": '𝑫',
+    "f": '𝑭',
+    "g": '𝑮',
+    "h": '𝑯',
+    "j": '𝙟',
+}
 
 /** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least "effort" to shift */
 function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {
