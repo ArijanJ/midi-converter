@@ -1,6 +1,7 @@
 <script>
     import { colors, colored_string } from "../utils/Rendering.js"
     import { separator } from "../utils/VP.js"
+    import { lowerOorScale, upperOorScale } from "../utils/VP.js"
     import { Sheet } from "../utils/VP.js"
 
     import { createEventDispatcher } from "svelte";
@@ -43,9 +44,13 @@
             if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
                 isChord = false
 
+        const oorSeparator = "'";
         let nonOors = chord.notes.filter(note => note.outOfRange === false);
+        let lowerOors = chord.notes.filter(note => note.outOfRange === true && lowerOorScale.includes(note.originalChar))
+        let upperOors = chord.notes.filter(note => note.outOfRange === true && upperOorScale.includes(note.originalChar))
         let needsOorsSeperators = nonOors.length > 0 && chord.notes.some(note => note.outOfRange);
         const [firstNonOor, lastNonOor] = [nonOors[0], nonOors[nonOors.length - 1]]
+        const [lastLowerOor, firstUpperOor] = [lowerOors[lowerOors.length - 1], upperOors[0]]
 
         if (isChord) res += '['
 
@@ -54,11 +59,18 @@
 
             if (note.outOfRange === true) {
                 if (settings.oors === true) {
+                    if (nonOors.length === 0 && note === firstUpperOor) {
+                        res += oorSeparator
+                    }
+
                     res += `<span style="${oorSpanStyle}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}</span>`
+
+                    if (nonOors.length === 0 && note === lastLowerOor) {
+                        res += oorSeparator
+                    }
                 }
             }
             else {
-                const oorSeparator = "'";
 
                 if (settings.oors === true && needsOorsSeperators && (settings.pOors === "Start" || settings.pOors === "Inorder") && note === firstNonOor) {
                     res += oorSeparator

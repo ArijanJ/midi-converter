@@ -9,6 +9,7 @@ class Note {
         this.playTime   =  playTime
         this.delta      =  delta
         this.char       =  vpScale[value - firstPossibleNote]
+        this.originalChar = this.char;
         this.tempo      =  tempo
         this.BPM        =  BPM
 
@@ -270,8 +271,8 @@ const vpScale =
 
 const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
 
-const lowerOorScale = lowercases.slice(0, 15)
-const upperOorScale = lowercases.slice(15, 27)
+export const lowerOorScale = lowercases.slice(0, 15)
+export const upperOorScale = lowercases.slice(15, 27)
 const oorUnicodeEqMap = {
     "1": "𝟏",
     "2": "𝟐",
