@@ -71,14 +71,13 @@
                 }
             }
             else {
-
-                if (settings.oors === true && needsOorsSeperators && (settings.pOors === "Start" || settings.pOors === "Inorder") && note === firstNonOor) {
+                if (settings.oors === true && needsOorsSeperators && note === firstNonOor) {
                     res += oorSeparator
                 }
 
                 res += note.char
 
-                if (settings.oors === true && needsOorsSeperators && (settings.pOors === "End" || settings.pOors === "Inorder") && note === lastNonOor) {
+                if (settings.oors === true && needsOorsSeperators && note === lastNonOor) {
                     res += oorSeparator
                 }
             }
