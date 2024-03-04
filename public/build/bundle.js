@@ -5007,7 +5007,7 @@ var app = (function () {
     			attr_dev(span, "contenteditable", "true");
     			attr_dev(span, "class", "comment svelte-jszitz");
     			if (/*comment*/ ctx[0] === void 0) add_render_callback(() => /*span_input_handler*/ ctx[13].call(span));
-    			add_location(span, file$1, 189, 12, 7442);
+    			add_location(span, file$1, 189, 12, 7416);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -5073,10 +5073,10 @@ var app = (function () {
     			div0 = element("div");
     			if_block.c();
     			attr_dev(div0, "class", "line svelte-jszitz");
-    			add_location(div0, file$1, 168, 4, 6428);
+    			add_location(div0, file$1, 168, 4, 6402);
     			attr_dev(div1, "class", "viewer svelte-jszitz");
     			set_style(div1, "font-family", /*settings*/ ctx[2].font);
-    			add_location(div1, file$1, 167, 0, 6336);
+    			add_location(div1, file$1, 167, 0, 6310);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5158,7 +5158,7 @@ var app = (function () {
     		let nonOors = chord.notes.filter(note => note.outOfRange === false);
     		let lowerOors = chord.notes.filter(note => note.outOfRange === true && lowerOorScale.includes(note.originalChar));
     		let upperOors = chord.notes.filter(note => note.outOfRange === true && upperOorScale.includes(note.originalChar));
-    		let needsOorsSeperators = nonOors.length > 0 && chord.notes.some(note => note.outOfRange);
+    		let needsOorsSeperators = settings.oors === true && nonOors.length > 0 && chord.notes.some(note => note.outOfRange);
     		const [firstNonOor, lastNonOor] = [nonOors[0], nonOors[nonOors.length - 1]];
     		const [lastLowerOor, firstUpperOor] = [lowerOors[lowerOors.length - 1], upperOors[0]];
     		if (isChord) res += '[';
@@ -5182,13 +5182,13 @@ var app = (function () {
     					}
     				}
     			} else {
-    				if (settings.oors === true && needsOorsSeperators && note === firstNonOor) {
+    				if (needsOorsSeperators && note === firstNonOor) {
     					res += oorSeparator;
     				}
 
     				res += note.char;
 
-    				if (settings.oors === true && needsOorsSeperators && note === lastNonOor) {
+    				if (needsOorsSeperators && note === lastNonOor) {
     					res += oorSeparator;
     				}
     			}

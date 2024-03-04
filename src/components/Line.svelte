@@ -48,7 +48,7 @@
         let nonOors = chord.notes.filter(note => note.outOfRange === false);
         let lowerOors = chord.notes.filter(note => note.outOfRange === true && lowerOorScale.includes(note.originalChar))
         let upperOors = chord.notes.filter(note => note.outOfRange === true && upperOorScale.includes(note.originalChar))
-        let needsOorsSeperators = nonOors.length > 0 && chord.notes.some(note => note.outOfRange);
+        let needsOorsSeperators = settings.oors === true && nonOors.length > 0 && chord.notes.some(note => note.outOfRange);
         const [firstNonOor, lastNonOor] = [nonOors[0], nonOors[nonOors.length - 1]]
         const [lastLowerOor, firstUpperOor] = [lowerOors[lowerOors.length - 1], upperOors[0]]
 
@@ -71,13 +71,13 @@
                 }
             }
             else {
-                if (settings.oors === true && needsOorsSeperators && note === firstNonOor) {
+                if (needsOorsSeperators && note === firstNonOor) {
                     res += oorSeparator
                 }
 
                 res += note.char
 
-                if (settings.oors === true && needsOorsSeperators && note === lastNonOor) {
+                if (needsOorsSeperators && note === lastNonOor) {
                     res += oorSeparator
                 }
             }
