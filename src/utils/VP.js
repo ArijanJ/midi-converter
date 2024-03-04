@@ -15,10 +15,6 @@ class Note {
         this.valid      = (value >= 21 && value <= 108)
         this.outOfRange = (value <= 35 || value >=  97)
 
-        if (this.outOfRange) {
-            this.char = oorUnicodeEqMap[this.char]
-        }
-
         // Make sure that capital notes go before lowercase ones
         if (capitalNotes.includes(this.char)) {
             if (shifts === 'Start') this.displayValue = value - lastPossibleNote
@@ -27,6 +23,18 @@ class Note {
         else if (this.outOfRange) {
             if (oors === 'Start') this.displayValue = value - 1024
             else if (oors == 'End') this.displayValue = value + 1024
+            else {
+                // Inorder
+                if (lowerOorScale.includes(this.char)) {
+                    this.displayValue = value - 1024
+                }
+                else {
+                    this.displayValue = value + 1024
+                }
+            }
+
+            // unicode equivalent lookalike
+            this.char = oorUnicodeEqMap[this.char]
         }
         else this.displayValue = value
     }
@@ -282,7 +290,7 @@ const oorUnicodeEqMap = {
     "t": "𝑻",
     "y": '𝒀',
     "u": '𝑼',
-    "i": 'ꀤ',
+    "i": '𝗶',
     "o": '𝑶',
     "p": '𝑷',
     "a": '𝘼',
@@ -291,7 +299,7 @@ const oorUnicodeEqMap = {
     "f": '𝑭',
     "g": '𝑮',
     "h": '𝑯',
-    "j": '𝙟',
+    "j": '𝗝',
 }
 
 /** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least "effort" to shift */

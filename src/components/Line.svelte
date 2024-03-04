@@ -35,12 +35,17 @@
     let previousChord = { notes: [{ playTime: -999999 }] }
 
     function colored_chord(chord, color, separator = ' ') {
-        let res = `<span style="color:${color}">`
-
         let isChord = (chord.notes.length > 1 && chord.notes.find(note => note.valid === true))
+
+        let res = `<span style="color:${color}; ${isChord ? "display: inline-flex;" : ""}">`
+        let oorSpanStyle = `display:inline-block; border-bottom: 2px solid ${color};`;
         if (settings.oors === false)
             if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
                 isChord = false
+
+        let nonOors = chord.notes.filter(note => note.outOfRange === false);
+        let needsOorsSeperators = nonOors.length > 0 && chord.notes.some(note => note.outOfRange);
+        const [firstNonOor, lastNonOor] = [nonOors[0], nonOors[nonOors.length - 1]]
 
         if (isChord) res += '['
 
@@ -49,9 +54,22 @@
 
             if (note.outOfRange === true) {
                 if (settings.oors === true) {
-                    res += `<span style="display:inline-block; border-bottom: 2px solid ${color}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}</span>`
+                    res += `<span style="${oorSpanStyle}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}</span>`
                 }
-            } else res += note.char
+            }
+            else {
+                const oorSeparator = "'";
+
+                if (settings.oors === true && needsOorsSeperators && (settings.pOors === "Start" || settings.pOors === "Inorder") && note === firstNonOor) {
+                    res += oorSeparator
+                }
+
+                res += note.char
+
+                if (settings.oors === true && needsOorsSeperators && (settings.pOors === "End" || settings.pOors === "Inorder") && note === lastNonOor) {
+                    res += oorSeparator
+                }
+            }
         }
 
         if (isChord) res += ']'

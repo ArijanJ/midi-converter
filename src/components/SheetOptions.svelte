@@ -13,7 +13,7 @@
         classicChordOrder: true,
         sequentialQuantize: false,
         pShifts: 'Start',
-        pOors: 'Start',
+        pOors: 'Inorder',
         oors: true,
         tempoMarks: false,
         oorPrefix: '\\',
@@ -54,6 +54,7 @@
     <div class='select-div'>
         <label for='oors-position'>Place out of range notes at:</label>
         <select name='oors-position' id='oors-position' bind:value={settings.pOors}>
+            <option value='Inorder'>Inorder</option>
             <option value='Start'>Start</option>
             <option value='End'>End</option>
         </select>

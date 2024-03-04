@@ -3182,10 +3182,6 @@ var app = (function () {
             this.valid      = (value >= 21 && value <= 108);
             this.outOfRange = (value <= 35 || value >=  97);
 
-            if (this.outOfRange) {
-                this.char = oorUnicodeEqMap[this.char];
-            }
-
             // Make sure that capital notes go before lowercase ones
             if (capitalNotes.includes(this.char)) {
                 if (shifts === 'Start') this.displayValue = value - lastPossibleNote;
@@ -3194,6 +3190,18 @@ var app = (function () {
             else if (this.outOfRange) {
                 if (oors === 'Start') this.displayValue = value - 1024;
                 else if (oors == 'End') this.displayValue = value + 1024;
+                else {
+                    // Inorder
+                    if (lowerOorScale.includes(this.char)) {
+                        this.displayValue = value - 1024;
+                    }
+                    else {
+                        this.displayValue = value + 1024;
+                    }
+                }
+
+                // unicode equivalent lookalike
+                this.char = oorUnicodeEqMap[this.char];
             }
             else this.displayValue = value;
         }
@@ -3428,6 +3436,8 @@ var app = (function () {
         `yuiopasdfghj`;
 
     const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm';
+
+    const lowerOorScale = lowercases.slice(0, 15);
     const oorUnicodeEqMap = {
         "1": "𝟏",
         "2": "𝟐",
@@ -3446,7 +3456,7 @@ var app = (function () {
         "t": "𝑻",
         "y": '𝒀',
         "u": '𝑼',
-        "i": 'ꀤ',
+        "i": '𝗶',
         "o": '𝑶',
         "p": '𝑷',
         "a": '𝘼',
@@ -3455,7 +3465,7 @@ var app = (function () {
         "f": '𝑭',
         "g": '𝑮',
         "h": '𝑯',
-        "j": '𝙟',
+        "j": '𝗝',
     };
 
     /** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least "effort" to shift */
@@ -3572,62 +3582,63 @@ var app = (function () {
     	let select1;
     	let option2;
     	let option3;
-    	let t21;
+    	let option4;
+    	let t22;
     	let div4;
     	let label4;
-    	let t23;
-    	let select2;
     	let t24;
+    	let select2;
+    	let t25;
     	let div5;
     	let label5;
-    	let t26;
-    	let input2;
     	let t27;
-    	let span1;
+    	let input2;
     	let t28;
+    	let span1;
+    	let t29;
 
-    	let t29_value = (/*settings*/ ctx[0].beats == 1
+    	let t30_value = (/*settings*/ ctx[0].beats == 1
     	? "1 beat"
     	: `${/*settings*/ ctx[0].beats} beats`) + "";
 
-    	let t29;
     	let t30;
     	let t31;
+    	let t32;
     	let div6;
     	let label6;
-    	let t33;
-    	let input3;
     	let t34;
-    	let span2;
-    	let t35_value = /*settings*/ ctx[0].quantize + "";
+    	let input3;
     	let t35;
+    	let span2;
+    	let t36_value = /*settings*/ ctx[0].quantize + "";
     	let t36;
     	let t37;
+    	let t38;
     	let label7;
     	let input4;
-    	let t38;
     	let t39;
+    	let t40;
     	let label8;
     	let input5;
-    	let t40;
     	let t41;
+    	let t42;
     	let label9;
     	let input6;
-    	let t42;
     	let t43;
+    	let t44;
     	let label10;
     	let input7;
-    	let t44;
     	let t45;
     	let t46;
+    	let t47;
     	let button2;
-    	let t48;
+    	let t49;
     	let button3;
-    	let t50;
+    	let t51;
     	let button4;
     	let button4_disabled_value;
-    	let t51;
     	let t52;
+    	let t53;
     	let style;
     	let mounted;
     	let dispose;
@@ -3691,188 +3702,193 @@ var app = (function () {
     			t18 = space();
     			select1 = element("select");
     			option2 = element("option");
-    			option2.textContent = "Start";
+    			option2.textContent = "Inorder";
     			option3 = element("option");
-    			option3.textContent = "End";
-    			t21 = space();
+    			option3.textContent = "Start";
+    			option4 = element("option");
+    			option4.textContent = "End";
+    			t22 = space();
     			div4 = element("div");
     			label4 = element("label");
     			label4.textContent = "Font:";
-    			t23 = space();
+    			t24 = space();
     			select2 = element("select");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			t24 = space();
+    			t25 = space();
     			div5 = element("div");
     			label5 = element("label");
     			label5.textContent = "Break lines:";
-    			t26 = space();
-    			input2 = element("input");
     			t27 = space();
+    			input2 = element("input");
+    			t28 = space();
     			span1 = element("span");
-    			t28 = text("Every ");
-    			t29 = text(t29_value);
-    			t30 = space();
-    			if (if_block0) if_block0.c();
+    			t29 = text("Every ");
+    			t30 = text(t30_value);
     			t31 = space();
+    			if (if_block0) if_block0.c();
+    			t32 = space();
     			div6 = element("div");
     			label6 = element("label");
     			label6.textContent = "Quantize:";
-    			t33 = space();
-    			input3 = element("input");
     			t34 = space();
+    			input3 = element("input");
+    			t35 = space();
     			span2 = element("span");
-    			t35 = text(t35_value);
-    			t36 = text(" miliseconds");
-    			t37 = space();
+    			t36 = text(t36_value);
+    			t37 = text(" miliseconds");
+    			t38 = space();
     			label7 = element("label");
     			input4 = element("input");
-    			t38 = text("\n        Classic chord order");
-    			t39 = space();
+    			t39 = text("\n        Classic chord order");
+    			t40 = space();
     			label8 = element("label");
     			input5 = element("input");
-    			t40 = text("\n        Sequential quantizes");
-    			t41 = space();
+    			t41 = text("\n        Sequential quantizes");
+    			t42 = space();
     			label9 = element("label");
     			input6 = element("input");
-    			t42 = text("\n        Include out of range (ctrl) notes");
-    			t43 = space();
+    			t43 = text("\n        Include out of range (ctrl) notes");
+    			t44 = space();
     			label10 = element("label");
     			input7 = element("input");
-    			t44 = text("\n        Show tempo marks");
-    			t45 = space();
-    			if (if_block1) if_block1.c();
+    			t45 = text("\n        Show tempo marks");
     			t46 = space();
+    			if (if_block1) if_block1.c();
+    			t47 = space();
     			button2 = element("button");
     			button2.textContent = "Copy Text";
-    			t48 = space();
+    			t49 = space();
     			button3 = element("button");
     			button3.textContent = "Copy Transposes";
-    			t50 = space();
+    			t51 = space();
     			button4 = element("button");
     			if_block2.c();
-    			t51 = space();
-    			if (if_block3) if_block3.c();
     			t52 = space();
+    			if (if_block3) if_block3.c();
+    			t53 = space();
     			style = element("style");
     			style.textContent = "label {\n        max-width: fit-content;\n        text-align: center;\n    }\n\n    .select-div {\n        display: flex;\n        flex-direction: row;\n        align-items: center;\n        text-align: center;\n    }\n\n    select {\n        height: auto;\n        margin-left: 0.4em;\n        margin-top: 0.2em;\n        margin-bottom: 0;\n    }\n\n    input[type=\"checkbox\"] {\n        display: inline-block;\n        vertical-align: middle;\n    }\n\n    input[type=\"range\"] {\n        margin-left: 0.4em;\n        margin-right: 0.4em;\n        margin-bottom: 0;\n    }\n\n    input[type=\"file\"] {\n        margin-bottom: 0;\n    }\n\n    input[type=\"text\"] {\n        margin-bottom: 0;\n    }\n    \n    .beats, .quantize, .select-label, .tempo {\n        display: flex;\n        flex-direction: row;\n    }";
     			attr_dev(label0, "for", "transpose");
-    			add_location(label0, file$3, 30, 1, 729);
+    			add_location(label0, file$3, 30, 1, 731);
     			attr_dev(input0, "id", "transpose");
     			attr_dev(input0, "type", "number");
     			attr_dev(input0, "min", "-24");
     			attr_dev(input0, "max", "24");
-    			add_location(input0, file$3, 31, 1, 783);
-    			add_location(button0, file$3, 32, 4, 875);
+    			add_location(input0, file$3, 31, 1, 785);
+    			add_location(button0, file$3, 32, 4, 877);
     			set_style(div0, "display", "inline-block");
-    			add_location(div0, file$3, 29, 0, 692);
+    			add_location(div0, file$3, 29, 0, 694);
     			set_style(button1, "margin-bottom", "0");
-    			add_location(button1, file$3, 36, 4, 980);
+    			add_location(button1, file$3, 36, 4, 982);
     			set_style(label1, "margin-left", "0.5em");
     			set_style(label1, "display", "flex");
     			set_style(label1, "align-items", "center");
     			attr_dev(label1, "title", "Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)");
     			attr_dev(label1, "for", "atleast");
     			attr_dev(label1, "class", "slider-label");
-    			add_location(label1, file$3, 37, 4, 1099);
+    			add_location(label1, file$3, 37, 4, 1101);
     			attr_dev(input1, "id", "atleast");
     			attr_dev(input1, "type", "range");
     			attr_dev(input1, "min", "1");
     			attr_dev(input1, "max", "24");
-    			add_location(input1, file$3, 40, 4, 1410);
+    			add_location(input1, file$3, 40, 4, 1412);
     			set_style(span0, "display", "flex");
     			set_style(span0, "align-items", "center");
-    			add_location(span0, file$3, 41, 4, 1498);
+    			add_location(span0, file$3, 41, 4, 1500);
     			attr_dev(div1, "class", "quantize");
-    			add_location(div1, file$3, 35, 0, 953);
+    			add_location(div1, file$3, 35, 0, 955);
     			attr_dev(label2, "for", "shifts-position");
-    			add_location(label2, file$3, 46, 8, 1630);
+    			add_location(label2, file$3, 46, 8, 1632);
     			option0.__value = "Start";
     			option0.value = option0.__value;
-    			add_location(option0, file$3, 48, 12, 1832);
+    			add_location(option0, file$3, 48, 12, 1834);
     			option1.__value = "End";
     			option1.value = option1.__value;
-    			add_location(option1, file$3, 49, 12, 1881);
+    			add_location(option1, file$3, 49, 12, 1883);
     			select0.disabled = select0_disabled_value = /*settings*/ ctx[0].classicChordOrder;
     			attr_dev(select0, "name", "shifts-position");
     			attr_dev(select0, "id", "shifts-position");
     			if (/*settings*/ ctx[0].pShifts === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[8].call(select0));
-    			add_location(select0, file$3, 47, 8, 1699);
+    			add_location(select0, file$3, 47, 8, 1701);
     			attr_dev(div2, "class", "select-div");
-    			add_location(div2, file$3, 45, 4, 1597);
+    			add_location(div2, file$3, 45, 4, 1599);
     			attr_dev(label3, "for", "oors-position");
-    			add_location(label3, file$3, 54, 8, 1981);
-    			option2.__value = "Start";
+    			add_location(label3, file$3, 54, 8, 1983);
+    			option2.__value = "Inorder";
     			option2.value = option2.__value;
-    			add_location(option2, file$3, 56, 12, 2142);
-    			option3.__value = "End";
+    			add_location(option2, file$3, 56, 12, 2144);
+    			option3.__value = "Start";
     			option3.value = option3.__value;
-    			add_location(option3, file$3, 57, 12, 2191);
+    			add_location(option3, file$3, 57, 12, 2197);
+    			option4.__value = "End";
+    			option4.value = option4.__value;
+    			add_location(option4, file$3, 58, 12, 2246);
     			attr_dev(select1, "name", "oors-position");
     			attr_dev(select1, "id", "oors-position");
     			if (/*settings*/ ctx[0].pOors === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[9].call(select1));
-    			add_location(select1, file$3, 55, 8, 2053);
+    			add_location(select1, file$3, 55, 8, 2055);
     			attr_dev(div3, "class", "select-div");
-    			add_location(div3, file$3, 53, 4, 1948);
+    			add_location(div3, file$3, 53, 4, 1950);
     			attr_dev(label4, "for", "font");
-    			add_location(label4, file$3, 62, 8, 2291);
+    			add_location(label4, file$3, 63, 8, 2346);
     			attr_dev(select2, "name", "font");
     			attr_dev(select2, "id", "font");
     			if (/*settings*/ ctx[0].font === void 0) add_render_callback(() => /*select2_change_handler*/ ctx[10].call(select2));
-    			add_location(select2, file$3, 63, 8, 2331);
+    			add_location(select2, file$3, 64, 8, 2386);
     			attr_dev(div4, "class", "select-div");
-    			add_location(div4, file$3, 61, 4, 2258);
+    			add_location(div4, file$3, 62, 4, 2313);
     			attr_dev(label5, "class", "slider-label");
     			attr_dev(label5, "for", "beats-for-newline");
-    			add_location(label5, file$3, 71, 8, 2558);
+    			add_location(label5, file$3, 72, 8, 2613);
     			attr_dev(input2, "type", "range");
     			attr_dev(input2, "id", "beats-for-newline");
     			attr_dev(input2, "min", "1");
     			attr_dev(input2, "max", "32");
-    			add_location(input2, file$3, 72, 8, 2640);
-    			add_location(span1, file$3, 73, 8, 2733);
+    			add_location(input2, file$3, 73, 8, 2695);
+    			add_location(span1, file$3, 74, 8, 2788);
     			attr_dev(div5, "class", "beats");
-    			add_location(div5, file$3, 70, 4, 2530);
+    			add_location(div5, file$3, 71, 4, 2585);
     			attr_dev(label6, "class", "slider-label");
     			attr_dev(label6, "for", "quantize-prompt");
-    			add_location(label6, file$3, 87, 8, 3267);
+    			add_location(label6, file$3, 88, 8, 3322);
     			attr_dev(input3, "type", "range");
     			attr_dev(input3, "id", "quantize-prompt");
     			attr_dev(input3, "min", "1");
     			attr_dev(input3, "max", "100");
-    			add_location(input3, file$3, 88, 8, 3344);
-    			add_location(span2, file$3, 89, 8, 3439);
+    			add_location(input3, file$3, 89, 8, 3399);
+    			add_location(span2, file$3, 90, 8, 3494);
     			attr_dev(div6, "class", "quantize");
-    			add_location(div6, file$3, 86, 4, 3236);
+    			add_location(div6, file$3, 87, 4, 3291);
     			attr_dev(input4, "type", "checkbox");
     			attr_dev(input4, "id", "classic-chord-order");
-    			add_location(input4, file$3, 93, 8, 3542);
+    			add_location(input4, file$3, 94, 8, 3597);
     			attr_dev(label7, "for", "classic-chord-order");
-    			add_location(label7, file$3, 92, 4, 3500);
+    			add_location(label7, file$3, 93, 4, 3555);
     			attr_dev(input5, "type", "checkbox");
     			attr_dev(input5, "id", "order-quantizes");
-    			add_location(input5, file$3, 98, 8, 3717);
+    			add_location(input5, file$3, 99, 8, 3772);
     			attr_dev(label8, "for", "order-quantizes");
-    			add_location(label8, file$3, 97, 4, 3679);
+    			add_location(label8, file$3, 98, 4, 3734);
     			attr_dev(input6, "type", "checkbox");
     			attr_dev(input6, "id", "out-of-range");
-    			add_location(input6, file$3, 103, 8, 3887);
+    			add_location(input6, file$3, 104, 8, 3942);
     			attr_dev(label9, "for", "out-of-range");
-    			add_location(label9, file$3, 102, 4, 3852);
+    			add_location(label9, file$3, 103, 4, 3907);
     			attr_dev(input7, "type", "checkbox");
     			attr_dev(input7, "id", "tempo-checkbox");
-    			add_location(input7, file$3, 108, 8, 4055);
+    			add_location(input7, file$3, 109, 8, 4110);
     			attr_dev(label10, "for", "tempo-checkbox");
-    			add_location(label10, file$3, 107, 4, 4018);
-    			add_location(button2, file$3, 119, 4, 4393);
-    			add_location(button3, file$3, 123, 4, 4479);
+    			add_location(label10, file$3, 108, 4, 4073);
+    			add_location(button2, file$3, 120, 4, 4448);
+    			add_location(button3, file$3, 124, 4, 4534);
     			button4.disabled = button4_disabled_value = /*settings*/ ctx[0].capturingImage;
-    			add_location(button4, file$3, 127, 4, 4577);
-    			add_location(div7, file$3, 44, 0, 1587);
-    			add_location(style, file$3, 153, 0, 5267);
+    			add_location(button4, file$3, 128, 4, 4632);
+    			add_location(div7, file$3, 44, 0, 1589);
+    			add_location(style, file$3, 154, 0, 5322);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -3909,11 +3925,12 @@ var app = (function () {
     			append_dev(div3, select1);
     			append_dev(select1, option2);
     			append_dev(select1, option3);
+    			append_dev(select1, option4);
     			select_option(select1, /*settings*/ ctx[0].pOors);
-    			append_dev(div7, t21);
+    			append_dev(div7, t22);
     			append_dev(div7, div4);
     			append_dev(div4, label4);
-    			append_dev(div4, t23);
+    			append_dev(div4, t24);
     			append_dev(div4, select2);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
@@ -3921,60 +3938,60 @@ var app = (function () {
     			}
 
     			select_option(select2, /*settings*/ ctx[0].font);
-    			append_dev(div7, t24);
+    			append_dev(div7, t25);
     			append_dev(div7, div5);
     			append_dev(div5, label5);
-    			append_dev(div5, t26);
+    			append_dev(div5, t27);
     			append_dev(div5, input2);
     			set_input_value(input2, /*settings*/ ctx[0].beats);
-    			append_dev(div5, t27);
+    			append_dev(div5, t28);
     			append_dev(div5, span1);
-    			append_dev(span1, t28);
     			append_dev(span1, t29);
-    			append_dev(div7, t30);
-    			if (if_block0) if_block0.m(div7, null);
+    			append_dev(span1, t30);
     			append_dev(div7, t31);
+    			if (if_block0) if_block0.m(div7, null);
+    			append_dev(div7, t32);
     			append_dev(div7, div6);
     			append_dev(div6, label6);
-    			append_dev(div6, t33);
+    			append_dev(div6, t34);
     			append_dev(div6, input3);
     			set_input_value(input3, /*settings*/ ctx[0].quantize);
-    			append_dev(div6, t34);
+    			append_dev(div6, t35);
     			append_dev(div6, span2);
-    			append_dev(span2, t35);
     			append_dev(span2, t36);
-    			append_dev(div7, t37);
+    			append_dev(span2, t37);
+    			append_dev(div7, t38);
     			append_dev(div7, label7);
     			append_dev(label7, input4);
     			input4.checked = /*settings*/ ctx[0].classicChordOrder;
-    			append_dev(label7, t38);
-    			append_dev(div7, t39);
+    			append_dev(label7, t39);
+    			append_dev(div7, t40);
     			append_dev(div7, label8);
     			append_dev(label8, input5);
     			input5.checked = /*settings*/ ctx[0].sequentialQuantize;
-    			append_dev(label8, t40);
-    			append_dev(div7, t41);
+    			append_dev(label8, t41);
+    			append_dev(div7, t42);
     			append_dev(div7, label9);
     			append_dev(label9, input6);
     			input6.checked = /*settings*/ ctx[0].oors;
-    			append_dev(label9, t42);
-    			append_dev(div7, t43);
+    			append_dev(label9, t43);
+    			append_dev(div7, t44);
     			append_dev(div7, label10);
     			append_dev(label10, input7);
     			input7.checked = /*settings*/ ctx[0].tempoMarks;
-    			append_dev(label10, t44);
-    			append_dev(div7, t45);
-    			if (if_block1) if_block1.m(div7, null);
+    			append_dev(label10, t45);
     			append_dev(div7, t46);
+    			if (if_block1) if_block1.m(div7, null);
+    			append_dev(div7, t47);
     			append_dev(div7, button2);
-    			append_dev(div7, t48);
+    			append_dev(div7, t49);
     			append_dev(div7, button3);
-    			append_dev(div7, t50);
+    			append_dev(div7, t51);
     			append_dev(div7, button4);
     			if_block2.m(button4, null);
-    			append_dev(div7, t51);
+    			append_dev(div7, t52);
     			if (if_block3) if_block3.m(div7, null);
-    			insert_dev(target, t52, anchor);
+    			insert_dev(target, t53, anchor);
     			insert_dev(target, style, anchor);
 
     			if (!mounted) {
@@ -4058,9 +4075,9 @@ var app = (function () {
     				set_input_value(input2, /*settings*/ ctx[0].beats);
     			}
 
-    			if (dirty & /*settings*/ 1 && t29_value !== (t29_value = (/*settings*/ ctx[0].beats == 1
+    			if (dirty & /*settings*/ 1 && t30_value !== (t30_value = (/*settings*/ ctx[0].beats == 1
     			? "1 beat"
-    			: `${/*settings*/ ctx[0].beats} beats`) + "")) set_data_dev(t29, t29_value);
+    			: `${/*settings*/ ctx[0].beats} beats`) + "")) set_data_dev(t30, t30_value);
 
     			if (/*settings*/ ctx[0].missingTempo == true) {
     				if (if_block0) {
@@ -4068,7 +4085,7 @@ var app = (function () {
     				} else {
     					if_block0 = create_if_block_5(ctx);
     					if_block0.c();
-    					if_block0.m(div7, t31);
+    					if_block0.m(div7, t32);
     				}
     			} else if (if_block0) {
     				if_block0.d(1);
@@ -4079,7 +4096,7 @@ var app = (function () {
     				set_input_value(input3, /*settings*/ ctx[0].quantize);
     			}
 
-    			if (dirty & /*settings*/ 1 && t35_value !== (t35_value = /*settings*/ ctx[0].quantize + "")) set_data_dev(t35, t35_value);
+    			if (dirty & /*settings*/ 1 && t36_value !== (t36_value = /*settings*/ ctx[0].quantize + "")) set_data_dev(t36, t36_value);
 
     			if (dirty & /*settings*/ 1) {
     				input4.checked = /*settings*/ ctx[0].classicChordOrder;
@@ -4103,7 +4120,7 @@ var app = (function () {
     				} else {
     					if_block1 = create_if_block_4(ctx);
     					if_block1.c();
-    					if_block1.m(div7, t46);
+    					if_block1.m(div7, t47);
     				}
     			} else if (if_block1) {
     				if_block1.d(1);
@@ -4137,7 +4154,7 @@ var app = (function () {
     			if (if_block1) if_block1.d();
     			if_block2.d();
     			if (if_block3) if_block3.d();
-    			if (detaching) detach_dev(t52);
+    			if (detaching) detach_dev(t53);
     			if (detaching) detach_dev(style);
     			mounted = false;
     			run_all(dispose);
@@ -4155,7 +4172,7 @@ var app = (function () {
     	return block;
     }
 
-    // (65:12) {#each fonts as font}
+    // (66:12) {#each fonts as font}
     function create_each_block$1(ctx) {
     	let option;
     	let t_value = /*font*/ ctx[23] + "";
@@ -4167,7 +4184,7 @@ var app = (function () {
     			t = text(t_value);
     			option.__value = /*font*/ ctx[23];
     			option.value = option.__value;
-    			add_location(option, file$3, 65, 16, 2439);
+    			add_location(option, file$3, 66, 16, 2494);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -4183,14 +4200,14 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(65:12) {#each fonts as font}",
+    		source: "(66:12) {#each fonts as font}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:4) {#if settings.missingTempo == true}
+    // (78:4) {#if settings.missingTempo == true}
     function create_if_block_5(ctx) {
     	let div;
     	let label;
@@ -4216,15 +4233,15 @@ var app = (function () {
     			attr_dev(label, "class", "slider-label");
     			attr_dev(label, "for", "tempo");
     			attr_dev(label, "title", "You're able to change this because your MIDI file doesn't have tempo/BPM.");
-    			add_location(label, file$3, 78, 12, 2905);
+    			add_location(label, file$3, 79, 12, 2960);
     			attr_dev(input, "type", "range");
     			attr_dev(input, "id", "tempo");
     			attr_dev(input, "min", "1");
     			attr_dev(input, "max", "300");
-    			add_location(input, file$3, 81, 12, 3094);
-    			add_location(span, file$3, 82, 12, 3178);
+    			add_location(input, file$3, 82, 12, 3149);
+    			add_location(span, file$3, 83, 12, 3233);
     			attr_dev(div, "class", "tempo");
-    			add_location(div, file$3, 77, 8, 2873);
+    			add_location(div, file$3, 78, 8, 2928);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4263,14 +4280,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(77:4) {#if settings.missingTempo == true}",
+    		source: "(78:4) {#if settings.missingTempo == true}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (113:4) {#if settings.oors && settings.tempoMarks}
+    // (114:4) {#if settings.oors && settings.tempoMarks}
     function create_if_block_4(ctx) {
     	let div;
     	let label;
@@ -4287,11 +4304,11 @@ var app = (function () {
     			t1 = space();
     			input = element("input");
     			attr_dev(label, "for", "oor-prefix");
-    			add_location(label, file$3, 114, 8, 4238);
+    			add_location(label, file$3, 115, 8, 4293);
     			attr_dev(input, "type", "text");
     			attr_dev(input, "id", "oor-prefix");
-    			add_location(input, file$3, 115, 8, 4299);
-    			add_location(div, file$3, 113, 4, 4224);
+    			add_location(input, file$3, 116, 8, 4354);
+    			add_location(div, file$3, 114, 4, 4279);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4321,14 +4338,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(113:4) {#if settings.oors && settings.tempoMarks}",
+    		source: "(114:4) {#if settings.oors && settings.tempoMarks}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (134:8) {:else}
+    // (135:8) {:else}
     function create_else_block_1(ctx) {
     	let t;
 
@@ -4348,14 +4365,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(134:8) {:else}",
+    		source: "(135:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (132:8) {#if settings.capturingImage}
+    // (133:8) {#if settings.capturingImage}
     function create_if_block_3(ctx) {
     	let t;
 
@@ -4375,14 +4392,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(132:8) {#if settings.capturingImage}",
+    		source: "(133:8) {#if settings.capturingImage}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (139:4) {#if typeof ClipboardItem !== "undefined"}
+    // (140:4) {#if typeof ClipboardItem !== "undefined"}
     function create_if_block_1$1(ctx) {
     	let button;
     	let button_disabled_value;
@@ -4402,7 +4419,7 @@ var app = (function () {
     			button = element("button");
     			if_block.c();
     			button.disabled = button_disabled_value = /*settings*/ ctx[0].capturingImage;
-    			add_location(button, file$3, 140, 8, 4951);
+    			add_location(button, file$3, 141, 8, 5006);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -4440,14 +4457,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(139:4) {#if typeof ClipboardItem !== \\\"undefined\\\"}",
+    		source: "(140:4) {#if typeof ClipboardItem !== \\\"undefined\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (147:12) {:else}
+    // (148:12) {:else}
     function create_else_block$1(ctx) {
     	let t;
 
@@ -4467,14 +4484,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(147:12) {:else}",
+    		source: "(148:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (145:12) {#if settings.capturingImage}
+    // (146:12) {#if settings.capturingImage}
     function create_if_block_2(ctx) {
     	let t;
 
@@ -4494,7 +4511,7 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(145:12) {#if settings.capturingImage}",
+    		source: "(146:12) {#if settings.capturingImage}",
     		ctx
     	});
 
@@ -4573,7 +4590,7 @@ var app = (function () {
     		classicChordOrder: true,
     		sequentialQuantize: false,
     		pShifts: 'Start',
-    		pOors: 'Start',
+    		pOors: 'Inorder',
     		oors: true,
     		tempoMarks: false,
     		oorPrefix: '\\',
@@ -4937,7 +4954,7 @@ var app = (function () {
     /* src\components\Line.svelte generated by Svelte v3.55.1 */
     const file$1 = "src\\components\\Line.svelte";
 
-    // (165:8) {:else}
+    // (183:8) {:else}
     function create_else_block(ctx) {
     	let html_tag;
     	let raw_value = /*render*/ ctx[6](/*sheet*/ ctx[4]) + "";
@@ -4966,14 +4983,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(165:8) {:else}",
+    		source: "(183:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (159:8) {#if (comment || comment == '')}
+    // (177:8) {#if (comment || comment == '')}
     function create_if_block$1(ctx) {
     	let span;
     	let t;
@@ -4988,7 +5005,7 @@ var app = (function () {
     			attr_dev(span, "contenteditable", "true");
     			attr_dev(span, "class", "comment svelte-jszitz");
     			if (/*comment*/ ctx[0] === void 0) add_render_callback(() => /*span_input_handler*/ ctx[13].call(span));
-    			add_location(span, file$1, 160, 12, 6025);
+    			add_location(span, file$1, 178, 12, 6892);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -5027,7 +5044,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(159:8) {#if (comment || comment == '')}",
+    		source: "(177:8) {#if (comment || comment == '')}",
     		ctx
     	});
 
@@ -5054,10 +5071,10 @@ var app = (function () {
     			div0 = element("div");
     			if_block.c();
     			attr_dev(div0, "class", "line svelte-jszitz");
-    			add_location(div0, file$1, 139, 4, 5011);
+    			add_location(div0, file$1, 157, 4, 5878);
     			attr_dev(div1, "class", "viewer svelte-jszitz");
     			set_style(div1, "font-family", /*settings*/ ctx[2].font);
-    			add_location(div1, file$1, 138, 0, 4919);
+    			add_location(div1, file$1, 156, 0, 5786);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5131,9 +5148,13 @@ var app = (function () {
     	let previousChord = { notes: [{ playTime: -999999 }] };
 
     	function colored_chord(chord, color, separator = ' ') {
-    		let res = `<span style="color:${color}">`;
     		let isChord = chord.notes.length > 1 && chord.notes.find(note => note.valid === true);
+    		let res = `<span style="color:${color}; ${isChord ? "display: inline-flex;" : ""}">`;
+    		let oorSpanStyle = `display:inline-block; border-bottom: 2px solid ${color};`;
     		if (settings.oors === false) if (chord.notes.filter(note => note.outOfRange === false).length <= 1) isChord = false;
+    		let nonOors = chord.notes.filter(note => note.outOfRange === false);
+    		let needsOorsSeperators = nonOors.length > 0 && chord.notes.some(note => note.outOfRange);
+    		const [firstNonOor, lastNonOor] = [nonOors[0], nonOors[nonOors.length - 1]];
     		if (isChord) res += '[';
 
     		for (const note of chord.notes) {
@@ -5144,9 +5165,21 @@ var app = (function () {
 
     			if (note.outOfRange === true) {
     				if (settings.oors === true) {
-    					res += `<span style="display:inline-block; border-bottom: 2px solid ${color}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}</span>`;
+    					res += `<span style="${oorSpanStyle}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}</span>`;
     				}
-    			} else res += note.char;
+    			} else {
+    				const oorSeparator = "'";
+
+    				if (settings.oors === true && needsOorsSeperators && (settings.pOors === "Start" || settings.pOors === "Inorder") && note === firstNonOor) {
+    					res += oorSeparator;
+    				}
+
+    				res += note.char;
+
+    				if (settings.oors === true && needsOorsSeperators && (settings.pOors === "End" || settings.pOors === "Inorder") && note === lastNonOor) {
+    					res += oorSeparator;
+    				}
+    			}
     		}
 
     		if (isChord) res += ']';
@@ -5446,7 +5479,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (329:0) {#if trackSelection}
+    // (335:0) {#if trackSelection}
     function create_if_block_1(ctx) {
     	let section;
     	let div;
@@ -5480,10 +5513,10 @@ var app = (function () {
     			button = element("button");
     			button.textContent = "Import selected tracks";
     			attr_dev(div, "id", "tracks");
-    			add_location(div, file, 330, 4, 10120);
-    			add_location(button, file, 336, 4, 10297);
+    			add_location(div, file, 336, 4, 10302);
+    			add_location(button, file, 342, 4, 10479);
     			attr_dev(section, "id", "track-chooser");
-    			add_location(section, file, 329, 0, 10087);
+    			add_location(section, file, 335, 0, 10269);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, section, anchor);
@@ -5561,14 +5594,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(329:0) {#if trackSelection}",
+    		source: "(335:0) {#if trackSelection}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (332:8) {#each tracks as track, idx}
+    // (338:8) {#each tracks as track, idx}
     function create_each_block_1(ctx) {
     	let track;
     	let updating_selected;
@@ -5629,14 +5662,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(332:8) {#each tracks as track, idx}",
+    		source: "(338:8) {#each tracks as track, idx}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (341:0) {#if sheetReady}
+    // (347:0) {#if sheetReady}
     function create_if_block(ctx) {
     	let div1;
     	let div0;
@@ -5665,9 +5698,9 @@ var app = (function () {
 
     			set_style(div0, "width", "max-content");
     			add_render_callback(() => /*div0_elementresize_handler*/ ctx[26].call(div0));
-    			add_location(div0, file, 342, 8, 10488);
+    			add_location(div0, file, 348, 8, 10670);
     			set_style(div1, "background", "#2D2A32");
-    			add_location(div1, file, 341, 4, 10424);
+    			add_location(div1, file, 347, 4, 10606);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -5740,14 +5773,14 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(341:0) {#if sheetReady}",
+    		source: "(347:0) {#if sheetReady}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (344:12) {#each Object.entries(lines) as [ index, line ]}
+    // (350:12) {#each Object.entries(lines) as [ index, line ]}
     function create_each_block(ctx) {
     	let line;
     	let current;
@@ -5804,7 +5837,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(344:12) {#each Object.entries(lines) as [ index, line ]}",
+    		source: "(350:12) {#each Object.entries(lines) as [ index, line ]}",
     		ctx
     	});
 
@@ -6303,7 +6336,13 @@ var app = (function () {
 
     				for (let line of linesElement.children) {
     					if (!line?.innerText) continue;
-    					text += line.children[0]?.innerText + '\n';
+    					let lineNotes = line.children[0].innerText.split("\n");
+
+    					if (lineNotes[0].includes("Transpose")) {
+    						lineNotes[0] += "\n";
+    					}
+
+    					text += lineNotes.join("") + '\n';
     				}
 
     				navigator.clipboard.writeText(text);

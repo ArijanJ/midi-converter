@@ -317,7 +317,13 @@
             let linesElement = container.querySelector('div.viewer').parentElement
             for (let line of linesElement.children) {
                 if (!line?.innerText) continue
-                text += line.children[0]?.innerText + '\n'
+
+                let lineNotes = line.children[0].innerText.split("\n")
+                if (lineNotes[0].includes("Transpose")) {
+                    lineNotes[0] += "\n";
+                }
+
+                text += lineNotes.join("") + '\n'
             }
             navigator.clipboard.writeText(text)
         }, 0)
