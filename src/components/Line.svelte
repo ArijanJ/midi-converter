@@ -48,7 +48,11 @@
         let nonOors = chord.notes.filter(note => note.outOfRange === false);
         let lowerOors = chord.notes.filter(note => note.outOfRange === true && lowerOorScale.includes(note.originalChar))
         let upperOors = chord.notes.filter(note => note.outOfRange === true && upperOorScale.includes(note.originalChar))
+
         let needsOorsSeperators = settings.oors === true && nonOors.length > 0 && chord.notes.some(note => note.outOfRange);
+        const needsOnlyLowerOorsExtraSeparator = nonOors.length === 0 && (upperOors.length === 0 && lowerOors.length > 1)
+        const needsOnlyUpperOorsExtraSeparator = nonOors.length === 0 && (lowerOors.length === 0 && upperOors.length > 1)
+
         const [firstNonOor, lastNonOor] = [nonOors[0], nonOors[nonOors.length - 1]]
         const [lastLowerOor, firstUpperOor] = [lowerOors[lowerOors.length - 1], upperOors[0]]
 
@@ -59,13 +63,19 @@
 
             if (note.outOfRange === true) {
                 if (settings.oors === true) {
-                    if (nonOors.length === 0 && note === firstUpperOor) {
+                    if (needsOnlyUpperOorsExtraSeparator && note === firstUpperOor) {
+                        res += oorSeparator + oorSeparator
+                    }
+                    else if (!needsOnlyLowerOorsExtraSeparator && nonOors.length === 0 && note === firstUpperOor) {
                         res += oorSeparator
                     }
 
                     res += `<span style="${oorSpanStyle}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}</span>`
 
-                    if (nonOors.length === 0 && note === lastLowerOor) {
+                    if (needsOnlyLowerOorsExtraSeparator && note === lastLowerOor) {
+                        res += oorSeparator + oorSeparator
+                    }
+                    else if (!needsOnlyUpperOorsExtraSeparator && nonOors.length === 0 && note === lastLowerOor) {
                         res += oorSeparator
                     }
                 }
