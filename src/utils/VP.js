@@ -9,7 +9,6 @@ class Note {
         this.playTime   =  playTime
         this.delta      =  delta
         this.char       =  vpScale[value - firstPossibleNote]
-        this.originalChar = this.char;
         this.tempo      =  tempo
         this.BPM        =  BPM
 
@@ -33,9 +32,6 @@ class Note {
                     this.displayValue = value + 1024
                 }
             }
-
-            // unicode equivalent lookalike
-            this.char = oorUnicodeEqMap[this.char]
         }
         else this.displayValue = value
     }

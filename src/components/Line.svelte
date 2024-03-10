@@ -39,22 +39,15 @@
         let isChord = (chord.notes.length > 1 && chord.notes.find(note => note.valid === true))
 
         let res = `<span style="color:${color}; ${isChord ? "display: inline-flex;" : ""}">`
-        let oorSpanStyle = `display:inline-block; border-bottom: 2px solid ${color};`;
+        let oorSpanStyle = `display:inline-block;`;
         if (settings.oors === false)
             if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
                 isChord = false
 
-        const oorSeparator = "'";
+        const oorSeparator = ":";
         let nonOors = chord.notes.filter(note => note.outOfRange === false);
-        let lowerOors = chord.notes.filter(note => note.outOfRange === true && lowerOorScale.includes(note.originalChar))
-        let upperOors = chord.notes.filter(note => note.outOfRange === true && upperOorScale.includes(note.originalChar))
-
-        let needsOorsSeperators = settings.oors === true && nonOors.length > 0 && chord.notes.some(note => note.outOfRange);
-        const needsOnlyLowerOorsExtraSeparator = nonOors.length === 0 && (upperOors.length === 0 && lowerOors.length > 1)
-        const needsOnlyUpperOorsExtraSeparator = nonOors.length === 0 && (lowerOors.length === 0 && upperOors.length > 1)
-
-        const [firstNonOor, lastNonOor] = [nonOors[0], nonOors[nonOors.length - 1]]
-        const [lastLowerOor, firstUpperOor] = [lowerOors[lowerOors.length - 1], upperOors[0]]
+        let startOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value - 1024)
+        let endOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value + 1024)
 
         if (isChord) res += '['
 
@@ -63,33 +56,25 @@
 
             if (note.outOfRange === true) {
                 if (settings.oors === true) {
-                    if (needsOnlyUpperOorsExtraSeparator && note === firstUpperOor) {
-                        res += oorSeparator + oorSeparator
-                    }
-                    else if (!needsOnlyLowerOorsExtraSeparator && nonOors.length === 0 && note === firstUpperOor) {
+                    const isFirstStartOor = note === startOors[0];
+                    const isFirstEndOorWithoutChord = !isChord && note === endOors[0];
+                    const isChordWithNoNonOorsAndIsFirstEndOor = isChord && nonOors.length === 0 && startOors.length === 0 && note === endOors[0];
+                    const isChordWithMoreThanOneNonOorAndIsFirstEndOor = isChord && nonOors.length > 0 && note === endOors[0];
+
+                    if (
+                        isFirstStartOor ||
+                        isFirstEndOorWithoutChord ||
+                        isChordWithNoNonOorsAndIsFirstEndOor ||
+                        isChordWithMoreThanOneNonOorAndIsFirstEndOor
+                    ) {
                         res += oorSeparator
                     }
 
-                    res += `<span style="${oorSpanStyle}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}</span>`
-
-                    if (needsOnlyLowerOorsExtraSeparator && note === lastLowerOor) {
-                        res += oorSeparator + oorSeparator
-                    }
-                    else if (!needsOnlyUpperOorsExtraSeparator && nonOors.length === 0 && note === lastLowerOor) {
-                        res += oorSeparator
-                    }
+                    res += `<span style="${oorSpanStyle}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}${isFirstStartOor && nonOors.length > 0 ? "'" : ""}</span>`
                 }
             }
             else {
-                if (needsOorsSeperators && note === firstNonOor) {
-                    res += oorSeparator
-                }
-
                 res += note.char
-
-                if (needsOorsSeperators && note === lastNonOor) {
-                    res += oorSeparator
-                }
             }
         }
 
