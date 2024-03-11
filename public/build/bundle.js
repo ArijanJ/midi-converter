@@ -4974,7 +4974,7 @@ var app = (function () {
     			attr_dev(span, "contenteditable", "true");
     			attr_dev(span, "class", "comment svelte-jszitz");
     			if (/*comment*/ ctx[0] === void 0) add_render_callback(() => /*span_input_handler*/ ctx[13].call(span));
-    			add_location(span, file$1, 184, 12, 7365);
+    			add_location(span, file$1, 184, 12, 7369);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -5040,10 +5040,10 @@ var app = (function () {
     			div0 = element("div");
     			if_block.c();
     			attr_dev(div0, "class", "line svelte-jszitz");
-    			add_location(div0, file$1, 163, 4, 6351);
+    			add_location(div0, file$1, 163, 4, 6355);
     			attr_dev(div1, "class", "viewer svelte-jszitz");
     			set_style(div1, "font-family", /*settings*/ ctx[2].font);
-    			add_location(div1, file$1, 162, 0, 6259);
+    			add_location(div1, file$1, 162, 0, 6263);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5137,10 +5137,10 @@ var app = (function () {
     				if (settings.oors === true) {
     					const isFirstStartOor = note === startOors[0];
     					const isFirstEndOorWithoutChord = !isChord && note === endOors[0];
-    					const isChordWithNoNonOorsAndIsFirstEndOor = isChord && nonOors.length === 0 && startOors.length === 0 && note === endOors[0];
+    					const isChordWithOnlyEndOorsAndIsFirstEndOor = isChord && nonOors.length === 0 && startOors.length === 0 && note === endOors[0];
     					const isChordWithMoreThanOneNonOorAndIsFirstEndOor = isChord && nonOors.length > 0 && note === endOors[0];
 
-    					if (isFirstStartOor || isFirstEndOorWithoutChord || isChordWithNoNonOorsAndIsFirstEndOor || isChordWithMoreThanOneNonOorAndIsFirstEndOor) {
+    					if (isFirstStartOor || isFirstEndOorWithoutChord || isChordWithOnlyEndOorsAndIsFirstEndOor || isChordWithMoreThanOneNonOorAndIsFirstEndOor) {
     						res += oorSeparator;
     					}
 

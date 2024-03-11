@@ -58,13 +58,13 @@
                 if (settings.oors === true) {
                     const isFirstStartOor = note === startOors[0];
                     const isFirstEndOorWithoutChord = !isChord && note === endOors[0];
-                    const isChordWithNoNonOorsAndIsFirstEndOor = isChord && nonOors.length === 0 && startOors.length === 0 && note === endOors[0];
+                    const isChordWithOnlyEndOorsAndIsFirstEndOor = isChord && nonOors.length === 0 && startOors.length === 0 && note === endOors[0];
                     const isChordWithMoreThanOneNonOorAndIsFirstEndOor = isChord && nonOors.length > 0 && note === endOors[0];
 
                     if (
                         isFirstStartOor ||
                         isFirstEndOorWithoutChord ||
-                        isChordWithNoNonOorsAndIsFirstEndOor ||
+                        isChordWithOnlyEndOorsAndIsFirstEndOor ||
                         isChordWithMoreThanOneNonOorAndIsFirstEndOor
                     ) {
                         res += oorSeparator
