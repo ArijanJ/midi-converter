@@ -42,7 +42,6 @@
             if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
                 isChord = false
 
-        const oorSeparator = ":";
         let nonOors = chord.notes.filter(note => note.outOfRange === false);
         let startOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value - 1024)
         let endOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value + 1024)
@@ -65,10 +64,10 @@
                         isChordWithOnlyEndOorsAndIsFirstEndOor ||
                         isChordWithMoreThanOneNonOorAndIsFirstEndOor
                     ) {
-                        res += oorSeparator
+                        res += settings.oorSeparator
                     }
 
-                    res += `<span style="display:inline-block;">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}${isFirstStartOor && nonOors.length > 0 ? "'" : ""}</span>`
+                    res += `<span style="display:inline-block; font-weight: 900">${note.char}${isFirstStartOor && nonOors.length > 0 ? "'" : ""}</span>`
                 }
             }
             else {

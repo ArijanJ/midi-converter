@@ -3511,11 +3511,11 @@ var app = (function () {
 
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[23] = list[i];
+    	child_ctx[25] = list[i];
     	return child_ctx;
     }
 
-    // (29:0) {#if show}
+    // (32:0) {#if show}
     function create_if_block$2(ctx) {
     	let div0;
     	let label0;
@@ -3619,7 +3619,7 @@ var app = (function () {
     	}
 
     	let if_block0 = /*settings*/ ctx[0].missingTempo == true && create_if_block_5(ctx);
-    	let if_block1 = /*settings*/ ctx[0].oors && /*settings*/ ctx[0].tempoMarks && create_if_block_4(ctx);
+    	let if_block1 = /*settings*/ ctx[0].oors && create_if_block_4(ctx);
 
     	function select_block_type(ctx, dirty) {
     		if (/*settings*/ ctx[0].capturingImage) return create_if_block_3;
@@ -3741,122 +3741,122 @@ var app = (function () {
     			style = element("style");
     			style.textContent = "label {\n        max-width: fit-content;\n        text-align: center;\n    }\n\n    .select-div {\n        display: flex;\n        flex-direction: row;\n        align-items: center;\n        text-align: center;\n    }\n\n    select {\n        height: auto;\n        margin-left: 0.4em;\n        margin-top: 0.2em;\n        margin-bottom: 0;\n    }\n\n    input[type=\"checkbox\"] {\n        display: inline-block;\n        vertical-align: middle;\n    }\n\n    input[type=\"range\"] {\n        margin-left: 0.4em;\n        margin-right: 0.4em;\n        margin-bottom: 0;\n    }\n\n    input[type=\"file\"] {\n        margin-bottom: 0;\n    }\n\n    input[type=\"text\"] {\n        margin-bottom: 0;\n    }\n    \n    .beats, .quantize, .select-label, .tempo {\n        display: flex;\n        flex-direction: row;\n    }";
     			attr_dev(label0, "for", "transpose");
-    			add_location(label0, file$3, 30, 1, 731);
+    			add_location(label0, file$3, 33, 1, 830);
     			attr_dev(input0, "id", "transpose");
     			attr_dev(input0, "type", "number");
     			attr_dev(input0, "min", "-24");
     			attr_dev(input0, "max", "24");
-    			add_location(input0, file$3, 31, 1, 785);
-    			add_location(button0, file$3, 32, 4, 877);
+    			add_location(input0, file$3, 34, 1, 884);
+    			add_location(button0, file$3, 35, 4, 976);
     			set_style(div0, "display", "inline-block");
-    			add_location(div0, file$3, 29, 0, 694);
+    			add_location(div0, file$3, 32, 0, 793);
     			set_style(button1, "margin-bottom", "0");
-    			add_location(button1, file$3, 36, 4, 982);
+    			add_location(button1, file$3, 39, 4, 1081);
     			set_style(label1, "margin-left", "0.5em");
     			set_style(label1, "display", "flex");
     			set_style(label1, "align-items", "center");
     			attr_dev(label1, "title", "Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)");
     			attr_dev(label1, "for", "atleast");
     			attr_dev(label1, "class", "slider-label");
-    			add_location(label1, file$3, 37, 4, 1101);
+    			add_location(label1, file$3, 40, 4, 1200);
     			attr_dev(input1, "id", "atleast");
     			attr_dev(input1, "type", "range");
     			attr_dev(input1, "min", "1");
     			attr_dev(input1, "max", "24");
-    			add_location(input1, file$3, 40, 4, 1412);
+    			add_location(input1, file$3, 43, 4, 1511);
     			set_style(span0, "display", "flex");
     			set_style(span0, "align-items", "center");
-    			add_location(span0, file$3, 41, 4, 1500);
+    			add_location(span0, file$3, 44, 4, 1599);
     			attr_dev(div1, "class", "quantize");
-    			add_location(div1, file$3, 35, 0, 955);
+    			add_location(div1, file$3, 38, 0, 1054);
     			attr_dev(label2, "for", "shifts-position");
-    			add_location(label2, file$3, 46, 8, 1632);
+    			add_location(label2, file$3, 49, 8, 1731);
     			option0.__value = "Start";
     			option0.value = option0.__value;
-    			add_location(option0, file$3, 48, 12, 1834);
+    			add_location(option0, file$3, 51, 12, 1933);
     			option1.__value = "End";
     			option1.value = option1.__value;
-    			add_location(option1, file$3, 49, 12, 1883);
+    			add_location(option1, file$3, 52, 12, 1982);
     			select0.disabled = select0_disabled_value = /*settings*/ ctx[0].classicChordOrder;
     			attr_dev(select0, "name", "shifts-position");
     			attr_dev(select0, "id", "shifts-position");
-    			if (/*settings*/ ctx[0].pShifts === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[8].call(select0));
-    			add_location(select0, file$3, 47, 8, 1701);
+    			if (/*settings*/ ctx[0].pShifts === void 0) add_render_callback(() => /*select0_change_handler*/ ctx[9].call(select0));
+    			add_location(select0, file$3, 50, 8, 1800);
     			attr_dev(div2, "class", "select-div");
-    			add_location(div2, file$3, 45, 4, 1599);
+    			add_location(div2, file$3, 48, 4, 1698);
     			attr_dev(label3, "for", "oors-position");
-    			add_location(label3, file$3, 54, 8, 1983);
+    			add_location(label3, file$3, 57, 8, 2082);
     			option2.__value = "Inorder";
     			option2.value = option2.__value;
-    			add_location(option2, file$3, 56, 12, 2144);
+    			add_location(option2, file$3, 59, 12, 2243);
     			option3.__value = "Start";
     			option3.value = option3.__value;
-    			add_location(option3, file$3, 57, 12, 2197);
+    			add_location(option3, file$3, 60, 12, 2296);
     			option4.__value = "End";
     			option4.value = option4.__value;
-    			add_location(option4, file$3, 58, 12, 2246);
+    			add_location(option4, file$3, 61, 12, 2345);
     			attr_dev(select1, "name", "oors-position");
     			attr_dev(select1, "id", "oors-position");
-    			if (/*settings*/ ctx[0].pOors === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[9].call(select1));
-    			add_location(select1, file$3, 55, 8, 2055);
+    			if (/*settings*/ ctx[0].pOors === void 0) add_render_callback(() => /*select1_change_handler*/ ctx[10].call(select1));
+    			add_location(select1, file$3, 58, 8, 2154);
     			attr_dev(div3, "class", "select-div");
-    			add_location(div3, file$3, 53, 4, 1950);
+    			add_location(div3, file$3, 56, 4, 2049);
     			attr_dev(label4, "for", "font");
-    			add_location(label4, file$3, 63, 8, 2346);
+    			add_location(label4, file$3, 66, 8, 2445);
     			attr_dev(select2, "name", "font");
     			attr_dev(select2, "id", "font");
-    			if (/*settings*/ ctx[0].font === void 0) add_render_callback(() => /*select2_change_handler*/ ctx[10].call(select2));
-    			add_location(select2, file$3, 64, 8, 2386);
+    			if (/*settings*/ ctx[0].font === void 0) add_render_callback(() => /*select2_change_handler*/ ctx[11].call(select2));
+    			add_location(select2, file$3, 67, 8, 2485);
     			attr_dev(div4, "class", "select-div");
-    			add_location(div4, file$3, 62, 4, 2313);
+    			add_location(div4, file$3, 65, 4, 2412);
     			attr_dev(label5, "class", "slider-label");
     			attr_dev(label5, "for", "beats-for-newline");
-    			add_location(label5, file$3, 72, 8, 2613);
+    			add_location(label5, file$3, 75, 8, 2712);
     			attr_dev(input2, "type", "range");
     			attr_dev(input2, "id", "beats-for-newline");
     			attr_dev(input2, "min", "1");
     			attr_dev(input2, "max", "32");
-    			add_location(input2, file$3, 73, 8, 2695);
-    			add_location(span1, file$3, 74, 8, 2788);
+    			add_location(input2, file$3, 76, 8, 2794);
+    			add_location(span1, file$3, 77, 8, 2887);
     			attr_dev(div5, "class", "beats");
-    			add_location(div5, file$3, 71, 4, 2585);
+    			add_location(div5, file$3, 74, 4, 2684);
     			attr_dev(label6, "class", "slider-label");
     			attr_dev(label6, "for", "quantize-prompt");
-    			add_location(label6, file$3, 88, 8, 3322);
+    			add_location(label6, file$3, 91, 8, 3421);
     			attr_dev(input3, "type", "range");
     			attr_dev(input3, "id", "quantize-prompt");
     			attr_dev(input3, "min", "1");
     			attr_dev(input3, "max", "100");
-    			add_location(input3, file$3, 89, 8, 3399);
-    			add_location(span2, file$3, 90, 8, 3494);
+    			add_location(input3, file$3, 92, 8, 3498);
+    			add_location(span2, file$3, 93, 8, 3593);
     			attr_dev(div6, "class", "quantize");
-    			add_location(div6, file$3, 87, 4, 3291);
+    			add_location(div6, file$3, 90, 4, 3390);
     			attr_dev(input4, "type", "checkbox");
     			attr_dev(input4, "id", "classic-chord-order");
-    			add_location(input4, file$3, 94, 8, 3597);
+    			add_location(input4, file$3, 97, 8, 3696);
     			attr_dev(label7, "for", "classic-chord-order");
-    			add_location(label7, file$3, 93, 4, 3555);
+    			add_location(label7, file$3, 96, 4, 3654);
     			attr_dev(input5, "type", "checkbox");
     			attr_dev(input5, "id", "order-quantizes");
-    			add_location(input5, file$3, 99, 8, 3772);
+    			add_location(input5, file$3, 102, 8, 3871);
     			attr_dev(label8, "for", "order-quantizes");
-    			add_location(label8, file$3, 98, 4, 3734);
+    			add_location(label8, file$3, 101, 4, 3833);
     			attr_dev(input6, "type", "checkbox");
     			attr_dev(input6, "id", "out-of-range");
-    			add_location(input6, file$3, 104, 8, 3942);
+    			add_location(input6, file$3, 107, 8, 4041);
     			attr_dev(label9, "for", "out-of-range");
-    			add_location(label9, file$3, 103, 4, 3907);
+    			add_location(label9, file$3, 106, 4, 4006);
     			attr_dev(input7, "type", "checkbox");
     			attr_dev(input7, "id", "tempo-checkbox");
-    			add_location(input7, file$3, 109, 8, 4110);
+    			add_location(input7, file$3, 112, 8, 4209);
     			attr_dev(label10, "for", "tempo-checkbox");
-    			add_location(label10, file$3, 108, 4, 4073);
-    			add_location(button2, file$3, 120, 4, 4448);
-    			add_location(button3, file$3, 124, 4, 4534);
+    			add_location(label10, file$3, 111, 4, 4172);
+    			add_location(button2, file$3, 142, 4, 5330);
+    			add_location(button3, file$3, 146, 4, 5416);
     			button4.disabled = button4_disabled_value = /*settings*/ ctx[0].capturingImage;
-    			add_location(button4, file$3, 128, 4, 4632);
-    			add_location(div7, file$3, 44, 0, 1589);
-    			add_location(style, file$3, 154, 0, 5322);
+    			add_location(button4, file$3, 150, 4, 5514);
+    			add_location(div7, file$3, 47, 0, 1688);
+    			add_location(style, file$3, 176, 0, 6204);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -3964,25 +3964,25 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[4]),
-    					listen_dev(button0, "click", /*click_handler*/ ctx[5], false, false, false),
-    					listen_dev(button1, "click", /*click_handler_1*/ ctx[6], false, false, false),
-    					listen_dev(input1, "change", /*input1_change_input_handler*/ ctx[7]),
-    					listen_dev(input1, "input", /*input1_change_input_handler*/ ctx[7]),
-    					listen_dev(select0, "change", /*select0_change_handler*/ ctx[8]),
-    					listen_dev(select1, "change", /*select1_change_handler*/ ctx[9]),
-    					listen_dev(select2, "change", /*select2_change_handler*/ ctx[10]),
-    					listen_dev(input2, "change", /*input2_change_input_handler*/ ctx[11]),
-    					listen_dev(input2, "input", /*input2_change_input_handler*/ ctx[11]),
-    					listen_dev(input3, "change", /*input3_change_input_handler*/ ctx[13]),
-    					listen_dev(input3, "input", /*input3_change_input_handler*/ ctx[13]),
-    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[14]),
-    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[15]),
-    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[16]),
-    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[17]),
-    					listen_dev(button2, "click", /*click_handler_2*/ ctx[19], false, false, false),
-    					listen_dev(button3, "click", /*click_handler_3*/ ctx[20], false, false, false),
-    					listen_dev(button4, "click", /*click_handler_4*/ ctx[21], false, false, false)
+    					listen_dev(input0, "input", /*input0_input_handler*/ ctx[5]),
+    					listen_dev(button0, "click", /*click_handler*/ ctx[6], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_1*/ ctx[7], false, false, false),
+    					listen_dev(input1, "change", /*input1_change_input_handler*/ ctx[8]),
+    					listen_dev(input1, "input", /*input1_change_input_handler*/ ctx[8]),
+    					listen_dev(select0, "change", /*select0_change_handler*/ ctx[9]),
+    					listen_dev(select1, "change", /*select1_change_handler*/ ctx[10]),
+    					listen_dev(select2, "change", /*select2_change_handler*/ ctx[11]),
+    					listen_dev(input2, "change", /*input2_change_input_handler*/ ctx[12]),
+    					listen_dev(input2, "input", /*input2_change_input_handler*/ ctx[12]),
+    					listen_dev(input3, "change", /*input3_change_input_handler*/ ctx[14]),
+    					listen_dev(input3, "input", /*input3_change_input_handler*/ ctx[14]),
+    					listen_dev(input4, "change", /*input4_change_handler*/ ctx[15]),
+    					listen_dev(input5, "change", /*input5_change_handler*/ ctx[16]),
+    					listen_dev(input6, "change", /*input6_change_handler*/ ctx[17]),
+    					listen_dev(input7, "change", /*input7_change_handler*/ ctx[18]),
+    					listen_dev(button2, "click", /*click_handler_2*/ ctx[21], false, false, false),
+    					listen_dev(button3, "click", /*click_handler_3*/ ctx[22], false, false, false),
+    					listen_dev(button4, "click", /*click_handler_4*/ ctx[23], false, false, false)
     				];
 
     				mounted = true;
@@ -4082,7 +4082,7 @@ var app = (function () {
     				input7.checked = /*settings*/ ctx[0].tempoMarks;
     			}
 
-    			if (/*settings*/ ctx[0].oors && /*settings*/ ctx[0].tempoMarks) {
+    			if (/*settings*/ ctx[0].oors) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
     				} else {
@@ -4133,26 +4133,26 @@ var app = (function () {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(29:0) {#if show}",
+    		source: "(32:0) {#if show}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (66:12) {#each fonts as font}
+    // (69:12) {#each fonts as font}
     function create_each_block$1(ctx) {
     	let option;
-    	let t_value = /*font*/ ctx[23] + "";
+    	let t_value = /*font*/ ctx[25] + "";
     	let t;
 
     	const block = {
     		c: function create() {
     			option = element("option");
     			t = text(t_value);
-    			option.__value = /*font*/ ctx[23];
+    			option.__value = /*font*/ ctx[25];
     			option.value = option.__value;
-    			add_location(option, file$3, 66, 16, 2494);
+    			add_location(option, file$3, 69, 16, 2593);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, option, anchor);
@@ -4168,14 +4168,14 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(66:12) {#each fonts as font}",
+    		source: "(69:12) {#each fonts as font}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (78:4) {#if settings.missingTempo == true}
+    // (81:4) {#if settings.missingTempo == true}
     function create_if_block_5(ctx) {
     	let div;
     	let label;
@@ -4201,15 +4201,15 @@ var app = (function () {
     			attr_dev(label, "class", "slider-label");
     			attr_dev(label, "for", "tempo");
     			attr_dev(label, "title", "You're able to change this because your MIDI file doesn't have tempo/BPM.");
-    			add_location(label, file$3, 79, 12, 2960);
+    			add_location(label, file$3, 82, 12, 3059);
     			attr_dev(input, "type", "range");
     			attr_dev(input, "id", "tempo");
     			attr_dev(input, "min", "1");
     			attr_dev(input, "max", "300");
-    			add_location(input, file$3, 82, 12, 3149);
-    			add_location(span, file$3, 83, 12, 3233);
+    			add_location(input, file$3, 85, 12, 3248);
+    			add_location(span, file$3, 86, 12, 3332);
     			attr_dev(div, "class", "tempo");
-    			add_location(div, file$3, 78, 8, 2928);
+    			add_location(div, file$3, 81, 8, 3027);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4223,8 +4223,8 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(input, "change", /*input_change_input_handler*/ ctx[12]),
-    					listen_dev(input, "input", /*input_change_input_handler*/ ctx[12])
+    					listen_dev(input, "change", /*input_change_input_handler*/ ctx[13]),
+    					listen_dev(input, "input", /*input_change_input_handler*/ ctx[13])
     				];
 
     				mounted = true;
@@ -4248,57 +4248,67 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(78:4) {#if settings.missingTempo == true}",
+    		source: "(81:4) {#if settings.missingTempo == true}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (114:4) {#if settings.oors && settings.tempoMarks}
+    // (117:4) {#if settings.oors}
     function create_if_block_4(ctx) {
-    	let div;
+    	let div1;
     	let label;
     	let t1;
+    	let div0;
     	let input;
     	let mounted;
     	let dispose;
 
     	const block = {
     		c: function create() {
-    			div = element("div");
+    			div1 = element("div");
     			label = element("label");
-    			label.textContent = "Out-of-range prefix:";
+    			label.textContent = "Out-of-range separator (?):";
     			t1 = space();
+    			div0 = element("div");
     			input = element("input");
-    			attr_dev(label, "for", "oor-prefix");
-    			add_location(label, file$3, 115, 8, 4293);
+    			attr_dev(label, "title", "Helps tell you if notes are out-of-range, certain characters are restricted from use!");
+    			attr_dev(label, "for", "oor-separator");
+    			add_location(label, file$3, 118, 8, 4369);
     			attr_dev(input, "type", "text");
-    			attr_dev(input, "id", "oor-prefix");
-    			add_location(input, file$3, 116, 8, 4354);
-    			add_location(div, file$3, 114, 4, 4279);
+    			attr_dev(input, "id", "oor-separator");
+    			add_location(input, file$3, 120, 12, 4582);
+    			set_style(div0, "display", "inline-flex");
+    			add_location(div0, file$3, 119, 8, 4534);
+    			add_location(div1, file$3, 117, 4, 4355);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, label);
-    			append_dev(div, t1);
-    			append_dev(div, input);
-    			set_input_value(input, /*settings*/ ctx[0].oorPrefix);
+    			insert_dev(target, div1, anchor);
+    			append_dev(div1, label);
+    			append_dev(div1, t1);
+    			append_dev(div1, div0);
+    			append_dev(div0, input);
+    			set_input_value(input, /*settings*/ ctx[0].oorSeparator);
 
     			if (!mounted) {
-    				dispose = listen_dev(input, "input", /*input_input_handler*/ ctx[18]);
+    				dispose = [
+    					listen_dev(input, "input", /*input_handler*/ ctx[19], false, false, false),
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[20])
+    				];
+
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*settings*/ 1 && input.value !== /*settings*/ ctx[0].oorPrefix) {
-    				set_input_value(input, /*settings*/ ctx[0].oorPrefix);
+    			if (dirty & /*settings*/ 1 && input.value !== /*settings*/ ctx[0].oorSeparator) {
+    				set_input_value(input, /*settings*/ ctx[0].oorSeparator);
     			}
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(div1);
     			mounted = false;
-    			dispose();
+    			run_all(dispose);
     		}
     	};
 
@@ -4306,14 +4316,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(114:4) {#if settings.oors && settings.tempoMarks}",
+    		source: "(117:4) {#if settings.oors}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (135:8) {:else}
+    // (157:8) {:else}
     function create_else_block_1(ctx) {
     	let t;
 
@@ -4333,14 +4343,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(135:8) {:else}",
+    		source: "(157:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (133:8) {#if settings.capturingImage}
+    // (155:8) {#if settings.capturingImage}
     function create_if_block_3(ctx) {
     	let t;
 
@@ -4360,14 +4370,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(133:8) {#if settings.capturingImage}",
+    		source: "(155:8) {#if settings.capturingImage}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (140:4) {#if typeof ClipboardItem !== "undefined"}
+    // (162:4) {#if typeof ClipboardItem !== "undefined"}
     function create_if_block_1$1(ctx) {
     	let button;
     	let button_disabled_value;
@@ -4387,14 +4397,14 @@ var app = (function () {
     			button = element("button");
     			if_block.c();
     			button.disabled = button_disabled_value = /*settings*/ ctx[0].capturingImage;
-    			add_location(button, file$3, 141, 8, 5006);
+    			add_location(button, file$3, 163, 8, 5888);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
     			if_block.m(button, null);
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*click_handler_5*/ ctx[22], false, false, false);
+    				dispose = listen_dev(button, "click", /*click_handler_5*/ ctx[24], false, false, false);
     				mounted = true;
     			}
     		},
@@ -4425,14 +4435,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(140:4) {#if typeof ClipboardItem !== \\\"undefined\\\"}",
+    		source: "(162:4) {#if typeof ClipboardItem !== \\\"undefined\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (148:12) {:else}
+    // (170:12) {:else}
     function create_else_block$1(ctx) {
     	let t;
 
@@ -4452,14 +4462,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(148:12) {:else}",
+    		source: "(170:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (146:12) {#if settings.capturingImage}
+    // (168:12) {#if settings.capturingImage}
     function create_if_block_2(ctx) {
     	let t;
 
@@ -4479,7 +4489,7 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(146:12) {#if settings.capturingImage}",
+    		source: "(168:12) {#if settings.capturingImage}",
     		ctx
     	});
 
@@ -4561,7 +4571,7 @@ var app = (function () {
     		pOors: 'Inorder',
     		oors: true,
     		tempoMarks: false,
-    		oorPrefix: '\\',
+    		oorSeparator: ':',
     		transposition: 0,
     		lbauto_atleast: 4,
     		font: fonts[0],
@@ -4569,6 +4579,8 @@ var app = (function () {
     		missingTempo: false,
     		bpm: 120
     	} } = $$props;
+
+    	const isAscii = str => (/^[\x00-\x7F]+$/).test(str);
 
     	$$self.$$.on_mount.push(function () {
     		if (show === undefined && !('show' in $$props || $$self.$$.bound[$$self.$$.props['show']])) {
@@ -4650,8 +4662,17 @@ var app = (function () {
     		$$invalidate(0, settings);
     	}
 
+    	const input_handler = val => {
+    		if (vpScale.includes(val.data) || [null, "", "    ", " ", "'", "[", "]", "(", ")", "{", "}"].includes(val.data) || !isAscii(val.data)) {
+    			// if restricted char, reset to default
+    			$$invalidate(0, settings.oorSeparator = ":", settings);
+    		} else {
+    			$$invalidate(0, settings.oorSeparator = val.data[val.data.length - 1], settings);
+    		}
+    	};
+
     	function input_input_handler() {
-    		settings.oorPrefix = this.value;
+    		settings.oorSeparator = this.value;
     		$$invalidate(0, settings);
     	}
 
@@ -4667,10 +4688,12 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		createEventDispatcher,
+    		vpScale,
     		dispatch,
     		show,
     		fonts,
-    		settings
+    		settings,
+    		isAscii
     	});
 
     	$$self.$inject_state = $$props => {
@@ -4689,6 +4712,7 @@ var app = (function () {
     		show,
     		dispatch,
     		fonts,
+    		isAscii,
     		input0_input_handler,
     		click_handler,
     		click_handler_1,
@@ -4703,6 +4727,7 @@ var app = (function () {
     		input5_change_handler,
     		input6_change_handler,
     		input7_change_handler,
+    		input_handler,
     		input_input_handler,
     		click_handler_2,
     		click_handler_3,
@@ -4922,7 +4947,7 @@ var app = (function () {
     /* src\components\Line.svelte generated by Svelte v3.55.1 */
     const file$1 = "src\\components\\Line.svelte";
 
-    // (187:8) {:else}
+    // (186:8) {:else}
     function create_else_block(ctx) {
     	let html_tag;
     	let raw_value = /*render*/ ctx[6](/*sheet*/ ctx[4]) + "";
@@ -4951,14 +4976,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(187:8) {:else}",
+    		source: "(186:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (181:8) {#if (comment || comment == '')}
+    // (180:8) {#if (comment || comment == '')}
     function create_if_block$1(ctx) {
     	let span;
     	let t;
@@ -4973,7 +4998,7 @@ var app = (function () {
     			attr_dev(span, "contenteditable", "true");
     			attr_dev(span, "class", "comment svelte-jszitz");
     			if (/*comment*/ ctx[0] === void 0) add_render_callback(() => /*span_input_handler*/ ctx[13].call(span));
-    			add_location(span, file$1, 182, 12, 7257);
+    			add_location(span, file$1, 181, 12, 7201);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -5012,7 +5037,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(181:8) {#if (comment || comment == '')}",
+    		source: "(180:8) {#if (comment || comment == '')}",
     		ctx
     	});
 
@@ -5039,10 +5064,10 @@ var app = (function () {
     			div0 = element("div");
     			if_block.c();
     			attr_dev(div0, "class", "line svelte-jszitz");
-    			add_location(div0, file$1, 161, 4, 6243);
+    			add_location(div0, file$1, 160, 4, 6187);
     			attr_dev(div1, "class", "viewer svelte-jszitz");
     			set_style(div1, "font-family", /*settings*/ ctx[2].font);
-    			add_location(div1, file$1, 160, 0, 6151);
+    			add_location(div1, file$1, 159, 0, 6095);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5119,7 +5144,6 @@ var app = (function () {
     		let isChord = chord.notes.length > 1 && chord.notes.find(note => note.valid === true);
     		let res = `<span style="color:${color}; ${isChord ? "display: inline-flex;" : ""}">`;
     		if (settings.oors === false) if (chord.notes.filter(note => note.outOfRange === false).length <= 1) isChord = false;
-    		const oorSeparator = ":";
     		let nonOors = chord.notes.filter(note => note.outOfRange === false);
     		let startOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value - 1024);
     		let endOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value + 1024);
@@ -5139,10 +5163,10 @@ var app = (function () {
     					const isChordWithMoreThanOneNonOorAndIsFirstEndOor = isChord && nonOors.length > 0 && note === endOors[0];
 
     					if (isFirstStartOor || isFirstEndOorWithoutChord || isChordWithOnlyEndOorsAndIsFirstEndOor || isChordWithMoreThanOneNonOorAndIsFirstEndOor) {
-    						res += oorSeparator;
+    						res += settings.oorSeparator;
     					}
 
-    					res += `<span style="display:inline-block;">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}${isFirstStartOor && nonOors.length > 0 ? "'" : ""}</span>`;
+    					res += `<span style="display:inline-block; font-weight: 900">${note.char}${isFirstStartOor && nonOors.length > 0 ? "'" : ""}</span>`;
     				}
     			} else {
     				res += note.char;
