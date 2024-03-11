@@ -269,35 +269,6 @@ const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
 
 export const lowerOorScale = lowercases.slice(0, 15)
 export const upperOorScale = lowercases.slice(15, 27)
-const oorUnicodeEqMap = {
-    "1": "𝟏",
-    "2": "𝟐",
-    "3": "𝟑",
-    "4": "𝟒",
-    "5": "𝟓",
-    "6": "𝟔",
-    "7": "𝟕",
-    "8": "𝟴",
-    "9": "𝟵",
-    "0": "ʘ",
-    "q": "𝑸",
-    "w": "𝑾",
-    "e": "𝑬",
-    "r": "𝓡",
-    "t": "𝑻",
-    "y": '𝒀',
-    "u": '𝑼',
-    "i": '𝗶',
-    "o": '𝑶',
-    "p": '𝑷',
-    "a": '𝘼',
-    "s": '𝑺',
-    "d": '𝑫',
-    "f": '𝑭',
-    "g": '𝑮',
-    "h": '𝑯',
-    "j": '𝗝',
-}
 
 /** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least "effort" to shift */
 function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {

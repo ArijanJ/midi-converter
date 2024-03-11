@@ -1,7 +1,6 @@
 <script>
     import { colors, colored_string } from "../utils/Rendering.js"
     import { separator } from "../utils/VP.js"
-    import { lowerOorScale, upperOorScale } from "../utils/VP.js"
     import { Sheet } from "../utils/VP.js"
 
     import { createEventDispatcher } from "svelte";
@@ -39,7 +38,6 @@
         let isChord = (chord.notes.length > 1 && chord.notes.find(note => note.valid === true))
 
         let res = `<span style="color:${color}; ${isChord ? "display: inline-flex;" : ""}">`
-        let oorSpanStyle = `display:inline-block;`;
         if (settings.oors === false)
             if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
                 isChord = false
@@ -70,7 +68,7 @@
                         res += oorSeparator
                     }
 
-                    res += `<span style="${oorSpanStyle}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}${isFirstStartOor && nonOors.length > 0 ? "'" : ""}</span>`
+                    res += `<span style="display:inline-block;">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}${isFirstStartOor && nonOors.length > 0 ? "'" : ""}</span>`
                 }
             }
             else {
