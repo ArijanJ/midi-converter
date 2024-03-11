@@ -124,7 +124,7 @@
                 on:input={(val) => {
                     if (
                         vpScale.includes(val.data) ||
-                        [null, "", "    ", " ", "'", "[", "]", "(", ")", "{", "}"].includes(val.data) ||
+                        [null, "", "    ", " ", "'", "[", "]", "(", ")", "{", "}", "-", ".", ","].includes(val.data) ||
                         !isAscii(val.data)
                     ) {
                         // if restricted char, reset to default

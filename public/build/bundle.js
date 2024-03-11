@@ -3851,12 +3851,12 @@ var app = (function () {
     			add_location(input7, file$3, 112, 8, 4209);
     			attr_dev(label10, "for", "tempo-checkbox");
     			add_location(label10, file$3, 111, 4, 4172);
-    			add_location(button2, file$3, 142, 4, 5330);
-    			add_location(button3, file$3, 146, 4, 5416);
+    			add_location(button2, file$3, 142, 4, 5345);
+    			add_location(button3, file$3, 146, 4, 5431);
     			button4.disabled = button4_disabled_value = /*settings*/ ctx[0].capturingImage;
-    			add_location(button4, file$3, 150, 4, 5514);
+    			add_location(button4, file$3, 150, 4, 5529);
     			add_location(div7, file$3, 47, 0, 1688);
-    			add_location(style, file$3, 176, 0, 6204);
+    			add_location(style, file$3, 176, 0, 6219);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div0, anchor);
@@ -4397,7 +4397,7 @@ var app = (function () {
     			button = element("button");
     			if_block.c();
     			button.disabled = button_disabled_value = /*settings*/ ctx[0].capturingImage;
-    			add_location(button, file$3, 163, 8, 5888);
+    			add_location(button, file$3, 163, 8, 5903);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -4663,7 +4663,7 @@ var app = (function () {
     	}
 
     	const input_handler = val => {
-    		if (vpScale.includes(val.data) || [null, "", "    ", " ", "'", "[", "]", "(", ")", "{", "}"].includes(val.data) || !isAscii(val.data)) {
+    		if (vpScale.includes(val.data) || [null, "", "    ", " ", "'", "[", "]", "(", ")", "{", "}", "-", ".", ","].includes(val.data) || !isAscii(val.data)) {
     			// if restricted char, reset to default
     			$$invalidate(0, settings.oorSeparator = ":", settings);
     		} else {
