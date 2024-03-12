@@ -1,5 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte'
+    import {vpScale} from "../utils/VP";
 
     let dispatch = createEventDispatcher()
 
@@ -13,10 +14,10 @@
         classicChordOrder: true,
         sequentialQuantize: false,
         pShifts: 'Start',
-        pOors: 'Start',
+        pOors: 'Inorder',
         oors: true,
         tempoMarks: false,
-        oorPrefix: '\\',
+        oorSeparator: ':',
         transposition: 0,
         lbauto_atleast: 4,
         font: fonts[0],
@@ -24,6 +25,8 @@
         missingTempo: false,
         bpm: 120
     }
+
+    const isAscii = str => /^[\x00-\x7F]+$/.test(str);
 </script>
 
 {#if show}
@@ -54,6 +57,7 @@
     <div class='select-div'>
         <label for='oors-position'>Place out of range notes at:</label>
         <select name='oors-position' id='oors-position' bind:value={settings.pOors}>
+            <option value='Inorder'>Inorder</option>
             <option value='Start'>Start</option>
             <option value='End'>End</option>
         </select>
@@ -110,10 +114,29 @@
         Show tempo marks
     </label>
 
-    {#if settings.oors && settings.tempoMarks}
+    {#if settings.oors}
     <div>
-        <label for="oor-prefix">Out-of-range prefix:</label>
-        <input type='text' id="oor-prefix" bind:value={settings.oorPrefix}>
+        <label title="Helps tell you if notes are out-of-range, certain characters are restricted from use!" for="oor-separator">Out-of-range separator (?):</label>
+        <div style="display: inline-flex;">
+            <input
+                type='text'
+                id="oor-separator"
+                on:input={(val) => {
+                    if (
+                        vpScale.includes(val.data) ||
+                        [null, "", "    ", " ", "'", "[", "]", "(", ")", "{", "}", "-", ".", ","].includes(val.data) ||
+                        !isAscii(val.data)
+                    ) {
+                        // if restricted char, reset to default
+                        settings.oorSeparator = ":"
+                    }
+                    else {
+                        settings.oorSeparator = val.data[val.data.length - 1]
+                    }
+                }}
+                bind:value={settings.oorSeparator}
+            >
+        </div>
     </div>
     {/if}
 

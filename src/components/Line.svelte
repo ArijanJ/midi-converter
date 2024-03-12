@@ -35,12 +35,16 @@
     let previousChord = { notes: [{ playTime: -999999 }] }
 
     function colored_chord(chord, color, separator = ' ') {
-        let res = `<span style="color:${color}">`
-
         let isChord = (chord.notes.length > 1 && chord.notes.find(note => note.valid === true))
+
+        let res = `<span style="color:${color}; ${isChord ? "display: inline-flex;" : ""}">`
         if (settings.oors === false)
             if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
                 isChord = false
+
+        let nonOors = chord.notes.filter(note => note.outOfRange === false);
+        let startOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value - 1024)
+        let endOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value + 1024)
 
         if (isChord) res += '['
 
@@ -49,9 +53,26 @@
 
             if (note.outOfRange === true) {
                 if (settings.oors === true) {
-                    res += `<span style="display:inline-block; border-bottom: 2px solid ${color}">${settings.tempoMarks ? settings.oorPrefix : ''}${note.char}</span>`
+                    const isFirstStartOor = note === startOors[0];
+                    const isFirstEndOorWithoutChord = !isChord && note === endOors[0];
+                    const isChordWithOnlyEndOorsAndIsFirstEndOor = isChord && nonOors.length === 0 && startOors.length === 0 && note === endOors[0];
+                    const isChordWithMoreThanOneNonOorAndIsFirstEndOor = isChord && nonOors.length > 0 && note === endOors[0];
+
+                    if (
+                        isFirstStartOor ||
+                        isFirstEndOorWithoutChord ||
+                        isChordWithOnlyEndOorsAndIsFirstEndOor ||
+                        isChordWithMoreThanOneNonOorAndIsFirstEndOor
+                    ) {
+                        res += settings.oorSeparator
+                    }
+
+                    res += `<span style="display:inline-block; font-weight: 900">${note.char}${isFirstStartOor && nonOors.length > 0 ? "'" : ""}</span>`
                 }
-            } else res += note.char
+            }
+            else {
+                res += note.char
+            }
         }
 
         if (isChord) res += ']'

@@ -23,6 +23,15 @@ class Note {
         else if (this.outOfRange) {
             if (oors === 'Start') this.displayValue = value - 1024
             else if (oors == 'End') this.displayValue = value + 1024
+            else {
+                // Inorder
+                if (lowerOorScale.includes(this.char)) {
+                    this.displayValue = value - 1024
+                }
+                else {
+                    this.displayValue = value + 1024
+                }
+            }
         }
         else this.displayValue = value
     }
@@ -257,6 +266,9 @@ const vpScale =
     `yuiopasdfghj`
 
 const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
+
+export const lowerOorScale = lowercases.slice(0, 15)
+export const upperOorScale = lowercases.slice(15, 27)
 
 /** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least "effort" to shift */
 function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {
