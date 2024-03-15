@@ -121,20 +121,16 @@
             <input
                 type='text'
                 id="oor-separator"
+                bind:value={settings.oorSeparator}
                 on:input={(val) => {
-                    if (
-                        vpScale.includes(val.data) ||
-                        [null, "", "    ", " ", "'", "[", "]", "(", ")", "{", "}", "-", ".", ","].includes(val.data) ||
-                        !isAscii(val.data)
-                    ) {
-                        // if restricted char, reset to default
+                    if ([null, "0", "", "    ", " ", "'", "[", "]", "(", ")", "{", "}", "_", "-", ".", ","]
+                        .concat(vpScale.split(''))
+                        .includes(val.data?.toLowerCase() ?? null))
+                    { // if restricted char, reset to default
                         settings.oorSeparator = ":"
                     }
-                    else {
-                        settings.oorSeparator = val.data[val.data.length - 1]
-                    }
+                    else settings.oorSeparator = val.data[0]
                 }}
-                bind:value={settings.oorSeparator}
             >
         </div>
     </div>

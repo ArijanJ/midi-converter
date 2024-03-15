@@ -53,7 +53,8 @@
 
             if (note.outOfRange === true) {
                 if (settings.oors === true) {
-                    const isFirstStartOor = note === startOors[0];
+                    const isFirstStartOor = (note === startOors[0])
+                    const isLastStartOor = (note === startOors[startOors.length-1])
                     const isFirstEndOorWithoutChord = !isChord && note === endOors[0];
                     const isChordWithOnlyEndOorsAndIsFirstEndOor = isChord && nonOors.length === 0 && startOors.length === 0 && note === endOors[0];
                     const isChordWithMoreThanOneNonOorAndIsFirstEndOor = isChord && nonOors.length > 0 && note === endOors[0];
@@ -67,7 +68,7 @@
                         res += settings.oorSeparator
                     }
 
-                    res += `<span style="display:inline-block; font-weight: 900">${note.char}${isFirstStartOor && nonOors.length > 0 ? "'" : ""}</span>`
+                    res += `<span style="display:inline-block; font-weight: 900">${note.char}${isLastStartOor && nonOors.length > 0 ? "'" : ""}</span>`
                 }
             }
             else {
