@@ -18,6 +18,7 @@
 
 	// VP.js/Sheet
 	let originalSheet
+    let sheetText
 
     // [true, true, false, true, ...]
     let selectedTracks
@@ -85,7 +86,7 @@
             if (!current.note || !current.chord) continue
 
             if (shouldBreak(current.note) && acc.length > 0) {
-                lines.push({ chords: acc, transposition: settings.transposition, continuation: current.note })
+                lines.push({ chords: acc, transposition: settings.transposition, continuation: current.note})
                 acc = []
             }
 
@@ -123,6 +124,8 @@
             saveSheet()
             createLines()
         }
+
+        sheetText = ""
         oldSettings = { ...settings }
 	}
 
@@ -180,8 +183,22 @@
     }
 
     let getTransposesOfSheet = () => {
+        const getPrevTranspose = (i) => {
+            i -= 1;
+            while (i >= 0) {
+                if (!lines[i]?.comment) {
+                    return lines[i].transposition
+                }
+                i -= 1
+            }
+
+            return false
+        }
+
         let transposes = lines.reduce((acc, line, i) => {
-            if (i === 0 || (lines[i-1]?.transposition ?? 0) !== line.transposition) {
+            let prevTranspose = getPrevTranspose(i)
+
+            if (!line.comment && (i === 0 || prevTranspose !== line.transposition)) {
                 acc.push(-line.transposition);
             }
 
@@ -313,19 +330,7 @@
     on:copyText={() => {
         settings.tempoMarks = true
         setTimeout(() => {
-            let text = ''
-            let linesElement = container.querySelector('div.viewer').parentElement
-            for (let line of linesElement.children) {
-                if (!line?.innerText) continue
-
-                let lineNotes = line.children[0].innerText.split("\n")
-                if (lineNotes[0].includes("Transpose")) {
-                    lineNotes[0] += "\n";
-                }
-
-                text += lineNotes.join("") + '\n'
-            }
-            navigator.clipboard.writeText(text)
+            navigator.clipboard.writeText(sheetText)
         }, 0)
     }}
     on:copyTransposes={copyTransposes}
@@ -345,10 +350,11 @@
 {/if}
 
 {#if sheetReady}
-    <div style="background: #2D2A32" bind:this={container}>
+    <div style="background: #2D2A32; user-select: none" bind:this={container}>
         <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
             {#each Object.entries(lines) as [ index, line ]}
             <Line line={line}
+                  prevLine={lines?.[index-1]}
                   {index}
                   {settings}
                   comment={line.comment}
@@ -356,6 +362,7 @@
                   on:transpose={lineTransposed}
                   on:auto={autoLine}
                   on:comment={comment}
+                  on:sheetText={(text) => sheetText += text.detail + "\n"}
                   sameTranspositionAsPrevious={stap(index)}/>
             {/each}
         </div>

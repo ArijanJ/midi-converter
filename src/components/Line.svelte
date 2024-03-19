@@ -14,6 +14,7 @@
      */
     export let comment = undefined
 
+    export let prevLine;
     export let line /* Sheet-like */
     $: {
         previousChord = { notes: [{ playTime: -999999 }] }
@@ -37,7 +38,6 @@
     function colored_chord(chord, color, separator = ' ') {
         let isChord = (chord.notes.length > 1 && chord.notes.find(note => note.valid === true))
 
-        let res = `<span style="color:${color}; ${isChord ? "display: inline-flex;" : ""}">`
         if (settings.oors === false)
             if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
                 isChord = false
@@ -46,10 +46,19 @@
         let startOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value - 1024)
         let endOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value + 1024)
 
-        if (isChord) res += '['
+        let dom = `<span style="color:${color};">`
+        let text = ""
+        if (isChord) {
+            dom += '['
+            text += '['
+        }
 
         for (const note of chord.notes) {
-            if (!note.valid) { res += '_'; continue }
+            if (!note.valid) {
+                dom += '_';
+                text += "_";
+                continue
+            }
 
             if (note.outOfRange === true) {
                 if (settings.oors === true) {
@@ -65,35 +74,52 @@
                         isChordWithOnlyEndOorsAndIsFirstEndOor ||
                         isChordWithMoreThanOneNonOorAndIsFirstEndOor
                     ) {
-                        res += settings.oorSeparator
+                        text += settings.oorSeparator
                     }
 
-                    res += `<span style="display:inline-block; font-weight: 900">${note.char}${isLastStartOor && nonOors.length > 0 ? "'" : ""}</span>`
+                    dom += `<span style="display:inline-flex; justify-content: center; min-width: 10px; border-bottom: 3px solid; font-weight: 900">${note.char}</span>`
+                    text += `${note.char}${isLastStartOor && nonOors.length > 0 ? "'" : ""}`
                 }
             }
             else {
-                res += note.char
+                dom += note.char
+                text += `${note.char}`
             }
         }
 
-        if (isChord) res += ']'
+        if (isChord) {
+            dom += ']'
+            text += ']'
+        }
 
-        return res + '</span>'
+        dom = dom + '</span>'
+        return {dom: dom, text: text}
     }
 
     function render(sheet) {
         const negtransposition = -line.transposition
 
-        let result = '' 
+        let domResult = ''
+        let textResult = ''
+
+        if (prevLine?.comment) {
+            textResult += prevLine.comment + "\n"
+        }
+
         if (!sameTranspositionAsPrevious) {
             let text = `Transpose by: ${negtransposition > 0 ? '+' : ''}${negtransposition}`
             if (line.difference) text += ` (${-line.difference > 0 ? '+' : ''}${-line.difference})`
-            result += colored_string(text + '\n', 'white')
+            domResult += colored_string(text + '\n', 'white')
+            textResult += text + "\n"
         }
 
         let chords = sheet.chords
         for (let i = 0; i < chords.length; i++) {
-            if (!chords) { result += '[bad-midi-file!]<br>'; continue }
+            if (!chords) {
+                domResult += '[bad-midi-file!]<br>';
+                textResult += '[bad-midi-file!]';
+                continue
+            }
 
             const current = {
                 chord: chords[i],
@@ -107,7 +133,13 @@
 
             if (!next.note) {
                 if (passedNext) { next.note = passedNext; }
-                else { result += colored_chord(current.chord, 'white'); continue  }
+                else {
+                    let res = colored_chord(current.chord, 'white');
+                    domResult += res.dom;
+                    textResult += res.text;
+
+                    continue
+                }
             }
 
             let beat = current.note.tempo / 1000
@@ -138,18 +170,37 @@
             else if (difference < beat * 16)
                 color = colors.long
 
-            result += colored_chord(current.chord, color)
+            let res = colored_chord(current.chord, color)
+            domResult += res.dom
+            textResult += res.text
 
             if (settings.tempoMarks) { // what a mess
-                if (!settings.oors)
-                    if (current.chord.notes.some(note => note.outOfRange == false))
-                        result += colored_string(separator(beat, difference), color)
-                    else result += ' '
-                else result += colored_string(separator(beat, difference), color)
-            } else 
-                result += ' '
+                let tempoSeparator = separator(beat, difference)
+                res = colored_string(tempoSeparator, color)
+
+                if (!settings.oors) {
+                    if (current.chord.notes.some(note => note.outOfRange == false)) {
+                        domResult += res
+                        textResult += tempoSeparator
+                    }
+                    else {
+                        domResult += ' '
+                        textResult += ' '
+                    }
+                }
+                else {
+                    domResult += res
+                    textResult += tempoSeparator
+                }
+            }
+            else {
+                domResult += ' '
+                textResult += ' '
+            }
         }
-        return result
+
+        dispatch("sheetText", textResult.trimEnd());
+        return domResult
     }
 
     function updateComment() {
