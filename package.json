@@ -24,6 +24,7 @@
     "midievents": "^2.0.0",
     "midifile": "^2.0.0",
     "modern-screenshot": "^4.4.37",
+    "pako": "^2.1.0",
     "sirv-cli": "^2.0.0"
   }
 }

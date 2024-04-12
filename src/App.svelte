@@ -7,6 +7,8 @@
     import Line from './components/Line.svelte'
 	import { onMount } from 'svelte'
 
+    import history, { decompress } from './utils/History.js'
+
 	// DOM input element
 	let fileInput
 
@@ -308,6 +310,8 @@
             return previous.transposition == line.transposition
         }
     }
+    
+    let pieces = undefined
 </script>
 
 <svelte:head>
@@ -350,6 +354,23 @@
 {/if}
 
 {#if sheetReady}
+    {#if false} <!-- Basic history implementation -->
+        <button on:click={() => {
+            pieces = history.getAll()
+            }}>get history</button>
+        <button on:click={() => {
+            let name = fileInput.files[0].name.split(".").slice(0, -1);
+            history.add(name, lines)
+        }}>add current to history</button>
+        {#if pieces}
+            {#each pieces as piece}
+                <button on:click={() => {
+                    console.log(decompress(piece.data))
+                    lines = decompress(piece.data)
+                }}>{piece.name}</button>
+            {/each}
+        {/if}
+    {/if}
     <div style="background: #2D2A32; user-select: none" bind:this={container}>
         <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
             {#each Object.entries(lines) as [ index, line ]}
