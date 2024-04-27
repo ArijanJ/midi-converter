@@ -1,3 +1,9 @@
+<style>
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+</style>
+
 <script>
     import { domToBlob } from "modern-screenshot";
     import { getMIDIFileFromArrayBuffer, getEvents, getTempo } from './utils/MIDI.js'
@@ -5,14 +11,67 @@
     import SheetOptions from './components/SheetOptions.svelte'
     import Track from './components/Track.svelte'
     import Line from './components/Line.svelte'
-	import { onMount } from 'svelte'
+    import HistoryEntry from "./components/HistoryEntry.svelte";
 
-    import history, { decompress } from './utils/History.js'
+    import { onMount } from "svelte";
+
+    let importer = {
+        element: undefined, // main welcome screen div
+        hide: () => { importer.element.style.top = "-110vh" },
+        show: () => { importer.element.style.top = "0px" }
+    }
+
+    import history, { decompress, remainingSize } from './utils/History'
+    
+    let remaining = remainingSize()
+    
+    import SheetActions from "./components/SheetActions.svelte";
+    let existingProject = { 
+        element: undefined, 
+        name: undefined,
+        data: undefined,
+        set: (project) => {
+            MIDIObject = undefined
+            existingProject.name = project.name
+            existingProject.data = decompress(project.data)
+            existingProject.proceed(true)
+        },
+        proceed: (forceLoad) => {
+            let decision = existingProject.element?.returnValue // dialog result
+            if (forceLoad) decision = "load"
+            if (!decision) return
+
+            if (decision == "load" || decision == "existing") {
+                console.log("Loading", existingProject.name)
+                sheetReady = true
+                lines = existingProject.data
+            }
+            else if (decision == "new") {
+                importFile()
+            }
+
+            importer.hide()
+        }
+    }
+
+    let filename;
+    let basename = (s) => { 
+        if (!s) return;
+        return s.split(".").slice(0, -1).join('.') 
+    }
 
 	// DOM input element
-	let fileInput
+	let fileInput;
+    $: {
+        if (fileInput) filename = basename(fileInput.files[0]?.name) ?? existingProject.name
+    }
 
-	let trackSelection = false
+    let trackChooser = {
+        element: undefined,
+        hide: () => { trackChooser.element.style.top = "-110vh" },
+        show: () => { trackChooser.element.style.top = "0px" }
+    }
+
 	let sheetReady = false
 
 	let MIDIObject
@@ -32,23 +91,36 @@
     let container
     let notesContainerWidth
 
-	onMount(() => {
-		fileInput.addEventListener('change', async() => {
-			await fileInput.files[0].arrayBuffer().then((arrbuf) =>{
-				MIDIObject = getMIDIFileFromArrayBuffer(arrbuf)
+    async function onFileChange() {
+        filename = basename(fileInput.files[0].name)
+        let exists = pieces.find((entry) => entry.name == filename) ?? false
+        if(exists /* in history */) {
+            existingProject.name = filename
+            existingProject.data = decompress(exists.data)
+            existingProject.element.showModal() 
+        }
+        else {
+            importFile()
+            importer.hide()
+        }
+    }
+    
+    async function importFile() {
+        await fileInput.files[0].arrayBuffer().then((arrbuf) =>{
+            MIDIObject = getMIDIFileFromArrayBuffer(arrbuf)
 
-				if(!getTempo(MIDIObject).ticksPerBeat)
-					console.error("No ticksPerBeat in this midi file")
+            if(!getTempo(MIDIObject).ticksPerBeat)
+                console.error("No ticksPerBeat in this midi file")
 
-                tracks = MIDIObject.tracks
-                selectedTracks = tracks.map(() => true)
+            tracks = MIDIObject.tracks
+            selectedTracks = tracks.map(() => true)
+            
+            sheetReady = false
+            trackChooser.show()
 
-				trackSelection = true
-				sheetReady = false
-                penalty = 0.000
-			})
-		}, false)
-	})
+            penalty = 0.000
+        })
+    }
 
     function shouldBreak(note) {
         if (!note) return false
@@ -98,7 +170,7 @@
 		sheetReady = true
 
 		// Hide TrackChooser
-		trackSelection = false
+		// trackSelection = false
         lines = lines
 	}
 
@@ -112,12 +184,13 @@
             }
             lines = lines
         }
-        else if (oldSettings.beats != settings.beats) {
+        else if (oldSettings.beats != settings.beats ||
+                 oldSettings.classicChordOrder != settings.classicChordOrder) {
             createLines()
+            lines = lines
         }
         else if (oldSettings.quantize != settings.quantize ||
-                 oldSettings.sequentialQuantize != settings.sequentialQuantize ||
-                 oldSettings.classicChordOrder != settings.classicChordOrder) {
+                 oldSettings.sequentialQuantize != settings.sequentialQuantize) {
             saveSheet()
             createLines()
             lines = lines
@@ -133,8 +206,10 @@
 
     let auto = () => { 
         settings.transposition = bestTransposition(originalSheet, 11)
+        console.log(bestTransposition(originalSheet, 11));
         for (let i = 0; i < lines.length; i++)
             setLineTransposition(i, settings.transposition)
+        autosave()
     }
 
     let lineBasedAuto = (fromLine = 0) => {
@@ -151,6 +226,7 @@
         }
         
         lines = lines
+        autosave()
     }
 
     let lines = [] // [{ chords: Chord[], transposition?, continuation: undefined, comment: false }, ...]
@@ -170,6 +246,7 @@
         const by = e.detail.by
         setTimeout(() => {
             setLineTransposition(index, lines[index].transposition+by)
+            autosave()
         }, 0)
     }
 
@@ -182,6 +259,7 @@
         if(keepGoing) { // Transpose all the way down
             lineBasedAuto(index)
         }
+        autosave()
     }
 
     let getTransposesOfSheet = () => {
@@ -239,10 +317,6 @@
         ), 250)
     }
 
-    function handleCaptureSheetAsImage(event) {
-       captureSheetAsImage(event.detail.mode);
-    }
-
     function copyCapturedImage(blob) {
         // note: ClipboardItem is not supported by mozilla
         try {
@@ -261,13 +335,13 @@
         const url = URL.createObjectURL(blob);
 
         // create a temporary element to download the image
-        let filename = fileInput.files[0].name.split(".");
-        filename.pop();
-        filename = filename.join(".") + ".png";
+        let _filename = filename
+        _filename.pop();
+        _filename = _filename.join(".") + ".png";
 
         let linkEl = document.createElement("a");
         linkEl.href = url
-        linkEl.download = filename
+        linkEl.download = _filename
 
         document.body.appendChild(linkEl);
         linkEl.click();
@@ -298,6 +372,7 @@
                 lines[index].comment = comment
             }
         }
+        autosave()
     }
 
     /** Checks if a line at index has same transposition as previous non-comment line */
@@ -311,81 +386,135 @@
         }
     }
     
-    let pieces = undefined
+    let pieces = history.getAll()
+    
+    function autosave() {
+        if (filename) history.add(filename, settings, lines).then(() => pieces = history.getAll())
+        remaining = remainingSize()
+        return
+    }
 </script>
 
 <svelte:head>
     <title>MIDI Converter</title>
 </svelte:head>
 
-<div style="display: inline-block">
-    <label for="file">
-        Please import a MIDI file:
-        <a href="https://github.com/ArijanJ/midi-converter/wiki/Usage">How do I use this?</a>
-    </label>
-    <input type="file" bind:this={fileInput} accept=".mid,.midi">
+<dialog bind:this={existingProject.element} class="rounded-lg overflow-hidden"
+        on:close={() => { existingProject.proceed() }}>
+    <form>
+        <p class="p-3 text-center">
+            Careful, you've previously edited this sheet!
+            <br>
+            Loading it again will overwrite your progress.
+        </p>
+        <div class="mx-2 mb-2 flex gap-2 w-full justify-center">
+            <button formmethod="dialog" class="p-1" value="load">Load saved</button>
+            <button formmethod="dialog" class="p-1" value="new">Start over</button>
+        </div>
+    </form>
+</dialog>
+
+<div bind:this={importer.element}
+    class="flex flex-col gap-12 w-full h-full items-center align-center justify-center content-center
+            absolute top-0 z-50"
+     style="height:100%; background: rgb(45,42,50);
+            background: linear-gradient(45deg, rgba(45,42,50,1) 0%, rgba(50,40,40,1) 50%, rgba(71,57,37,1) 100%); 
+            transition: all 0.6s ease-in-out;">
+    <div class="flex flex-col items-center gap-6">
+        <p class="text-white text-3xl">Import a MIDI file to get started:</p>
+        <label for="drop" class="cursor-pointer 
+                                 rounded-xl
+                                 text-xl
+                                 p-4"
+                            style="border: 2px solid dimgrey">
+            Click or drop a MIDI file here!
+        </label>
+        <input id="drop" class="hidden" type="file" bind:this={fileInput} accept=".mid,.midi" on:change={onFileChange}>
+    </div>
+
+    {#if pieces.length > 0} <!-- Has piece(s) in history? -->
+        <hr class="w-[58em]" style="border: 1px solid #a0a0a0">
+
+        <div class="flex flex-col items-center gap-6">
+            <p class="text-white text-3xl">Or, continue one of your previous projects:</p>
+            <div class="w-3/4 flex flex-wrap justify-center gap-2 overflow-clip text-ellipsis">
+                {#each pieces as piece}
+                    <HistoryEntry {piece} on:load={(x) => { existingProject.set(x.detail.project); importer.hide() }}
+                                          on:refresh={() => { pieces = history.getAll(); remaining = remainingSize() }}/>
+                {/each}
+            </div>
+        </div>
+        
+        <div>Used {remaining} / 5000 kB
+            <span title="The last entry (or multiple) will automatically be dropped if an autosave fails.
+You can also right-click a saved sheet to manually delete it.
+Individual sizes are an estimation, the total is correct.">ⓘ</span>
+        </div>
+    {/if}
 </div>
 
-<SheetOptions
-    show={sheetReady}
-    on:auto={auto}
-    on:lineBasedAuto={() => { lineBasedAuto() }}
-    on:captureSheetAsImage={handleCaptureSheetAsImage}
-    on:copyText={() => {
-        settings.tempoMarks = true
-        setTimeout(() => {
-            navigator.clipboard.writeText(sheetText)
-        }, 0)
-    }}
-    on:copyTransposes={copyTransposes}
-    bind:settings
-/>
-
-{#if trackSelection}
-<section id="track-chooser">
-    <div id="tracks">
-        {#each tracks as track, idx}
-            <Track {track} idx={idx+1} 
-            bind:selected={selectedTracks[idx]} />
-        {/each}
-    </div>
-    <button on:click={() => { saveSheet(); createLines() }}>Import selected tracks</button>
-</section>
-{/if}
-
-{#if sheetReady}
-    {#if false} <!-- Basic history implementation -->
-        <button on:click={() => {
-            pieces = history.getAll()
-            }}>get history</button>
-        <button on:click={() => {
-            let name = fileInput.files[0].name.split(".").slice(0, -1);
-            history.add(name, lines)
-        }}>add current to history</button>
-        {#if pieces}
-            {#each pieces as piece}
-                <button on:click={() => {
-                    console.log(decompress(piece.data))
-                    lines = decompress(piece.data)
-                }}>{piece.name}</button>
-            {/each}
-        {/if}
-    {/if}
-    <div style="background: #2D2A32; user-select: none" bind:this={container}>
-        <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
-            {#each Object.entries(lines) as [ index, line ]}
-            <Line line={line}
-                  prevLine={lines?.[index-1]}
-                  {index}
-                  {settings}
-                  comment={line.comment}
-                  passedNext={line.continuation}
-                  on:transpose={lineTransposed}
-                  on:auto={autoLine}
-                  on:comment={comment}
-                  on:sheetText={(text) => sheetText += text.detail + "\n"}
-                  sameTranspositionAsPrevious={stap(index)}/>
-            {/each}
+<div class="flex flex-row">
+    <div class="m-1" style="min-width:25em; max-width:25em">
+        <div>
+            {#if sheetReady}
+                <p class="mb-2">You are currently editing: {filename}</p>
+                <button on:click={() => { importer.show(); setTimeout(() => { sheetReady = false }, 600) }}>Import another MIDI file</button>
+                <hr class="my-2 mx-1">
+            {/if}
+            <SheetOptions
+                bind:settings
+                show={sheetReady}
+                hasMIDI={!(!MIDIObject)}
+                on:auto={auto}
+                on:lineBasedAuto={() => {lineBasedAuto()}}
+            />
         </div>
     </div>
-{/if}
+    
+    <section bind:this={trackChooser.element} id="track-chooser" class="z-40 w-full absolute flex flex-col gap-4 justify-center items-center content-center text-2xl"
+             style="top: -110vh; height: 100vh; background: rgb(45,42,50);
+                    background: linear-gradient(45deg, rgba(45,42,50,1) 0%, rgba(50,40,40,1) 50%, rgba(71,57,37,1) 100%); 
+                    transition: all 0.6s ease-in-out;">
+        <div id="tracks" class="flex flex-col gap-2">
+        {#if tracks}
+            {#each tracks as track, idx}
+                <Track {track} idx={idx+1}
+                bind:selected={selectedTracks[idx]} />
+            {/each}
+        {/if}
+        </div>
+        <button on:click={() => { saveSheet(); createLines(); trackChooser.hide() }}>Import selected tracks</button>
+    </section>
+    
+    {#if sheetReady == true}
+        <div class="flex flex-col items-start">
+            <SheetActions {settings} 
+                on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode) }}
+                on:copyText={() => {
+                    settings.tempoMarks = true
+                    setTimeout(() => {
+                        navigator.clipboard.writeText(sheetText)
+                    }, 0)
+                }}
+                on:copyTransposes={copyTransposes} />
+
+            <div style="background: #2D2A32; user-select: none" bind:this={container}>
+                <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
+                    {#each Object.entries(lines) as [ index, line ]}
+                    <Line line={line}
+                          prevLine={lines?.[index-1]}
+                          {index}
+                          {settings}
+                          comment={line.comment}
+                          passedNext={line.continuation}
+                          on:transpose={lineTransposed}
+                          on:auto={autoLine}
+                          on:comment={comment}
+                          on:sheetText={(text) => sheetText += text.detail + "\n"}
+                          sameTranspositionAsPrevious={stap(index)}/>
+                    {/each}
+                </div>
+            </div>
+        </div>
+    {/if}
+</div>

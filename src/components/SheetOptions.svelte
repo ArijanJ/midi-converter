@@ -5,6 +5,7 @@
     let dispatch = createEventDispatcher()
 
     export let show
+    export let hasMIDI = false
 
     let fonts = ['Verdana', 'Tahoma', 'Dejavu Sans', 'Segoe UI', 'Gill Sans', 'Helvetica',  'Lucida Sans', 'Century Gothic']
 
@@ -25,30 +26,37 @@
         missingTempo: false,
         bpm: 120
     }
-
-    const isAscii = str => /^[\x00-\x7F]+$/.test(str);
 </script>
 
 {#if show}
 <div style="display: inline-block">
-	<label for="transpose">Transpose (sheet) by:</label>
-	<input id="transpose" type="number" bind:value={settings.transposition} min=-24 max=24>
-    <button on:click={() => { dispatch('auto') }}>Auto-transpose</button>
+    <div class="flex flex-row gap-2">
+        <label class="m-1 flex flex-col align-middle" for="transpose">Transpose (sheet) by:</label>
+        <input id="transpose" type="number" bind:value={settings.transposition} min=-24 max=24 class="w-16 box-border">
+        <button on:click={() => { dispatch('auto') }}>Auto-transpose</button>
+    </div>
 </div>
 
-<div class="quantize">
-    <button style="margin-bottom: 0" on:click={() => { dispatch('lineBasedAuto') }}>Line-based auto-transpose</button>
-    <label style="margin-left: 0.5em; display:flex; align-items: center"
-           title="Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)" 
-           for="atleast" class='slider-label'>Resilience (?):</label>
-    <input id="atleast" type="range" min=1 max=24 bind:value={settings.lbauto_atleast}>
-    <span style="display:flex; align-items: center">{settings.lbauto_atleast}</span>
+<hr class="my-2 mx-1">
+
+<div class="flex flex-col items-start align-middle">
+    <button style="margin-bottom: 0;" on:click={() => { dispatch('lineBasedAuto') }}>Line-based auto-transpose</button>
+    <div class="flex flex-row mt-3">
+        <label class="flex flex-row items-center"
+               title="Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)" 
+               for="atleast">Resilience (?):</label>
+        <input class="w-32" id="atleast" type="range" min=1 max=24 bind:value={settings.lbauto_atleast}>
+        <span style="display:flex; align-items: center">{settings.lbauto_atleast}</span>
+    </div>
 </div>
+
+<hr class="my-2 mx-1">
 
 <div>
     <div class='select-div'>
         <label for='shifts-position'>Place shifted notes at:</label>
-        <select disabled={settings.classicChordOrder} name='shifts-position' id='shifts-position' bind:value={settings.pShifts}>
+        <select disabled={settings.classicChordOrder} title={settings.classicChordOrder ? "Disable \"Classic chord order\" to customize this." : "" }
+                name='shifts-position' id='shifts-position' bind:value={settings.pShifts}>
             <option value='Start'>Start</option>
             <option value='End'>End</option>
         </select>
@@ -63,20 +71,17 @@
         </select>
     </div>
 
-    <div class='select-div'>
-        <label for='font'>Font:</label>
-        <select name='font' id='font' bind:value={settings.font}>
-            {#each fonts as font}
-                <option value={font}>{font}</option>
-            {/each}
-        </select>
-    </div>
+    <hr class="my-2 mx-1">
 
-    <div class='beats'>
-        <label class='slider-label' for='beats-for-newline'>Break lines: </label>
-        <input type='range' id='beats-for-newline' min=1 max=32 bind:value={settings.beats}>
-        <span>Every {settings.beats == 1 ? "1 beat" : `${settings.beats} beats`}</span>
-    </div>
+    {#if hasMIDI}
+        <div class='beats'>
+            <label class='slider-label' for='beats-for-newline'>Break lines: </label>
+            <input type='range' id='beats-for-newline' min=1 max=32 bind:value={settings.beats}>
+            <span>Every {settings.beats == 1 ? "1 beat" : `${settings.beats} beats`}</span>
+        </div>
+    {:else}
+        <i>Some settings are not available because the original MIDI data is missing.</i>
+    {/if}
 
     {#if settings.missingTempo == true}
         <div class='tempo'>
@@ -88,22 +93,25 @@
         </div>
     {/if}
 
-    <div class='quantize'>
-        <label class='slider-label' for='quantize-prompt'>Quantize: </label>
-        <input type='range' id="quantize-prompt" min=1 max=100 bind:value={settings.quantize}>
-        <span>{settings.quantize} miliseconds</span>
-    </div>
+    {#if hasMIDI}
+        <div class='beats'>
+            <label class='slider-label' for='quantize-prompt'>Quantize: </label>
+            <input type='range' id="quantize-prompt" min=1 max=100 bind:value={settings.quantize}>
+            <span>{settings.quantize} miliseconds</span>
+        </div>
 
-    <label for='classic-chord-order'>
-        <input type='checkbox' id="classic-chord-order" bind:checked={settings.classicChordOrder}>
-        Classic chord order
-    </label>
+        <label for='classic-chord-order'>
+            <input type='checkbox' id="classic-chord-order" bind:checked={settings.classicChordOrder}>
+            Classic chord order
+        </label>
 
-    <label for='order-quantizes'>
-        <input type='checkbox' id="order-quantizes" bind:checked={settings.sequentialQuantize}>
-        Sequential quantizes
-    </label>
+        <label for='order-quantizes'>
+            <input type='checkbox' id="order-quantizes" bind:checked={settings.sequentialQuantize}>
+            Sequential quantizes
+        </label>
+    {/if}
 
+    <div></div>
     <label for='out-of-range'>
         <input type='checkbox' id="out-of-range" bind:checked={settings.oors}>
         Include out of range (ctrl) notes
@@ -114,10 +122,10 @@
         Show tempo marks
     </label>
 
-    {#if settings.oors}
+    {#if settings.oors && settings.tempoMarks}
     <div>
         <label title="Helps tell you if notes are out-of-range, certain characters are restricted from use!" for="oor-separator">Out-of-range separator (?):</label>
-        <div style="display: inline-flex;">
+        <div style="display: inline-flex">
             <input
                 type='text'
                 id="oor-separator"
@@ -136,38 +144,19 @@
     </div>
     {/if}
 
-    <button on:click={ () => dispatch("copyText") }>
-        Copy Text
-    </button>
+    <hr class="my-2 mx-1">
 
-    <button on:click={ () => dispatch("copyTransposes") }>
-        Copy Transposes
-    </button>
+    <div class='select-div'>
+        <label for='font'>Font:</label>
+        <select name='font' id='font' bind:value={settings.font}>
+            {#each fonts as font}
+                <option value={font}>{font}</option>
+            {/each}
+        </select>
+    </div>
 
-    <button
-        disabled={settings.capturingImage}
-        on:click={() => dispatch("captureSheetAsImage", {mode: "download"})}
-    >
-        {#if settings.capturingImage}
-            Please Wait...
-        {:else}
-            Download Image
-        {/if}
-    </button>
+    <hr class="my-2 mx-1">
 
-    {#if typeof ClipboardItem !== "undefined"}
-        <!-- note: not supported by mozilla -->
-        <button
-            disabled={settings.capturingImage}
-            on:click={() => dispatch("captureSheetAsImage", {mode: "copy"})}
-        >
-            {#if settings.capturingImage}
-                Please Wait...
-            {:else}
-                Copy Image
-            {/if}
-        </button>
-    {/if}
 </div>
 
 <style>
@@ -209,7 +198,7 @@
         margin-bottom: 0;
     }
     
-    .beats, .quantize, .select-label, .tempo {
+    .beats, .select-label, .tempo {
         display: flex;
         flex-direction: row;
     }

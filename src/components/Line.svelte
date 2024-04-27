@@ -77,7 +77,7 @@
                         text += settings.oorSeparator
                     }
 
-                    dom += `<span style="display:inline-flex; justify-content: center; min-width: 10px; border-bottom: 3px solid; font-weight: 900">${note.char}</span>`
+                    dom += `<span style="display:inline-flex; justify-content: center; min-width: 10px; border-bottom: 2px solid; font-weight: 900">${note.char}</span>`
                     text += `${note.char}${isLastStartOor && nonOors.length > 0 ? "'" : ""}`
                 }
             }
@@ -269,4 +269,3 @@
         all: unset
     }
 </style>
-
