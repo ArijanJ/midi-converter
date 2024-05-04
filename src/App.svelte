@@ -335,13 +335,11 @@
         const url = URL.createObjectURL(blob);
 
         // create a temporary element to download the image
-        let _filename = filename
-        _filename.pop();
-        _filename = _filename.join(".") + ".png";
+        let output = filename + '.png';
 
         let linkEl = document.createElement("a");
         linkEl.href = url
-        linkEl.download = _filename
+        linkEl.download = output
 
         document.body.appendChild(linkEl);
         linkEl.click();

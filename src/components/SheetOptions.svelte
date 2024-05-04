@@ -178,6 +178,10 @@
         margin-top: 0.2em;
         margin-bottom: 0;
     }
+    
+    select option {
+        background: #2D2A32;
+    }
 
     input[type="checkbox"] {
         display: inline-block;
