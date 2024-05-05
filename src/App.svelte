@@ -105,7 +105,8 @@
         }
     }
     
-    async function importFile() {
+    async function importFile(dataTransfer = undefined) {
+        if (dataTransfer) fileInput.files = dataTransfer.files
         await fileInput.files[0].arrayBuffer().then((arrbuf) =>{
             MIDIObject = getMIDIFileFromArrayBuffer(arrbuf)
 
@@ -383,7 +384,17 @@
             return previous.transposition == line.transposition
         }
     }
-    
+
+    function droppedFile(e) {
+        e.preventDefault()
+        
+        let file = e?.dataTransfer?.items?.[0]
+        if(!file || !file.getAsFile) { console.error('bad file dropped'); return }
+        
+        importFile(e.dataTransfer)
+        onFileChange()
+    }
+
     let pieces = history.getAll()
     
     function autosave() {
@@ -391,6 +402,7 @@
         remaining = remainingSize()
         return
     }
+    
 </script>
 
 <svelte:head>
@@ -420,7 +432,8 @@
             transition: all 0.6s ease-in-out;">
     <div class="flex flex-col items-center gap-6">
         <p class="text-white text-3xl">Import a MIDI file to get started:</p>
-        <label for="drop" class="cursor-pointer 
+        <label on:drop|preventDefault={droppedFile} on:dragover|preventDefault
+               for="drop" class="cursor-pointer 
                                  rounded-xl
                                  text-xl
                                  p-4"
