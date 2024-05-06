@@ -29,4 +29,6 @@
     {/if}
 
     <button on:click={ () => dispatch("copyTransposes") }>Copy Transposes</button>
+
+    <button on:click={ () => dispatch("export") }>Export</button>
 </div>
