@@ -27,7 +27,12 @@
     }
     
     let processDecision = () => {
-        if (removalDialog.returnValue == "delete") {
+        if (removalDialog.returnValue == "export-and-delete") {
+            dispatch('export')
+            history.delete(piece.name)
+            dispatch('refresh')
+        }
+        else if (removalDialog.returnValue == "delete") {
             history.delete(piece.name)
             dispatch('refresh')
         }
@@ -42,6 +47,7 @@
         </p>
         <div class="mx-2 mb-2 flex gap-2 w-full justify-center">
             <button formmethod="dialog" class="p-1" value="cancel">Cancel</button>
+            <button formmethod="dialog" class="p-1" value="export-and-delete">Export and Delete</button>
             <button formmethod="dialog" class="p-1" value="delete">Delete</button>
         </div>
     </form>

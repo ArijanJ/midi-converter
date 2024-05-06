@@ -59,7 +59,14 @@ const module = {
             else console.error(error, message)
         }
     },
-    
+
+    export: async (name) => {
+        let pieces = module.getAll()
+        let thisPiece = pieces.filter((entry) => entry.name === name)[0]
+
+        return thisPiece
+    },
+
     delete: (name) => {
         let pieces = module.getAll().filter((entry) => entry.name != name)
         localStorage.setItem(_key, JSON.stringify(pieces))

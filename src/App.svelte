@@ -30,9 +30,14 @@
         element: undefined, 
         name: undefined,
         data: undefined,
-        set: (project) => {
-            MIDIObject = undefined
-            existingProject.name = project.name
+        set: (project, exportedCurrent = false) => {
+            MIDIObject = exportedCurrent ? MIDIObject : undefined
+            existingProject.name = filename ?? project.name
+            existingProject.data = decompress(project.data)
+        },
+        setAndProceed: (project, exportedCurrent = false) => {
+            MIDIObject = exportedCurrent ? MIDIObject : undefined
+            existingProject.name = filename ?? project.name
             existingProject.data = decompress(project.data)
             existingProject.proceed(true)
         },
@@ -43,8 +48,15 @@
 
             if (decision == "load" || decision == "existing") {
                 console.log("Loading", existingProject.name)
+
                 sheetReady = true
                 lines = existingProject.data
+            }
+            else if (decision == "export-and-restart") {
+                history.export(existingProject.name).then((piece) => {
+                    downloadSheetData(piece)
+                    importFile()
+                })
             }
             else if (decision == "new") {
                 importFile()
@@ -97,7 +109,7 @@
         if(exists /* in history */) {
             existingProject.name = filename
             existingProject.data = decompress(exists.data)
-            existingProject.element.showModal() 
+            existingProject.element.showModal()
         }
         else {
             importFile()
@@ -107,6 +119,17 @@
     
     async function importFile(dataTransfer = undefined) {
         if (dataTransfer) fileInput.files = dataTransfer.files
+
+        if (fileInput.files[0].type.split("/")[1] === "json") {
+            let sheetData = await fileInput.files[0].text()
+            existingProject.set(JSON.parse(sheetData))
+
+            sheetReady = true
+            lines = existingProject.data
+
+            return
+        }
+
         await fileInput.files[0].arrayBuffer().then((arrbuf) =>{
             MIDIObject = getMIDIFileFromArrayBuffer(arrbuf)
 
@@ -333,11 +356,21 @@
     }
 
     function downloadCapturedImage(blob) {
+        download(blob, "png")
+    }
+
+    function downloadSheetData(piece) {
+        filename = piece.name
+        let blob = new Blob([JSON.stringify(piece)], { type: "text/json" })
+        download(blob, "json")
+    }
+
+    function download(blob, extension) {
         const url = URL.createObjectURL(blob);
 
-        // create a temporary element to download the image
-        let output = filename + '.png';
+        let output = `${filename}.${extension}`
 
+        // create a temporary element to download the data
         let linkEl = document.createElement("a");
         linkEl.href = url
         linkEl.download = output
@@ -390,9 +423,13 @@
         
         let file = e?.dataTransfer?.items?.[0]
         if(!file || !file.getAsFile) { console.error('bad file dropped'); return }
-        
-        importFile(e.dataTransfer)
+
+        fileInput.files = e.dataTransfer.files
         onFileChange()
+    }
+
+    function clearFiles() {
+        document.getElementById("drop").value = "";
     }
 
     let pieces = history.getAll()
@@ -411,7 +448,7 @@
 
 <dialog bind:this={existingProject.element} class="rounded-lg overflow-hidden"
         on:close={() => { existingProject.proceed() }}>
-    <form>
+    <form class="flex flex-col row-auto items-center">
         <p class="p-3 text-center">
             Careful, you've previously edited this sheet!
             <br>
@@ -419,6 +456,7 @@
         </p>
         <div class="mx-2 mb-2 flex gap-2 w-full justify-center">
             <button formmethod="dialog" class="p-1" value="load">Load saved</button>
+            <button formmethod="dialog" class="p-1" value="export-and-restart">Export and Start over</button>
             <button formmethod="dialog" class="p-1" value="new">Start over</button>
         </div>
     </form>
@@ -431,16 +469,16 @@
             background: linear-gradient(45deg, rgba(45,42,50,1) 0%, rgba(50,40,40,1) 50%, rgba(71,57,37,1) 100%); 
             transition: all 0.6s ease-in-out;">
     <div class="flex flex-col items-center gap-6">
-        <p class="text-white text-3xl">Import a MIDI file to get started:</p>
+        <p class="text-white text-3xl">Import a MIDI/JSON file to get started:</p>
         <label on:drop|preventDefault={droppedFile} on:dragover|preventDefault
                for="drop" class="cursor-pointer 
                                  rounded-xl
                                  text-xl
                                  p-4"
                             style="border: 2px solid dimgrey">
-            Click or drop a MIDI file here!
+            Click or drop a MIDI/JSON file here!
         </label>
-        <input id="drop" class="hidden" type="file" bind:this={fileInput} accept=".mid,.midi" on:change={onFileChange}>
+        <input id="drop" class="hidden" type="file" bind:this={fileInput} accept=".mid,.midi,.json" on:change={onFileChange}>
     </div>
 
     {#if pieces.length > 0} <!-- Has piece(s) in history? -->
@@ -450,8 +488,12 @@
             <p class="text-white text-3xl">Or, continue one of your previous projects:</p>
             <div class="w-3/4 flex flex-wrap justify-center gap-2 overflow-clip text-ellipsis">
                 {#each pieces as piece}
-                    <HistoryEntry {piece} on:load={(x) => { existingProject.set(x.detail.project); importer.hide() }}
-                                          on:refresh={() => { pieces = history.getAll(); remaining = remainingSize() }}/>
+                    <HistoryEntry
+                        {piece}
+                        on:load={(x) => { existingProject.setAndProceed(x.detail.project); importer.hide() }}
+                        on:refresh={() => { pieces = history.getAll(); remaining = remainingSize() }}
+                        on:export={() => downloadSheetData(piece)}
+                    />
                 {/each}
             </div>
         </div>
@@ -469,7 +511,9 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
         <div>
             {#if sheetReady}
                 <p class="mb-2">You are currently editing: {filename}</p>
-                <button on:click={() => { importer.show(); setTimeout(() => { sheetReady = false }, 600) }}>Import another MIDI file</button>
+                <button on:click={() => { importer.show(); setTimeout(() => { sheetReady = false; filename = null; clearFiles();}, 600) }}>
+                    Import another MIDI/JSON file
+                </button>
                 <hr class="my-2 mx-1">
             {/if}
             <SheetOptions
@@ -507,7 +551,21 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                         navigator.clipboard.writeText(sheetText)
                     }, 0)
                 }}
-                on:copyTransposes={copyTransposes} />
+                on:copyTransposes={copyTransposes}
+                on:export={() => {
+                    autosave()
+                    setTimeout(() => {
+                        if (existingProject?.data === undefined) {
+                            let pieces = history.getAll()
+                            let thisPiece = pieces.filter(entry => entry.name === filename)[0]
+
+                            existingProject.setAndProceed(thisPiece, true)
+                        }
+
+                        history.export(existingProject.name).then((piece) => downloadSheetData(piece))
+                    }, 0)
+                }}
+            />
 
             <div style="background: #2D2A32; user-select: none" bind:this={container}>
                 <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
