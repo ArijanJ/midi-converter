@@ -327,6 +327,9 @@
     function captureSheetAsImage(mode) {
         settings.capturingImage = true;
 
+        // Widen actual container to prevent cutoff
+        container.firstChild.style.width = `${notesContainerWidth + 1}px`
+
         setTimeout(() =>
             domToBlob(container, {width: notesContainerWidth, scale: 2}).then((blob) => {
                 if (mode === "copy") {
@@ -337,6 +340,9 @@
                 }
 
                 settings.capturingImage = false;
+
+                // Restore original element size
+                container.firstChild.style.width = 'max-content'
             }
         ), 250)
     }
@@ -567,8 +573,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                 }}
             />
 
-            <div style="background: #2D2A32; user-select: none; width:100%;" bind:this={container}>
-                <div bind:clientWidth={notesContainerWidth}>
+            <div style="background: #2D2A32; user-select: none" bind:this={container}>
+                <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
                     {#each Object.entries(lines) as [ index, line ]}
                     <Line line={line}
                           prevLine={lines?.[index-1]}
