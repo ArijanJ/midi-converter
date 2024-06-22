@@ -567,8 +567,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                 }}
             />
 
-            <div style="background: #2D2A32; user-select: none" bind:this={container}>
-                <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
+            <div style="background: #2D2A32; user-select: none; width:100%;" bind:this={container}>
+                <div bind:clientWidth={notesContainerWidth}>
                     {#each Object.entries(lines) as [ index, line ]}
                     <Line line={line}
                           prevLine={lines?.[index-1]}
