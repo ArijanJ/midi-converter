@@ -7,7 +7,7 @@
     export let show
     export let hasMIDI = false
 
-    let fonts = ['Verdana', 'Tahoma', 'Dejavu Sans', 'Segoe UI', 'Gill Sans', 'Helvetica',  'Lucida Sans', 'Century Gothic']
+    let fonts = ['Verdana', 'Tahoma', 'Dejavu Sans', 'Segoe UI', 'Helvetica', 'Lucida Console', 'Candara']
 
     export let settings = {
         beats: 4,

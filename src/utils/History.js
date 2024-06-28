@@ -19,16 +19,18 @@ export function remainingSize() {
         
         keyLength = (localStorage[key].length + key.length);
         totalStorage += keyLength; 
-        return (keyLength / 1024).toFixed(2)
     }
+
+    return (keyLength / 1024).toFixed(2)
 }
 
-async function piece(name, settings, data) {
+async function piece(name, settings, data, skip_compression = false) {
+    console.log(skip_compression)
     return {
         name: name,
         settings: settings,
         updated: Date.now(),
-        data: await compress(data)
+        data: skip_compression ? data : await compress(data)
     }
 }
 
@@ -41,11 +43,11 @@ const module = {
         return pieces
     },
 
-    add: async (name, settings, json) => {
+    add: async (name, settings, json, skip_compression = false) => {
         let pieces = module.getAll()
 
         let thisPieceRemoved = pieces.filter((entry) => entry.name != name)
-        thisPieceRemoved.unshift(await piece(name, settings, json))
+        thisPieceRemoved.unshift(await piece(name, settings, json, skip_compression))
 
         try {
             localStorage.setItem(_key, JSON.stringify(thisPieceRemoved))
@@ -54,7 +56,7 @@ const module = {
                 console.log("Quota exceeded, dropping: ", thisPieceRemoved.pop())
                 thisPieceRemoved.shift() // undo addition
                 localStorage.setItem(_key, JSON.stringify(thisPieceRemoved))
-                module.add(name, settings, json)
+                module.add(name, settings, json, skip_compression)
             }
             else console.error(error, message)
         }

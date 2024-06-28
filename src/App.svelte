@@ -22,8 +22,10 @@
     }
 
     import history, { decompress, remainingSize } from './utils/History'
-    
     let remaining = remainingSize()
+    const sample_uri = 'https://gist.githubusercontent.com/ArijanJ/' +
+                       'f381c78375cfad2e9a707c6da7a5b304/raw/' +
+                       'c4ccc665d368402980dede2943fea25cdd02f440/Mariage_dAmour_(sample).json'
     
     import SheetActions from "./components/SheetActions.svelte";
     let existingProject = { 
@@ -439,7 +441,20 @@
     }
 
     let pieces = history.getAll()
-    
+    if(pieces.length == 0 && !localStorage.getItem('hadSample') ) {
+        localStorage.setItem('hadSample', true)
+        
+        fetch(sample_uri)
+            .then(response => response.json())
+            .then(other => {
+                history.add(other.name, other.settings, other.data, true)
+                setTimeout(() => {
+                    pieces = history.getAll(
+                    remaining = remainingSize()
+                )}, 0)
+            })
+    }
+
     function autosave() {
         if (filename) history.add(filename, settings, lines).then(() => pieces = history.getAll())
         remaining = remainingSize()
@@ -491,7 +506,11 @@
         <hr class="w-[58em]" style="border: 1px solid #a0a0a0">
 
         <div class="flex flex-col items-center gap-6">
+            {#if pieces.length == 1 && pieces[0].name.endsWith("(sample)")}
+            <p class="text-white text-3xl">Or, try this sample piece:</p>
+            {:else}
             <p class="text-white text-3xl">Or, continue one of your previous projects:</p>
+            {/if}
             <div class="w-3/4 flex flex-wrap justify-center gap-2 overflow-clip text-ellipsis">
                 {#each pieces as piece}
                     <HistoryEntry
@@ -504,7 +523,7 @@
             </div>
         </div>
         
-        <div>Used {remaining} / 5000 kB
+        <div>Used ~{remaining} / 5000 kB
             <span title="The last entry (or multiple) will automatically be dropped if an autosave fails.
 You can also right-click a saved sheet to manually delete it.
 Individual sizes are an estimation, the total is correct.">ⓘ</span>
@@ -513,7 +532,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
 </div>
 
 <div class="flex flex-row">
-    <div class="m-1" style="min-width:25em; max-width:25em">
+    <div class="m-1 flex flex-col" style="min-width:25em; max-width:25em">
         <div>
             {#if sheetReady}
                 <p class="mb-2">You are currently editing: {filename}</p>
@@ -529,6 +548,12 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                 on:auto={auto}
                 on:lineBasedAuto={() => {lineBasedAuto()}}
             />
+        </div>
+        <div id="guide">
+            - Left/right click: Transpose line down/up<br>
+            - Middle click: Auto-transpose line (least effort to play)<br>
+            - ctrl+middle click: Auto-transpose all lines below<br>
+            - ctrl+left/right click: Add/remove a comment<br>
         </div>
     </div>
     
