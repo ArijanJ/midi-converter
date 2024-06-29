@@ -89,7 +89,7 @@
                 title="You're able to change this because your MIDI file doesn't have tempo/BPM.">
                     BPM (?): </label>
             <input type='range' id='tempo' min=1 max=300 bind:value={settings.bpm}>
-            <span>{settings.bpm}</span>
+            <input type='number' class='w-16 box-border' min=1 max=300 bind:value={settings.bpm}>
         </div>
     {/if}
 
