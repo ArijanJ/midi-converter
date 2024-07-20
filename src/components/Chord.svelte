@@ -90,9 +90,9 @@
                     isChordWithMoreThanOneNonOorAndIsFirstEndOor
                 ) {
                     if (settings.tempoMarks)
-                        res += `${settings.oorSeparator}${note.char}`
+                        res += `<span style="border-bottom: 2px solid ${color}; font-weight:900;">${settings.oorSeparator}${note.char}</span>`
                     else if (!settings.tempoMarks)
-                        res += `<span style="border-bottom: 2px solid ${color}">${note.char}</span>`
+                        res += `<span style="border-bottom: 2px solid ${color}; font-weight:900">${note.char}</span>`
                 }
                 
                 if (settings.tempoMarks)
