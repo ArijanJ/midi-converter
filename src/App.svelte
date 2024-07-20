@@ -7,17 +7,17 @@
 <script>
     import { domToBlob } from "modern-screenshot";
     import { getMIDIFileFromArrayBuffer, getEvents, getTempo } from './utils/MIDI.js'
-	import { generateSheet, bestTransposition } from './utils/VP.js'
+	import { generateSheet as generateChords, best_transposition_for_chords, Chord as ChordObject, Note, is_chord, not_chord } from './utils/VP.js'
     import SheetOptions from './components/SheetOptions.svelte'
     import Track from './components/Track.svelte'
-    import Line from './components/Line.svelte'
+    import Chord from './components/Chord.svelte'
     import HistoryEntry from "./components/HistoryEntry.svelte";
 
-    import { onMount } from "svelte";
+    import { colors } from "./utils/Rendering.js";
 
     let importer = {
         element: undefined, // main welcome screen div
-        hide: () => { importer.element.style.top = "-110vh" },
+        hide: () => { importer.element.style.top = "-110vh"; resetSelection() },
         show: () => { importer.element.style.top = "0px" }
     }
 
@@ -26,10 +26,11 @@
     const sample_uri = 'https://gist.githubusercontent.com/ArijanJ/' +
                        'f381c78375cfad2e9a707c6da7a5b304/raw/' +
                        'c4ccc665d368402980dede2943fea25cdd02f440/Mariage_dAmour_(sample).json'
-    
+
     import SheetActions from "./components/SheetActions.svelte";
-    let existingProject = { 
-        element: undefined, 
+
+    let existingProject = {
+        element: undefined,
         name: undefined,
         data: undefined,
         set: (project, exportedCurrent = false) => {
@@ -52,7 +53,22 @@
                 console.log("Loading", existingProject.name)
 
                 sheetReady = true
-                lines = existingProject.data
+                chords_and_otherwise = existingProject.data
+
+                // ughhh, have to reconstruct the functions here cause they dont serialize
+                for(let i = 0; i < chords_and_otherwise.length; i++) {
+                    let chord = chords_and_otherwise[i]
+                    if(is_chord(chord)) {
+                        let new_notes = []
+                        for (let note of chord.notes) {
+                            new_notes.push(new Note(note.value, note.playTime, note.tempo, note.BPM, note.delta))
+                        }
+                        let new_chord = new ChordObject(new_notes, chord.classicChordOrder, chord.sequentialQuantize)
+                        new_chord.index = chord.index
+                        chords_and_otherwise[i] = new_chord
+                    }
+                }
+                console.log(chords_and_otherwise)
             }
             else if (decision == "export-and-restart") {
                 history.export(existingProject.name).then((piece) => {
@@ -69,9 +85,9 @@
     }
 
     let filename;
-    let basename = (s) => { 
+    let basename = (s) => {
         if (!s) return;
-        return s.split(".").slice(0, -1).join('.') 
+        return s.split(".").slice(0, -1).join('.')
     }
 
 	// DOM input element
@@ -91,16 +107,11 @@
 	let MIDIObject
     let tracks
 
-	// VP.js/Sheet
-	let originalSheet
+	let chords_and_otherwise
     let sheetText
 
     // [true, true, false, true, ...]
     let selectedTracks
-
-    // For line break calculations
-    let penalty = 0.000
-    let error_range = 0.5
 
     let container
     let notesContainerWidth
@@ -118,16 +129,17 @@
             importer.hide()
         }
     }
-    
+
     async function importFile(dataTransfer = undefined) {
         if (dataTransfer) fileInput.files = dataTransfer.files
 
-        if (fileInput.files[0].type.split("/")[1] === "json") {
+        const file_is_json = fileInput.files[0].type.split("/")[1] === "json"
+        if (file_is_json) {
             let sheetData = await fileInput.files[0].text()
             existingProject.set(JSON.parse(sheetData))
 
             sheetReady = true
-            lines = existingProject.data
+            chords_and_otherwise = existingProject.data
 
             return
         }
@@ -140,183 +152,190 @@
 
             tracks = MIDIObject.tracks
             selectedTracks = tracks.map(() => true)
-            
+
             sheetReady = false
             trackChooser.show()
-
-            penalty = 0.000
         })
     }
 
-    function shouldBreak(note) {
-        if (!note) return false
-        let tempo_ms = note.tempo / 1000 // Turn 652174 into 652.174
-        let goal = tempo_ms * settings.beats
-        let normalizedPlayTime = note.playTime - penalty
-        if (normalizedPlayTime + error_range >= goal) {
-            penalty += normalizedPlayTime
-            return true
-        }
-    }
-
     let saveSheet = () => {
+        if (!MIDIObject) { console.log('no midiobject'); return }
         let events = getEvents(MIDIObject, selectedTracks)
-		originalSheet = generateSheet(events, settings)
-        settings.missingTempo = originalSheet.missingTempo
+		chords_and_otherwise = generateChords(events, settings, chords_and_otherwise)
+        repopulateTransposeComments()
+
+        sheetReady = true
     }
-
-	let createLines = () => {
-        sheetReady = false
-
-        if (!originalSheet) return
-        const chords = originalSheet.chords
-
-        penalty = 0.000
-        lines = []
-        let acc = [] // Chord[]
-        for (let i = 0; i <= chords.length; i++) {
-            const current = {
-                chord: chords[i],
-            }; current.note = current.chord?.notes[0]
-
-            const next = {
-                chord: chords[i+1],
-            }; next.note = next.chord?.notes[0]
-
-            if (!current.note || !current.chord) continue
-
-            if (shouldBreak(current.note) && acc.length > 0) {
-                lines.push({ chords: acc, transposition: settings.transposition, continuation: current.note})
-                acc = []
-            }
-
-            acc.push(current.chord)
-        }
-        lines.push({ chords: acc, transposition: 0, continuation: undefined }) /* Push the leftovers */
-		sheetReady = true
-
-		// Hide TrackChooser
-		// trackSelection = false
-        lines = lines
-	}
 
     let oldSettings
     let settings
-	$: {
-        if (!oldSettings) { oldSettings = { ...settings }; break $ }
-        if (oldSettings.transposition != settings.transposition) {
-            for (let line of lines) {
-                line.transposition = settings.transposition
-            }
-            lines = lines
-        }
-        else if (oldSettings.beats != settings.beats ||
-                 oldSettings.classicChordOrder != settings.classicChordOrder) {
-            createLines()
-            lines = lines
-        }
-        else if (oldSettings.quantize != settings.quantize ||
-                 oldSettings.sequentialQuantize != settings.sequentialQuantize) {
-            saveSheet()
-            createLines()
-            lines = lines
-        }
-        else if (oldSettings.bpm != settings.bpm) {
-            saveSheet()
-            createLines()
-        }
 
-        sheetText = ""
+    try { 
+        settings = JSON.parse(localStorage.getItem('preferences')); 
+        settings.beats = 4 // doesn't make sense to save this
+    } 
+    catch (e) { settings = undefined; }
+	$: {
+        const require_regeneration = [
+            "beats",
+            "classicChordOrder",
+            "quantize",
+            "sequentialQuantize",
+            "minSpeedChange",
+            "bpmChanges",
+            "bpm",
+        ]
+        if (!oldSettings) { oldSettings = { ...settings }; break $ }
+        
+        if (require_regeneration.some((key) => settings[key] != oldSettings[key]))
+            saveSheet()
+        
         oldSettings = { ...settings }
+        if (MIDIObject)
+            localStorage.setItem('preferences', JSON.stringify(settings))
+        
+        renderSelection()
 	}
 
-    let auto = () => { 
-        settings.transposition = bestTransposition(originalSheet, 11)
-        console.log(bestTransposition(originalSheet, 11));
-        for (let i = 0; i < lines.length; i++)
-            setLineTransposition(i, settings.transposition)
+    let addComment = (index) => {
+        let real = real_index_of(index)
+        chords_and_otherwise.splice(real, 0, { type: "comment", kind: "custom", text: "Add a comment..." })
+        renderSelection()
+    }
+    
+    let updateComment = (index, text) => {
+        if (text == '')
+            chords_and_otherwise.splice(real_index_of(index), 1)
+        else
+            chords_and_otherwise[index].text = text
+        renderSelection()
         autosave()
     }
 
-    let lineBasedAuto = (fromLine = 0) => {
-        let previous = bestTransposition(lines[fromLine].originalSheet, 11, 0, true)
+    let transposeRegion = (left, right, by, opts = undefined) => {
+        let relative = opts?.relative ?? false
 
-        for (let index = fromLine; index <= lines.length; index++) {
-            const line = lines[index]
-            if (!line) continue
+        for (let i = left; i <= chords_and_otherwise.length; i++) {
+            let chord = chords_and_otherwise.find((e) => e.index == i)
+            if (not_chord(chord)) continue
 
-            const newTransposition = bestTransposition(line.originalSheet, 8, previous, false, settings.lbauto_atleast, previous)
-            setLineTransposition(index, newTransposition)
+            if (chord.index > right) break
 
-            previous = newTransposition
+            transposeChord(i, by, relative)
+        }
+
+        renderSelection()
+        
+        if (opts?.skipSave === true) return
+        autosave()
+    }
+
+    let autoRegion = (left, right, opts = undefined) => {
+        let stickTo = opts?.stickTo ?? 'same'
+        let skipSave = opts?.skipSave ?? false
+    
+        let chords_in_region = []
+        for (let i = left; i <= right; i++) {
+            let selected_chord = chords_and_otherwise[real_index_of(i)]
+            chords_in_region.push(selected_chord)
+        }
+
+        if (stickTo == 'same')
+            stickTo = chords_in_region[0].notes[0].transposition()
+
+        let best = best_transposition_for_chords(chords_in_region, 11, stickTo)
+        transposeRegion(left, right, best, { relative: false, skipSave: true })
+        // console.log('best:', best)
+
+        chords_and_otherwise = chords_and_otherwise
+        repopulateTransposeComments()
+        
+        if (!skipSave) autosave()
+        
+        return best
+    }
+
+    let repopulateTransposeComments = () => {
+        chords_and_otherwise = chords_and_otherwise.filter(e => e.kind != "transpose")
+
+        let first_note = next_not(chords_and_otherwise, not_chord, 0).notes[0]
+        let initial_transposition = first_note.transposition()
+
+        // Add first transpose comment
+        chords_and_otherwise.splice(0, 0, { type: "comment", kind: "transpose", text: `Transpose by: ${-initial_transposition}`, notop: true  })
+
+        let previous_transposition = initial_transposition
+
+        for (let i = 0; i < chords_and_otherwise.length; i++) {
+            let current = chords_and_otherwise[i]
+
+            if (not_chord(current)) continue
+
+            let transposition = current.notes[0].transposition()
+            let difference = transposition - previous_transposition
+
+            if (difference != 0) {
+                // Add comment
+                let text = `Transpose by: ${-transposition > 0 ? '+' : ''}${-transposition}`
+                text += ` (${-difference > 0 ? '+' : ''}${-difference})`
+
+                chords_and_otherwise.splice(i, 0, { type: "comment", kind: "transpose", text })
+                previous_transposition = transposition
+            }
         }
         
-        lines = lines
+        chords_and_otherwise = chords_and_otherwise
+    }
+
+    let transposeChord = (index, by, relative = false) => {
+        // console.log('tp', index, by)
+        let chord = chords_and_otherwise.find((e) => e.index == index)
+        if(not_chord(chord)) return
+
+        chord.transpose(by, relative, true) // mutate
+
+        chords_and_otherwise = chords_and_otherwise
+    }
+
+    let multiTransposeRegion = (left, right /* [{left, right}, {...}] */) => {
+        let regions = []
+
+        let idx = chords_and_otherwise.findIndex((e) => e.index == left)
+        for (let i = idx; i < chords_and_otherwise.length; i++) {
+            let event = chords_and_otherwise[i] ?? undefined
+            if (event.index >= right) {
+                regions.push({ left, right: event.index })
+                break
+            }
+            if (event.type == "break") {
+                let next_chord = next_not(chords_and_otherwise, not_chord, i)
+                regions.push({ left, right: next_chord.index })
+                left = next_chord.index
+            }
+        }
+
+        // console.log(regions)
+
+        let chord = real_index_of(regions[0].left)
+        chord = chords_and_otherwise[chord]
+
+        let previous_transposition = chord.notes[0]?.transposition() ?? 0
+        // console.log('prevt:', previous_transposition);
+        for (let region of regions) {
+            // console.log('transposing region', region.left, region.right)
+            let best = autoRegion(region.left, region.right, { stickTo: previous_transposition, skipSave: true } )
+            previous_transposition = best
+            // console.log('prevt:', previous_transposition);
+        }
+
+        repopulateTransposeComments()
         autosave()
     }
 
-    let lines = [] // [{ chords: Chord[], transposition?, continuation: undefined, comment: false }, ...]
+    let sheetTransposes = () => {
+        let transpose_comments = chords_and_otherwise.filter(e => e.kind == "transpose")
 
-    function setLineTransposition(idx, transposition) {
-        let index = +idx
-        lines[index].transposition = transposition
-
-        if(lines[index-1])
-            lines[index].difference = lines[index].transposition - lines[index-1].transposition
-        if(lines[index+1])
-            lines[index+1].difference = lines[index+1].transposition - lines[index].transposition
-    }
-
-    let lineTransposed = (e) => {
-        const index = e.detail.index
-        const by = e.detail.by
-        setTimeout(() => {
-            setLineTransposition(index, lines[index].transposition+by)
-            autosave()
-        }, 0)
-    }
-
-    let autoLine = (e) => {
-        const keepGoing = e.detail.keepGoing
-        const index = e.detail.index
-        const sheet = e.detail.sheet
-        let previous = lines[index-1]?.transposition ?? 0
-        setLineTransposition(index, bestTransposition(sheet, 11, previous, 0, 0))
-        if(keepGoing) { // Transpose all the way down
-            lineBasedAuto(index)
-        }
-        autosave()
-    }
-
-    let getTransposesOfSheet = () => {
-        const getPrevTranspose = (i) => {
-            i -= 1;
-            while (i >= 0) {
-                if (!lines[i]?.comment) {
-                    return lines[i].transposition
-                }
-                i -= 1
-            }
-
-            return false
-        }
-
-        let transposes = lines.reduce((acc, line, i) => {
-            let prevTranspose = getPrevTranspose(i)
-
-            if (!line.comment && (i === 0 || prevTranspose !== line.transposition)) {
-                acc.push(-line.transposition);
-            }
-
-            return acc;
-        }, []);
-
-        return transposes
-    }
-
-    let copyTransposes = () => {
-        let transposes = getTransposesOfSheet();
-        navigator.clipboard.writeText(transposes.join(" "));
+        return transpose_comments.map((e) => -parseInt(e.text.match(/\d+/))).join(' ')
     }
 
     /**
@@ -390,45 +409,9 @@
         document.body.removeChild(linkEl);
     }
 
-    function comment(e) {
-        const index = e.detail.index
-        const action = e.detail.action
-        const comment = e.detail.comment
-        switch(action) {
-            case "add": {
-                setTimeout(() => { // Make sure previous comment, if it exists, gets to update
-                    if (lines[index-1]?.comment) return
-                    lines.splice(index, 0, { comment: "Add a comment..." })
-                    lines = lines
-                }, 0)
-                break
-            }
-            case "remove": {
-                lines.splice(index, 1)
-                lines = lines
-                break
-            }
-            case "update": {
-                lines[index].comment = comment
-            }
-        }
-        autosave()
-    }
-
-    /** Checks if a line at index has same transposition as previous non-comment line */
-    function stap(index) {
-        const line = lines[index]
-        for (let i = index - 1; i >= 0; i--) {
-            const previous = lines[i]
-            if (previous.comment) continue
-
-            return previous.transposition == line.transposition
-        }
-    }
-
     function droppedFile(e) {
         e.preventDefault()
-        
+
         let file = e?.dataTransfer?.items?.[0]
         if(!file || !file.getAsFile) { console.error('bad file dropped'); return }
 
@@ -443,7 +426,7 @@
     let pieces = history.getAll()
     if(pieces.length == 0 && !localStorage.getItem('hadSample') ) {
         localStorage.setItem('hadSample', true)
-        
+
         fetch(sample_uri)
             .then(response => response.json())
             .then(other => {
@@ -451,16 +434,130 @@
                 setTimeout(() => {
                     pieces = history.getAll(
                     remaining = remainingSize()
-                )}, 0)
+            )}, 0)
             })
     }
 
     function autosave() {
-        if (filename) history.add(filename, settings, lines).then(() => pieces = history.getAll())
+        if (filename) history.add(filename, settings, chords_and_otherwise).then(() => pieces = history.getAll())
         remaining = remainingSize()
+        console.log('saving', chords_and_otherwise)
         return
     }
+
+    function next_not(coll, pred, start=0) {
+        let i = start
+        while(coll[i] && pred(coll[i])) {
+            i++
+        } /* then */ return coll[i]
+    }
+
+
+    let has_selection = false
+    let selection = {
+        left: undefined,
+        right: undefined
+    }
+    $: {
+        has_selection = selection.left != undefined && selection.right != undefined
+        // print("Selection: ", selection)
+    }
+
+    let real_index_of = (index) => {
+        return chords_and_otherwise.findIndex((e) => e.index == index)
+    }
+
+    function resetSelection(e) {
+        if (!sheetReady) return
+
+        if (!e?.shiftKey) {
+            selection.left = undefined
+            selection.right = undefined
+
+            for (let event of chords_and_otherwise) {
+                if (is_chord(event)) {
+                    event.selected = undefined
+                }
+            }
+            chords_and_otherwise = chords_and_otherwise
+        }
+    }
+
+    function selectAll(e) {
+        selection.left = 0
+        selection.right = chords_and_otherwise.length - 1
+
+        renderSelection()
+    }
+
+    function renderSelection(e) {
+        if(!chords_and_otherwise) return
     
+        // Deselect everything
+        for (let i = 0; i < chords_and_otherwise.length; i++) {
+            if (not_chord(chords_and_otherwise[i])) continue
+            chords_and_otherwise[i].selected = undefined
+        }
+
+        // Select pertinent part
+        for (let i = selection.left; i <= selection.right; i++) {
+            let chord = chords_and_otherwise.find((e) => e.index == i)
+            if (!chord) continue
+            // if (chord.index > selection.right) break
+
+            chord.selected = true
+        }
+
+        chords_and_otherwise = chords_and_otherwise
+    }
+
+    function setSelection(index) {
+        // Double-click to select line
+        if (selection.left === index && selection.right === index) {
+            // Find line bounds
+            let left = real_index_of(index)
+            // console.log(left)
+            while (is_chord(chords_and_otherwise[left])) {
+                left--
+            } left++
+            let right = left
+            while (is_chord(chords_and_otherwise[right])) {
+                right++
+            } right--
+
+
+            selection.left = chords_and_otherwise[left].index
+            selection.right = chords_and_otherwise[right].index
+        }
+        // Swap left and right if needed
+        else if(index < selection.left || selection.left === undefined) {
+            selection.right = selection.left ?? index
+            selection.left = index
+        } else {
+            selection.right = index
+        }
+
+        renderSelection()
+    }
+
+    function splitLineAt(index) {
+        let real_index = real_index_of(index)
+
+        chords_and_otherwise.splice(real_index, 0, { type: "break" })
+        chords_and_otherwise = chords_and_otherwise
+    }
+    
+    function joinRegion(left, right) {
+        let start = real_index_of(left)
+        for (let i = start; i < chords_and_otherwise.length; i++) {
+            if (chords_and_otherwise[i]?.type == "break") {
+                chords_and_otherwise.splice(i, 1)
+                i--
+            }
+            if (i > real_index_of(right)) break
+        }
+        chords_and_otherwise = chords_and_otherwise
+    }
 </script>
 
 <svelte:head>
@@ -487,12 +584,12 @@
     class="flex flex-col gap-12 w-full h-full items-center align-center justify-center content-center
             absolute top-0 z-50"
      style="height:100%; background: rgb(45,42,50);
-            background: linear-gradient(45deg, rgba(45,42,50,1) 0%, rgba(50,40,40,1) 50%, rgba(71,57,37,1) 100%); 
+            background: linear-gradient(45deg, rgba(45,42,50,1) 0%, rgba(50,40,40,1) 50%, rgba(71,57,37,1) 100%);
             transition: all 0.6s ease-in-out;">
     <div class="flex flex-col items-center gap-6">
         <p class="text-white text-3xl">Import a MIDI/JSON file to get started:</p>
         <label on:drop|preventDefault={droppedFile} on:dragover|preventDefault
-               for="drop" class="cursor-pointer 
+               for="drop" class="cursor-pointer
                                  rounded-xl
                                  text-xl
                                  p-4"
@@ -522,7 +619,7 @@
                 {/each}
             </div>
         </div>
-        
+
         <div>Used ~{remaining} / 5000 kB
             <span title="The last entry (or multiple) will automatically be dropped if an autosave fails.
 You can also right-click a saved sheet to manually delete it.
@@ -531,8 +628,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
     {/if}
 </div>
 
-<div class="flex flex-row">
-    <div class="m-1 flex flex-col" style="min-width:25em; max-width:25em">
+<div class="flex flex-row" on:click|self={resetSelection} on:keypress|self={resetSelection}>
+    <div id="sidebar" class="m-1 flex flex-col sticky overflow-y-auto top-0" style="min-width:25em; max-width:25em; max-height: 99vh">
         <div>
             {#if sheetReady}
                 <p class="mb-2">You are currently editing: {filename}</p>
@@ -540,26 +637,51 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                     Import another MIDI/JSON file
                 </button>
                 <hr class="my-2 mx-1">
+
             {/if}
+            <!-- Selection control -->
+            <div class="flex flex-col gap-2">
+                <button on:click={selectAll}>Select all</button>
+                {#if has_selection}
+                <div class="flex flex-row justify-around items-center gap-2">
+                    <button class="w-full block" on:click={() => { transposeRegion(selection.left, selection.right, 1, { relative: true }); repopulateTransposeComments() }}>Transpose selection down</button>
+                    <button class="w-full block" on:click={() => { transposeRegion(selection.left, selection.right, -1, { relative: true }); repopulateTransposeComments() }}>Transpose selection up</button>
+                </div>
+                <button on:click={() => { autoRegion(selection.left, selection.right) }}>Auto-transpose (single)</button>
+                <button on:click={() => { multiTransposeRegion(selection.left, selection.right) }}>Auto-transpose (multi)</button>
+                <div class="flex flex-row justify-around items-stretch gap-2">
+                    <button class="w-full block" on:click={() => { splitLineAt(selection.left) }}>Split selection</button>
+                    <button class="w-full block" on:click={() => { joinRegion(selection.left, selection.right) }}>Join selection</button>
+                </div>
+                <button on:click={() => { addComment(selection.left) }}>Add a comment</button>
+                {/if}
+            </div>
             <SheetOptions
                 bind:settings
                 show={sheetReady}
                 hasMIDI={!(!MIDIObject)}
-                on:auto={auto}
-                on:lineBasedAuto={() => {lineBasedAuto()}}
             />
         </div>
         <div id="guide">
-            - Left/right click: Transpose line down/up<br>
-            - Middle click: Auto-transpose line (least effort to play)<br>
-            - ctrl+middle click: Auto-transpose all lines below<br>
-            - ctrl+left/right click: Add/remove a comment<br>
+            Click on a note to set selection beginning/ending<br>
+            Double-click on a note to select the whole line
+            <hr class="my-2 mx-1">
+            Timing:<br>
+            <span style="color: {colors.whole}">Whole note</span><br>
+            <span style="color: {colors.half}">Half note</span><br>
+            <span style="color: {colors.quarter}">Quarter note</span><br>
+            <span style="color: {colors.eighth}">Eighth note</span><br>
+            <span style="color: {colors.sixteenth}">Sixteenth note</span><br>
+            <span style="color: {colors.thirtysecond}">Thirty-second note</span><br><br>
+
+            <span style="color: {colors.quadruple}">Longer than whole</span><br>
+            <span style="color: {colors.sixtyfourth}">Shorter than thirty-second</span><br>
         </div>
     </div>
-    
+
     <section bind:this={trackChooser.element} id="track-chooser" class="z-40 w-full absolute flex flex-col gap-4 justify-center items-center content-center text-2xl"
              style="top: -110vh; height: 100vh; background: rgb(45,42,50);
-                    background: linear-gradient(45deg, rgba(45,42,50,1) 0%, rgba(50,40,40,1) 50%, rgba(71,57,37,1) 100%); 
+                    background: linear-gradient(45deg, rgba(45,42,50,1) 0%, rgba(50,40,40,1) 50%, rgba(71,57,37,1) 100%);
                     transition: all 0.6s ease-in-out;">
         <div id="tracks" class="flex flex-col gap-2">
         {#if tracks}
@@ -569,20 +691,20 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
             {/each}
         {/if}
         </div>
-        <button on:click={() => { saveSheet(); createLines(); trackChooser.hide() }}>Import selected tracks</button>
+        <button on:click={() => { saveSheet(); trackChooser.hide() }}>Import selected tracks</button>
     </section>
-    
+
     {#if sheetReady == true}
-        <div class="flex flex-col items-start">
-            <SheetActions {settings} 
+        <div class="flex flex-col items-start" on:contextmenu|preventDefault on:click={resetSelection} on:keypress={resetSelection}>
+            <SheetActions {settings}
                 on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode) }}
                 on:copyText={() => {
                     settings.tempoMarks = true
                     setTimeout(() => {
-                        navigator.clipboard.writeText(sheetText)
+                        navigator.clipboard.writeText(container.firstChild.innerText)
                     }, 0)
                 }}
-                on:copyTransposes={copyTransposes}
+                on:copyTransposes={() => {navigator.clipboard.writeText(sheetTransposes())}}
                 on:export={() => {
                     autosave()
                     setTimeout(() => {
@@ -600,19 +722,45 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
 
             <div style="background: #2D2A32; user-select: none" bind:this={container}>
                 <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
-                    {#each Object.entries(lines) as [ index, line ]}
-                    <Line line={line}
-                          prevLine={lines?.[index-1]}
-                          {index}
-                          {settings}
-                          comment={line.comment}
-                          passedNext={line.continuation}
-                          on:transpose={lineTransposed}
-                          on:auto={autoLine}
-                          on:comment={comment}
-                          on:sheetText={(text) => sheetText += text.detail + "\n"}
-                          sameTranspositionAsPrevious={stap(index)}/>
-                    {/each}
+                    {#key chords_and_otherwise}
+                        {#each Object.entries(chords_and_otherwise) as [ index, inner ]}
+                            <!-- not a chord -->
+                            {#if inner.type} 
+                                {@const next_thing = chords_and_otherwise[+index+1]}
+                                {@const previous_thing = chords_and_otherwise[+index-1]}
+                                {#if inner.type === "break"}
+                                    {#if next_thing?.type != "comment"}
+                                        <br>
+                                    {/if}
+                                {:else if inner.type === "comment"}
+                                    {#if previous_thing?.type != "comment" && inner.notop != true}
+                                        <br>
+                                    {/if}
+                                    {#if inner.kind == "custom" || inner.kind == "tempo"}
+                                        <span class="comment" on:click|stopPropagation 
+                                          on:keypress|stopPropagation 
+                                          contenteditable="true" 
+                                          on:contextmenu|preventDefault
+                                          on:focusout={(e) => { updateComment(index, e.target.innerText) }}>
+                                              {inner.text}
+                                        </span>
+                                    {:else}
+                                        <span on:contextmenu|preventDefault class="comment">{inner.text}</span>
+                                    {/if}
+                                    <br>
+                                {/if}
+                            {:else}
+                                <!-- if it's an actual chord -->
+                                <Chord chord={inner} 
+                                       selected={inner.selected} 
+                                       index={inner.index} 
+                                       next={next_not(chords_and_otherwise, not_chord, +index+1) ?? undefined}
+                                       {settings}
+                                    on:select={(e) => { setSelection(e.detail.index) } }
+                                    />
+                            {/if}
+                        {/each}
+                    {/key}
                 </div>
             </div>
         </div>

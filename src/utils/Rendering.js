@@ -25,8 +25,8 @@ function yellow_to_red(value) {
     return `rgb(${red}, ${green}, 0)`
 }
 
-function colored_string(s, color) {
-    return `<span style="color:${color}">${s}</span>`
+function colored_string(s, color, options = {}) {
+    return `<span style="color:${color};${options.underline ? `border-bottom:2px solid ${color}` : ''}">${s}</span>`
 }
 
 export { colors, colored_string, yellow_to_green, yellow_to_red }

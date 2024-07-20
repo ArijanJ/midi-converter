@@ -3,25 +3,25 @@ import pako from "pako"
 const _key = 'pieces'
 
 export async function compress(object) {
-    return pako.deflate(JSON.stringify(object))
+    return pako.deflate(JSON.stringify(object), { level: 9 })
 }
 
 export function decompress(string) {
-    return JSON.parse(pako.inflate(string, { to: 'string' }))
+    return JSON.parse(pako.inflate(string, { to: 'string' }), { level: 9 })
 }
 
 export function remainingSize() {
-    var totalStorage = 0;
-    var keyLength, key;
+    let totalStorage = 0
+    let keyLength
 
-    for (key in localStorage) {
+    for (let key in localStorage) {
         if (!localStorage.hasOwnProperty(key)) continue
         
-        keyLength = (localStorage[key].length + key.length);
-        totalStorage += keyLength; 
+        keyLength = (localStorage[key].length + key.length)
+        totalStorage += keyLength
     }
 
-    return (keyLength / 1024).toFixed(2)
+    return (totalStorage / 1024).toFixed(2)
 }
 
 async function piece(name, settings, data, skip_compression = false) {
