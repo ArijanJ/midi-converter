@@ -14,6 +14,7 @@
         quantize: 35,
         classicChordOrder: true,
         sequentialQuantize: false,
+        curlyQuantizes: false,
         pShifts: 'Start',
         pOors: 'Inorder',
         oors: true,
@@ -102,6 +103,11 @@
             Sequential quantizes
         </label>
     {/if}
+
+    <label for='curly-quantizes'>
+        <input type='checkbox' id="curly-quantizes" bind:checked={settings.curlyQuantizes}>
+        Curly braces for quantized chords
+    </label>
 
     <div></div>
     <label for='out-of-range'>

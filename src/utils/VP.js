@@ -222,6 +222,7 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     }
 
     let index = 0
+    let did_chord_quantize_math = false
     // Generate chords
     events.forEach(element => {
         // if event is SET_TEMPO
@@ -271,17 +272,17 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
 
             // Submit the chord and start the next one
             let resulting_chord = new Chord(current_notes, classicChordOrder, sequentialQuantize)
-            resulting_chord.index = index; index++
+            resulting_chord.index = index
             
             // Transpose to previous
-            // console.log('curr index:', index)
-            // console.log('at that index:', chords_and_otherwise?.find((e) => e.index == index))
             let same_chord_that_existed_previously = chords_and_otherwise?.find((e) => e.index === index)
+            // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
             if (same_chord_that_existed_previously && same_chord_that_existed_previously.notes[0].transposition() != 0) {
                 resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
             }
             
             chords.push(resulting_chord)
+            index++
 
             current_notes = []
             current_notes.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
@@ -297,17 +298,17 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     // Final chord insertion to make sure no notes are left
     // chords.push(new Chord(currentChord, classicChordOrder))
     let resulting_chord = new Chord(current_notes, classicChordOrder, sequentialQuantize)
-    resulting_chord.index = index; index++
+    resulting_chord.index = index
 
     // Transpose to previous
-    // console.log('curr index:', index)
-    // console.log('at that index:', chords_and_otherwise?.find((e) => e.index == index))
     let same_chord_that_existed_previously = chords_and_otherwise?.find((e) => e.index === index)
     if (same_chord_that_existed_previously && same_chord_that_existed_previously.notes[0].transposition() != 0) {
         resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
     }
             
     chords.push(resulting_chord)
+    
+    index++
 
     if (!previousTempo)
         console.log(`No tempo found in sheet, set to ${nextBPM}/${nextTempo}`); 

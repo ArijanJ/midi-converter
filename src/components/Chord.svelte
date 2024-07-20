@@ -57,7 +57,12 @@
             if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
                 isChord = false
 
-        if (isChord) res += "[";
+        if (isChord) {
+            if (chord.is_quantized && settings.curlyQuantizes === true) {
+                res += "{"
+            } else
+                res += "["
+        }
 
         for (const note of chord.notes) {
             if (!note.valid) {
@@ -99,7 +104,12 @@
             }
         } // end note loop
 
-        if (isChord) res += "]";
+        if (isChord) {
+            if (chord.is_quantized && settings.curlyQuantizes === true) {
+                res += "}"
+            } else
+                res += "]"
+        }
 
         // Separator
         let beat = chord.notes[0].tempo / 1000;
