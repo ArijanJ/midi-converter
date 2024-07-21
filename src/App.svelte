@@ -42,11 +42,11 @@
             MIDIObject = exportedCurrent ? MIDIObject : undefined
             existingProject.name = filename ?? project.name
             existingProject.data = decompress(project.data)
-            existingProject.proceed(true)
+            existingProject.proceed('load')
         },
-        proceed: (forceLoad) => {
+        proceed: (force_decision = 'prompt') => {
             let decision = existingProject.element?.returnValue // dialog result
-            if (forceLoad) decision = "load"
+            if (force_decision !== 'prompt') decision = force_decision
             if (!decision) return
 
             if (decision == "load" || decision == "existing") {
@@ -54,6 +54,14 @@
 
                 sheetReady = true
                 chords_and_otherwise = existingProject.data
+
+                let old_style_project = !chords_and_otherwise.find((e) => is_chord(e))?.notes
+                if (old_style_project) {
+                    confirm("Looks like this project is from an older version, and unfortunately can't be opened anymore.\n" +
+                            "You can right-click it on the main screen to export or delete it from your list.\n\n" +
+                            "If you must view/edit it again, you can open it in an older version (reach me at @arijanj on Discord for help with this)")
+                    window.location.reload()
+                }
 
                 // ughhh, have to reconstruct the functions here cause they dont serialize
                 for(let i = 0; i < chords_and_otherwise.length; i++) {
