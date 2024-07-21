@@ -243,7 +243,7 @@
         if (stickTo == 'same')
             stickTo = chords_in_region[0].notes[0].transposition()
 
-        let best = best_transposition_for_chords(chords_in_region, 11, stickTo)
+        let best = best_transposition_for_chords(chords_in_region, 11, stickTo, settings.resilience ?? 4)
         transposeRegion(left, right, best, { relative: false, skipSave: true })
         // console.log('best:', best)
 
@@ -283,7 +283,7 @@
                 // Make sure to add the transpose before all other comments for consistency
                 while (chords_and_otherwise[non_comment_index]?.type == "comment") 
                     non_comment_index--
-                
+
                 chords_and_otherwise.splice(non_comment_index+1, 0, { type: "comment", kind: "transpose", text })
                 previous_transposition = transposition
             }
@@ -328,7 +328,10 @@
         // console.log('prevt:', previous_transposition);
         for (let region of regions) {
             // console.log('transposing region', region.left, region.right)
-            let best = autoRegion(region.left, region.right, { stickTo: previous_transposition, skipSave: true } )
+            let best = autoRegion(region.left, region.right, { 
+                stickTo: previous_transposition, 
+                skipSave: true 
+            })
             previous_transposition = best
             // console.log('prevt:', previous_transposition);
         }

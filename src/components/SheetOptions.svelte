@@ -23,7 +23,7 @@
         minSpeedChange: 10,
         oorSeparator: ':',
         // transposition: 0,
-        lbauto_atleast: 4,
+        resilience: 0,
         font: fonts[0],
         capturingImage: false,
         missingTempo: false,
@@ -32,16 +32,18 @@
 </script>
 
 {#if show}
-<!-- <div class="flex flex-col items-start align-middle">
-    <button style="margin-bottom: 0;" on:click={() => { dispatch('lineBasedAuto') }}>Line-based auto-transpose</button>
+
+<hr class="my-2 mx-1">
+
+<div class="flex flex-col items-start align-middle">
     <div class="flex flex-row mt-3">
         <label class="flex flex-row items-center"
                title="Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)" 
                for="atleast">Resilience (?):</label>
-        <input class="w-32" id="atleast" type="range" min=1 max=24 bind:value={settings.lbauto_atleast}>
-        <span style="display:flex; align-items: center">{settings.lbauto_atleast}</span>
+        <input class="w-32" id="atleast" type="range" min=0 max=12 bind:value={settings.resilience}>
+        <span style="display:flex; align-items: center">{settings.resilience}</span>
     </div>
-</div> -->
+</div>
 
 <hr class="my-2 mx-1">
 

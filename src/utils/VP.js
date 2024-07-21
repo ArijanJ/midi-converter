@@ -343,7 +343,7 @@ function score(chord) {
     return ((good_notes.length * 2) + Math.abs(uppercase_notes.length-lowercase_notes.length))
 }
 
-function best_transposition_for_chord(chord, deviation, stickTo = 0) {
+function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience = 4) {
     if (!chord) return
 
     // console.log(chord)
@@ -363,8 +363,8 @@ function best_transposition_for_chord(chord, deviation, stickTo = 0) {
     
     let consider = (n) => {
         let attempt_score = score(chord.transpose(n))
-        if (attempt_score > best_score) {
-            // console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score})`)
+        if (attempt_score > best_score + resilience ) {
+            console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score + resilience})`)
             best_score = attempt_score
             best_transpositions = [n]
         }
@@ -388,10 +388,10 @@ function best_transposition_for_chord(chord, deviation, stickTo = 0) {
     return best_transpositions
 }
 
-function best_transposition_for_chords(chords, deviation, stickTo = 0, atLeast = 4, startFrom = 0) {
+function best_transposition_for_chords(chords, deviation, stickTo = 0, resilience = 4) {
     // console.log('[btfcs] entry:', chords)
 
-    let best_transpositions_for_each_chord = chords.map((chord) => best_transposition_for_chord(chord, deviation, stickTo))
+    let best_transpositions_for_each_chord = chords.map((chord) => best_transposition_for_chord(chord, deviation, stickTo, resilience))
     // console.log('best transpositions for each chord: ', best_transpositions_for_each_chord)
     
     // // Most occurences of a single transposition (TODO: maybe reconsider)
