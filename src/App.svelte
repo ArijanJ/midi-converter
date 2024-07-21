@@ -268,7 +268,6 @@
 
         for (let i = 0; i < chords_and_otherwise.length; i++) {
             let current = chords_and_otherwise[i]
-
             if (not_chord(current)) continue
 
             let transposition = current.notes[0].transposition()
@@ -279,7 +278,13 @@
                 let text = `Transpose by: ${-transposition > 0 ? '+' : ''}${-transposition}`
                 text += ` (${-difference > 0 ? '+' : ''}${-difference})`
 
-                chords_and_otherwise.splice(i, 0, { type: "comment", kind: "transpose", text })
+                let non_comment_index = i-1
+
+                // Make sure to add the transpose before all other comments for consistency
+                while (chords_and_otherwise[non_comment_index]?.type == "comment") 
+                    non_comment_index--
+                
+                chords_and_otherwise.splice(non_comment_index+1, 0, { type: "comment", kind: "transpose", text })
                 previous_transposition = transposition
             }
         }
