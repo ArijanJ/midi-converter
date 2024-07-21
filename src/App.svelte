@@ -24,8 +24,8 @@
     import history, { decompress, remainingSize } from './utils/History'
     let remaining = remainingSize()
     const sample_uri = 'https://gist.githubusercontent.com/ArijanJ/' +
-                       'f381c78375cfad2e9a707c6da7a5b304/raw/' +
-                       'c4ccc665d368402980dede2943fea25cdd02f440/Mariage_dAmour_(sample).json'
+                       '80f86cbe9dcf8384dbdf9578c83102a6/raw/9f97ce922530ab9814e822cb8ffd2d8f0251c9bf/' +
+                       'Mar'+'iage_d'+'Amour_(sample).json'
 
     import SheetActions from "./components/SheetActions.svelte";
 
@@ -258,6 +258,7 @@
     }
 
     let repopulateTransposeComments = () => {
+        if(!chords_and_otherwise) return
         chords_and_otherwise = chords_and_otherwise.filter(e => e.kind != "transpose")
 
         let first_note = next_not(chords_and_otherwise, not_chord, 0).notes[0]
@@ -644,7 +645,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
         <div>
             {#if sheetReady}
                 <p class="mb-2">You are currently editing: {filename}</p>
-                <button on:click={() => { importer.show(); setTimeout(() => { sheetReady = false; filename = null; clearFiles();}, 600) }}>
+                <button class="w-full" on:click={() => { importer.show(); setTimeout(() => { sheetReady = false; filename = null; clearFiles();}, 600) }}>
                     Import another MIDI/JSON file
                 </button>
                 <hr class="my-2 mx-1">
