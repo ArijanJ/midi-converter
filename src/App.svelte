@@ -205,7 +205,7 @@
     
     let updateComment = (index, text) => {
         if (text == '')
-            chords_and_otherwise.splice(real_index_of(index), 1)
+            chords_and_otherwise.splice(index, 1)
         else
             chords_and_otherwise[index].text = text
         renderSelection()
@@ -231,7 +231,7 @@
     }
 
     let autoRegion = (left, right, opts = undefined) => {
-        let stickTo = opts?.stickTo ?? 'same'
+        let stickTo = opts?.stickTo ?? 0
         let skipSave = opts?.skipSave ?? false
     
         let chords_in_region = []
