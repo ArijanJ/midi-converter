@@ -17,7 +17,7 @@
 
     let importer = {
         element: undefined, // main welcome screen div
-        hide: () => { importer.element.style.top = "-110vh"; resetSelection() },
+        hide: () => { importer.element.style.top = "-110vh"; resetSelection(); repopulateTransposeComments() },
         show: () => { importer.element.style.top = "0px" }
     }
 
@@ -61,7 +61,9 @@
                     if(is_chord(chord)) {
                         let new_notes = []
                         for (let note of chord.notes) {
-                            new_notes.push(new Note(note.value, note.playTime, note.tempo, note.BPM, note.delta))
+                            let new_note = new Note(note.value, note.playTime, note.tempo, note.BPM, note.delta)
+                            new_note.original = note.original
+                            new_notes.push(new_note)
                         }
                         let new_chord = new ChordObject(new_notes, chord.classicChordOrder, chord.sequentialQuantize)
                         new_chord.index = chord.index
@@ -297,6 +299,7 @@
         let chord = chords_and_otherwise.find((e) => e.index == index)
         if(not_chord(chord)) return
 
+        console.log('transposing', chord, 'by', by)
         chord.transpose(by, relative, true) // mutate
 
         chords_and_otherwise = chords_and_otherwise
@@ -749,6 +752,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                                           on:keypress|stopPropagation 
                                           contenteditable="true" 
                                           on:contextmenu|preventDefault
+                                          style="white-space:pre-wrap;"
                                           on:focusout={(e) => { updateComment(index, e.target.innerText) }}>
                                               {inner.text}
                                         </span>

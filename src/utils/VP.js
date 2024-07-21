@@ -364,7 +364,7 @@ function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience 
     let consider = (n) => {
         let attempt_score = score(chord.transpose(n))
         if (attempt_score > best_score + resilience ) {
-            console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score + resilience})`)
+            // console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score + resilience})`)
             best_score = attempt_score
             best_transpositions = [n]
         }
