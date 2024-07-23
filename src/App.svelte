@@ -532,7 +532,7 @@
     
 
     function resetSelection() {
-        if (!sheetReady) return
+        if (!sheetReady || !selection.left && !selection.right) return
 
         for (let i = selection.left; i < chords_and_otherwise.length; i++) {
             const chord = chords_and_otherwise[i]
