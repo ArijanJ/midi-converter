@@ -3,9 +3,8 @@ const lastPossibleNote   =  108
 
 const capitalNotes = "!@#$%^&*()QWERTYUIOPASDFGHJKLZXCBVNM"
 
-let not_chord = (x) => !x || (x.type && (x.type == "break" || x.type == "comment"))
-let is_chord = (x) => !not_chord(x)
-
+let is_chord = (x) => 'index' in x 
+let not_chord = (x) => { try { return !is_chord(x) } catch { return true } } // !x || (x.type && (x.type == "break" || x.type == "comment"))
 class Note {
     constructor(value, playTime, tempo, BPM, delta, shifts='keep', oors='keep') {
         this.original   =  value
@@ -343,7 +342,7 @@ function score(chord) {
     return ((good_notes.length * 2) + Math.abs(uppercase_notes.length-lowercase_notes.length))
 }
 
-function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience = 4) {
+function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience = 0) {
     if (!chord) return
 
     // console.log(chord)
@@ -359,7 +358,7 @@ function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience 
     
     // let at_least_this_much_better = goodnote_count / 2
 
-    let best_score = score(chord.transpose(best_transpositions))
+    let best_score = score(chord.transpose(stickTo))
     
     let consider = (n) => {
         let attempt_score = score(chord.transpose(n))
@@ -390,6 +389,8 @@ function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience 
 
 function best_transposition_for_chords(chords, deviation, stickTo = 0, resilience = 4) {
     // console.log('[btfcs] entry:', chords)
+    
+    // TODO: fix resilience
 
     let best_transpositions_for_each_chord = chords.map((chord) => best_transposition_for_chord(chord, deviation, stickTo, resilience))
     // console.log('best transpositions for each chord: ', best_transpositions_for_each_chord)

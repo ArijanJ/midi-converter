@@ -23,8 +23,8 @@
 
     import history, { decompress, remainingSize } from './utils/History'
     let remaining = remainingSize()
-    const sample_uri = 'https://gist.githubusercontent.com/ArijanJ/' +
-                       '80f86cbe9dcf8384dbdf9578c83102a6/raw/9f97ce922530ab9814e822cb8ffd2d8f0251c9bf/' +
+    const sample_uri = 'https://gist.githubusercontent.com/ArijanJ/' + 
+                       '80f86cbe9dcf8384dbdf9578c83102a6/raw/4ec84c63f655866e6d0d4e1c75949a22537c417e/' +
                        'Mar'+'iage_d'+'Amour_(sample).json'
 
     import SheetActions from "./components/SheetActions.svelte";
@@ -75,10 +75,12 @@
                         }
                         let new_chord = new ChordObject(new_notes, chord.classicChordOrder, chord.sequentialQuantize)
                         new_chord.index = chord.index
+                        new_chord.next = chord.next
                         chords_and_otherwise[i] = new_chord
                     }
                 }
                 console.log(chords_and_otherwise)
+                update_chords()
             }
             else if (decision == "export-and-restart") {
                 history.export(existingProject.name).then((piece) => {
@@ -118,6 +120,7 @@
     let tracks
 
 	let chords_and_otherwise
+    let refresh_chords = false // flips between false and true all the time, just here for updating purposes
     let sheetText
 
     // [true, true, false, true, ...]
@@ -150,6 +153,7 @@
 
             sheetReady = true
             chords_and_otherwise = existingProject.data
+            update_chords()
 
             return
         }
@@ -172,6 +176,13 @@
         if (!MIDIObject) { console.log('no midiobject'); return }
         let events = getEvents(MIDIObject, selectedTracks)
 		chords_and_otherwise = generateChords(events, settings, chords_and_otherwise)
+
+        let only_chords = chords_and_otherwise.filter(e => is_chord(e))
+        only_chords.forEach((chord, i) => { 
+            chord.next = { notes: [ { playTime: only_chords[i+1]?.notes[0]?.playTime } ] }
+        }) // trust
+        
+        update_chords()
         repopulateTransposeComments()
 
         sheetReady = true
@@ -207,6 +218,11 @@
         renderSelection()
 	}
 
+    let update_chords = () => {
+        console.log('updating chords')
+        refresh_chords = !refresh_chords
+    }
+
     let addComment = (index) => {
         let real = real_index_of(index)
         chords_and_otherwise.splice(real, 0, { type: "comment", kind: "custom", text: "Add a comment..." })
@@ -231,7 +247,7 @@
 
             if (chord.index > right) break
 
-            transposeChord(i, by, relative)
+            transposeChord(i, by, { relative, skipUpdate: true })
         }
 
         renderSelection()
@@ -253,11 +269,10 @@
         if (stickTo == 'same')
             stickTo = chords_in_region[0].notes[0].transposition()
 
-        let best = best_transposition_for_chords(chords_in_region, 11, stickTo, settings.resilience ?? 4)
+        let best = best_transposition_for_chords(chords_in_region, 11, stickTo, 0/* settings.resilience ?? 4 */)
         transposeRegion(left, right, best, { relative: false, skipSave: true })
         // console.log('best:', best)
 
-        chords_and_otherwise = chords_and_otherwise
         repopulateTransposeComments()
         
         if (!skipSave) autosave()
@@ -300,24 +315,26 @@
             }
         }
         
-        chords_and_otherwise = chords_and_otherwise
+        update_chords()
     }
 
-    let transposeChord = (index, by, relative = false) => {
-        // console.log('tp', index, by)
+    let transposeChord = (index, by, opts /*relative = false, skipUpdate = false */) => {
+        let relative = opts.relative ?? false
+        let skipUpdate = opts.skipUpdate ?? false
+        
         let chord = chords_and_otherwise.find((e) => e.index == index)
         if(not_chord(chord)) return
 
-        console.log('transposing', chord, 'by', by)
+        // console.log('transposing', chord, 'by', by)
         chord.transpose(by, relative, true) // mutate
 
-        chords_and_otherwise = chords_and_otherwise
+        if (!skipUpdate) update_chords()
     }
 
     let multiTransposeRegion = (left, right /* [{left, right}, {...}] */) => {
         let regions = []
 
-        let idx = chords_and_otherwise.findIndex((e) => e.index == left)
+        let idx = real_index_of(left)
         for (let i = idx; i < chords_and_otherwise.length; i++) {
             let event = chords_and_otherwise[i] ?? undefined
             if (event.index >= right) {
@@ -483,27 +500,63 @@
         // print("Selection: ", selection)
     }
 
-    let real_index_of = (index) => {
-        return chords_and_otherwise.findIndex((e) => e.index == index)
-    }
+    // chatgpt binary search
+    function real_index_of(targetIndex) {
+        let arr = chords_and_otherwise;
+        let left = 0;
+        let right = arr.length - 1;
 
-    function resetSelection(e) {
+        while (left <= right) {
+            let mid = Math.floor((left + right) / 2);
+
+            // Find the closest element with an index on the left
+            while (mid >= left && !('index' in arr[mid])) {
+                mid--;
+            }
+
+            if (mid < left) {
+                left = Math.floor((left + right) / 2) + 1;
+                continue;
+            }
+
+            if (arr[mid].index === targetIndex) {
+                return mid; // Element found
+            } else if (arr[mid].index < targetIndex) {
+                left = mid + 1; // Continue search on the right half
+            } else {
+                right = mid - 1; // Continue search on the left half
+            }
+        }
+
+        return undefined; // Element not found
+    }
+    
+
+    function resetSelection() {
         if (!sheetReady) return
 
-        if (!e?.shiftKey) {
-            selection.left = undefined
-            selection.right = undefined
-
-            for (let event of chords_and_otherwise) {
-                if (is_chord(event)) {
-                    event.selected = undefined
-                }
-            }
-            chords_and_otherwise = chords_and_otherwise
+        for (let i = selection.left; i < chords_and_otherwise.length; i++) {
+            const chord = chords_and_otherwise[i]
+            if (not_chord(chord)) continue
+            
+            if (chord.index > selection.right) break
+            
+            chord.selected = undefined
         }
+
+        selection.left = undefined
+        selection.right = undefined
+
+        // for (let event of chords_and_otherwise) {
+        //     if (is_chord(event)) {
+        //         event.selected = undefined
+        //     }
+        // }
+
+        update_chords()
     }
 
-    function selectAll(e) {
+    function selectAll() {
         selection.left = 0
         selection.right = chords_and_otherwise.length - 1
 
@@ -512,6 +565,7 @@
 
     function renderSelection(e) {
         if(!chords_and_otherwise) return
+        // console.log('rendering', selection)
     
         // Deselect everything
         for (let i = 0; i < chords_and_otherwise.length; i++) {
@@ -528,10 +582,12 @@
             chord.selected = true
         }
 
-        chords_and_otherwise = chords_and_otherwise
+        update_chords()
     }
 
-    function setSelection(index) {
+    function setSelection(event_or_index) {
+        let index = event_or_index.detail?.index ?? event_or_index
+
         // Double-click to select line
         if (selection.left === index && selection.right === index) {
             // Find line bounds
@@ -564,7 +620,7 @@
         let real_index = real_index_of(index)
 
         chords_and_otherwise.splice(real_index, 0, { type: "break" })
-        chords_and_otherwise = chords_and_otherwise
+        update_chords()
     }
     
     function joinRegion(left, right) {
@@ -576,13 +632,15 @@
             }
             if (i > real_index_of(right)) break
         }
-        chords_and_otherwise = chords_and_otherwise
+        update_chords()
     }
 </script>
 
 <svelte:head>
     <title>MIDI Converter</title>
 </svelte:head>
+
+<button class="sticky" on:click={() => { console.log(real_index_of(1)) }}>do stuff</button>
 
 <dialog bind:this={existingProject.element} class="rounded-lg overflow-hidden"
         on:close={() => { existingProject.proceed() }}>
@@ -741,8 +799,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
             />
 
             <div style="background: #2D2A32; user-select: none" bind:this={container}>
-                <div style="width: max-content" bind:clientWidth={notesContainerWidth}>
-                    {#key chords_and_otherwise}
+                <div style="width: max-content; font-family:{settings.font}" bind:clientWidth={notesContainerWidth}>
+                    {#key refresh_chords}
                         {#each Object.entries(chords_and_otherwise) as [ index, inner ]}
                             <!-- not a chord -->
                             {#if inner.type} 
@@ -773,11 +831,11 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                             {:else}
                                 <!-- if it's an actual chord -->
                                 <Chord chord={inner} 
+                                       next={inner.next ?? undefined}
                                        selected={inner.selected} 
                                        index={inner.index} 
-                                       next={next_not(chords_and_otherwise, not_chord, +index+1) ?? undefined}
+                                       on:select={setSelection}
                                        {settings}
-                                    on:select={(e) => { setSelection(e.detail.index) } }
                                     />
                             {/if}
                         {/each}
