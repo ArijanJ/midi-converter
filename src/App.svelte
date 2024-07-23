@@ -221,6 +221,7 @@
     let update_chords = () => {
         console.log('updating chords')
         refresh_chords = !refresh_chords
+        chords_and_otherwise = chords_and_otherwise
     }
 
     let addComment = (index) => {
@@ -705,6 +706,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
     {/if}
 </div>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="flex flex-row" on:click|self={resetSelection} on:keypress|self={resetSelection}>
     <div id="sidebar" class="m-1 flex flex-col sticky overflow-y-auto top-0" style="min-width:25em; max-width:25em; max-height: 99vh">
         <div>
@@ -772,6 +774,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
     </section>
 
     {#if sheetReady == true}
+        <!-- svelte-ignore a11y-no-static-element-interactions -->
         <div class="flex flex-col items-start" on:contextmenu|preventDefault on:click={resetSelection} on:keypress={resetSelection}>
             <SheetActions {settings}
                 on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode) }}
@@ -799,46 +802,46 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
 
             <div style="background: #2D2A32; user-select: none" bind:this={container}>
                 <div style="width: max-content; font-family:{settings.font}" bind:clientWidth={notesContainerWidth}>
-                    {#key refresh_chords}
-                        {#each Object.entries(chords_and_otherwise) as [ index, inner ]}
-                            <!-- not a chord -->
-                            {#if inner.type} 
-                                {@const next_thing = chords_and_otherwise[+index+1]}
-                                {@const previous_thing = chords_and_otherwise[+index-1]}
-                                {#if inner.type === "break"}
-                                    {#if next_thing?.type != "comment"}
-                                        <br>
-                                    {/if}
-                                {:else if inner.type === "comment"}
-                                    {#if previous_thing?.type != "comment" && inner.notop != true}
-                                        <br>
-                                    {/if}
-                                    {#if inner.kind == "custom" || inner.kind == "tempo"}
-                                        <span class="comment" on:click|stopPropagation 
-                                          on:keypress|stopPropagation 
-                                          contenteditable="true" 
-                                          on:contextmenu|preventDefault
-                                          style="white-space:pre-wrap;"
-                                          on:focusout={(e) => { updateComment(index, e.target.innerText) }}>
-                                              {inner.text}
-                                        </span>
-                                    {:else}
-                                        <span on:contextmenu|preventDefault class="comment">{inner.text}</span>
-                                    {/if}
+                    {#each Object.entries(chords_and_otherwise) as [ index, inner ]}
+                        <!-- not a chord -->
+                        {#if inner.type} 
+                            {@const next_thing = chords_and_otherwise[+index+1]}
+                            {@const previous_thing = chords_and_otherwise[+index-1]}
+                            {#if inner.type === "break"}
+                                {#if next_thing?.type != "comment"}
                                     <br>
                                 {/if}
-                            {:else}
-                                <!-- if it's an actual chord -->
-                                <Chord chord={inner} 
-                                       next={inner.next ?? undefined}
-                                       selected={inner.selected} 
-                                       index={inner.index} 
-                                       on:select={setSelection}
-                                       {settings}
-                                    />
+                            {:else if inner.type === "comment"}
+                                {#if previous_thing?.type != "comment" && inner.notop != true}
+                                    <br>
+                                {/if}
+                                {#if inner.kind == "custom" || inner.kind == "tempo"}
+                                    <!-- svelte-ignore a11y-no-static-element-interactions -->
+                                    <span class="comment" on:click|stopPropagation 
+                                      on:keypress|stopPropagation 
+                                      contenteditable="true" 
+                                      on:contextmenu|preventDefault
+                                      style="white-space:pre-wrap;"
+                                      on:focusout={(e) => { updateComment(index, e.target.innerText) }}>
+                                          {inner.text}
+                                    </span>
+                                {:else}
+                                    <!-- svelte-ignore a11y-no-static-element-interactions -->
+                                    <span on:contextmenu|preventDefault class="comment">{inner.text}</span>
+                                {/if}
+                                <br>
                             {/if}
-                        {/each}
-                    {/key}
+                        {:else}
+                            <!-- if it's an actual chord -->
+                            <Chord chord={inner} 
+                                   next={inner.next ?? undefined}
+                                   selected={inner.selected} 
+                                   index={inner.index} 
+                                   on:select={setSelection}
+                                   {settings}
+                                />
+                        {/if}
+                    {/each}
                 </div>
             </div>
         </div>
