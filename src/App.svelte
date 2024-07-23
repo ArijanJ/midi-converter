@@ -250,9 +250,8 @@
             transposeChord(i, by, { relative, skipUpdate: true })
         }
 
-        renderSelection()
-        
         if (opts?.skipSave === true) return
+        renderSelection()
         autosave()
     }
 
