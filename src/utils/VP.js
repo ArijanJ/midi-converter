@@ -362,8 +362,8 @@ function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience 
     
     let consider = (n) => {
         let attempt_score = score(chord.transpose(n))
-        if (attempt_score > best_score + resilience ) {
-            // console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score + resilience})`)
+        if (attempt_score > best_score) {
+            console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score})`)
             best_score = attempt_score
             best_transpositions = [n]
         }
@@ -390,8 +390,6 @@ function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience 
 function best_transposition_for_chords(chords, deviation, stickTo = 0, resilience = 4) {
     // console.log('[btfcs] entry:', chords)
     
-    // TODO: fix resilience
-
     let best_transpositions_for_each_chord = chords.map((chord) => best_transposition_for_chord(chord, deviation, stickTo, resilience))
     // console.log('best transpositions for each chord: ', best_transpositions_for_each_chord)
     
@@ -409,7 +407,7 @@ function best_transposition_for_chords(chords, deviation, stickTo = 0, resilienc
 
         let occurences = best_transpositions_for_each_chord.filter(x => x == transposition)
         let count = occurences.length
-        if (count > best_count + resilience) {
+        if (count > best_count + resilience/2) {
             best_count = count
             best_transposition_overall = transposition
         }
