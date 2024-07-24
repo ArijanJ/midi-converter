@@ -274,7 +274,7 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             resulting_chord.index = index
             
             // Transpose to previous
-            let same_chord_that_existed_previously = chords_and_otherwise?.find((e) => e.index === index)
+            let same_chord_that_existed_previously = real_index_of(chords_and_otherwise, index)
             // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
             if (same_chord_that_existed_previously && same_chord_that_existed_previously.notes[0].transposition() != 0) {
                 resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
@@ -300,7 +300,7 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     resulting_chord.index = index
 
     // Transpose to previous
-    let same_chord_that_existed_previously = chords_and_otherwise?.find((e) => e.index === index)
+    let same_chord_that_existed_previously = real_index_of(chords_and_otherwise, index)
     if (same_chord_that_existed_previously && same_chord_that_existed_previously.notes[0].transposition() != 0) {
         resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
     }
@@ -363,7 +363,7 @@ function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience 
     let consider = (n) => {
         let attempt_score = score(chord.transpose(n))
         if (attempt_score > best_score) {
-            console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score})`)
+            // console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score})`)
             best_score = attempt_score
             best_transpositions = [n]
         }
@@ -434,11 +434,43 @@ function separator(beat, difference) {
     else return '...... '
 }
 
+// chatgpt binary search
+function real_index_of(arr, targetIndex) {
+    if(!arr) return
+    let left = 0;
+    let right = arr.length - 1;
+
+    while (left <= right) {
+        let mid = Math.floor((left + right) / 2);
+
+        // Find the closest element with an index on the left
+        while (mid >= left && !('index' in arr[mid])) {
+            mid--;
+        }
+
+        if (mid < left) {
+            left = Math.floor((left + right) / 2) + 1;
+            continue;
+        }
+
+        if (arr[mid].index === targetIndex) {
+            return mid; // Element found
+        } else if (arr[mid].index < targetIndex) {
+            left = mid + 1; // Continue search on the right half
+        } else {
+            right = mid - 1; // Continue search on the left half
+        }
+    }
+
+    return undefined; // Element not found
+}
+
 export { 
     vpScale, Note, Chord, 
     generateChords as generateSheet, 
     best_transposition_for_chords, 
     best_transposition_for_chord,
+    real_index_of,
     separator,
     is_chord, not_chord
 }
