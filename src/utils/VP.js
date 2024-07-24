@@ -3,14 +3,20 @@ const lastPossibleNote   =  108
 
 const capitalNotes = "!@#$%^&*()QWERTYUIOPASDFGHJKLZXCBVNM"
 
+let is_chord = (x) => 'index' in x 
+let not_chord = (x) => { try { return !is_chord(x) } catch { return true } } // !x || (x.type && (x.type == "break" || x.type == "comment"))
 class Note {
     constructor(value, playTime, tempo, BPM, delta, shifts='keep', oors='keep') {
+        this.original   =  value
         this.value      =  value
         this.playTime   =  playTime
         this.delta      =  delta
         this.char       =  vpScale[value - firstPossibleNote]
         this.tempo      =  tempo
         this.BPM        =  BPM
+        
+        // Only correct at runtime
+        this.transposition = () => this.value - this.original
 
         this.valid      = (value >= 21 && value <= 108)
         this.outOfRange = (value <= 35 || value >=  97)
@@ -35,12 +41,23 @@ class Note {
         }
         else this.displayValue = value
     }
+    
+    new_with_saved_original(newValue) {
+        let result = new Note(newValue, this.playTime, this.tempo, this.BPM, this.delta, this.shifts, this.oors)
+        result.original = this.original
+        return result
+    }
 }
 
 class Chord {
     constructor(notes, classicChordOrder = true, sequentialQuantize = true) {
         let is_quantized = false
         let previous_note = notes[0]
+        
+        // console.log(previous_note);
+        
+        this.classicChordOrder = classicChordOrder
+        this.sequentialQuantize = sequentialQuantize
 
         for (let note of notes) {
             if (note.playTime != previous_note.playTime) {
@@ -69,6 +86,38 @@ class Chord {
             else {
                 this.notes = this.#sortChord(notes, classicChordOrder);
             }
+        }
+    }
+    
+    transpose = (by, relative = false, mutate = false) => {
+        if (relative) {
+            by = this.notes[0].transposition() + by
+        }
+        
+        let new_chord = new Chord(this.notes, this.classicChordOrder, this.sequentialQuantize)
+        for (let i = 0; i < new_chord.notes.length; i++) {
+            let assignee = mutate ? this : new_chord 
+            let new_notes = assignee.notes.map(note => note.new_with_saved_original(note.original + by)) // create a note with the correct "original" value
+            new_chord = new Chord(new_notes, this.classicChordOrder, this.sequentialQuantize)
+            assignee.notes = new_chord.notes
+        }
+
+        return new_chord
+    }
+    
+    display = () => {
+        if (!this.notes[0]?.char) return '?'
+
+        else if (this.notes.length == 1) {
+            return this.notes[0].char
+        }
+
+        else {
+            let result = []
+            for (let note of this.notes) {
+                result.push(note.char ?? '?')
+            }
+            return '[' + result.join('') + ']'
         }
     }
 
@@ -129,67 +178,27 @@ class Chord {
     }
 }
 
-class Sheet {
-    constructor(chords) { this.chords = chords; this.missingTempo = false }
+function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, chords_and_otherwise = undefined) {
+    const error_range = 0.5
+    let penalty = 0.000
 
-    transpose(by, shifts='Start', oors='Start', classicChordOrder=true, sequentialQuantize=true) { /* Returns a new sheet */
-        if (!this.chords) return
-        let newChords = []
-
-        this.chords.forEach((chord) => {
-            let newChord = []
-
-            chord.notes.forEach((note) => {
-                newChord.push(new Note(note.value + by, note.playTime, note.tempo, note.BPM, note.delta, shifts, oors))
-            })
-
-            newChords.push(new Chord(newChord, classicChordOrder, sequentialQuantize))
-        })
-        return new Sheet(newChords)
-    }
-
-    countNotes() {
-        let notes = 0
-        for (let chord of this.chords) {
-            for (let _ of chord.notes)
-                notes++
+    function shouldBreak(note, penalty) {
+        // console.log("tobreak:", note)
+        if (!note) return false
+        let tempo_ms = note.tempo / 1000 // turn 6/52174 into 652.174
+        let goal = tempo_ms * settings.beats
+        let normalizedplaytime = note.playTime - penalty
+        // console.log(normalizedplaytime + error_range)
+        // console.log(goal)
+        if (normalizedplaytime + error_range >= goal) {
+            // console.log("BREAKING!")
+            return {doBreak: true, newPenalty: penalty + normalizedplaytime}
         }
-        return notes
+        return {doBreak: false, newPenalty: penalty}
     }
 
-    /** Returns the approximate text representation of the sheet for debugging purposes */
-    text() {
-        let result = '' 
+    // console.log(settings)
 
-        let chords = this.chords
-        for (let i = 0; i < chords.length; i++) {
-            if (!chords) { result += '[no-chords] '; continue }
-
-            const chord = chords[i]
-
-            let isChord = (chord.notes.length > 1 && chord.notes.find(note => note.valid === true))
-            if (chord.notes.filter(note => note.outOfRange === false).length <= 1)
-                isChord = false
-
-            if (isChord) result += '['
-
-            for (const note of chord.notes) {
-                result += note.char
-            } 
-
-            if (isChord) result += ']'
-
-            result += ' '
-        }
-        return result
-    }
-}
-
-function validNoteSpeed(event) {
-    return event.tempo && event.tempoBPM && event.tempo !== 0 && event.tempoBPM !== 0
-}
-
-function generateSheet(events /* Only NOTE_ON & SET_TEMPO events */, settings) /* -> Sheet */ {
     let quantize = settings.quantize
     let shifts = settings.pShifts
     let oors = settings.pOors
@@ -198,61 +207,114 @@ function generateSheet(events /* Only NOTE_ON & SET_TEMPO events */, settings) /
     let bpm = settings.bpm
 
     let chords = []
-    let currentChord = []
+    let current_notes = []
     let lastPlaytime = undefined
 
-    let hasTempo = false
+    let previousBPM = undefined
+    let previousTempo = undefined
 
     let nextBPM = bpm
     let nextTempo = bpm*4166.66 // Magic number
 
+    function validNoteSpeed(event) {
+        return event.tempo && event.tempoBPM && event.tempo !== 0 && event.tempoBPM !== 0
+    }
+
+    let index = 0
+    let did_chord_quantize_math = false
     // Generate chords
     events.forEach(element => {
         // if event is SET_TEMPO
         if (element.subtype == 0x51 && validNoteSpeed(element)) {
-            hasTempo = true
             nextTempo = element.tempo
             nextBPM = element.tempoBPM
+            if (previousTempo == undefined) {
+                if(settings.bpmChanges)
+                    chords.push({ type: 'comment', kind: 'tempo', text: `Tempo: ${Math.round(element.tempoBPM)} BPM` })
+            }
+            else if (previousTempo != undefined && (previousTempo != element.tempo) && (previousBPM != element.tempoBPM)) {
+                if(settings.bpmChanges) {
+                    let newBPM = Math.round(element.tempoBPM)
+                    
+                    let larger = newBPM > previousBPM ? newBPM : previousBPM
+                    let smaller = newBPM < previousBPM ? newBPM : previousBPM
+                    
+                    let percent = ((larger - smaller) / smaller) * 100
+                    
+                    if (percent < settings.minSpeedChange) return
+                    // chords.push({ type: 'comment', text: `BPM change to ${Math.round(element.tempoBPM)} (${Math.round(percent)}% ${newBPM > previousBPM ? 'faster' : 'slower'})` })
+                    chords.push({ type: 'comment', kind: 'tempo', text: `${Math.round(percent)}% ${newBPM > previousBPM ? 'faster' : 'slower'} - BPM changed to ${Math.round(element.tempoBPM)}` })
+                }
+            }
+            previousBPM = element.tempoBPM
+            previousTempo = element.tempo
             return
         } 
         // event is NOTE_ON
         const key      = element.param1
         const playtime = element.playTime
         const delta    = element.delta
+        
+        if (!key) return
 
         if (lastPlaytime == undefined)
             lastPlaytime = playtime
 
         if (Math.abs(playtime - lastPlaytime) < quantize) {
-            currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
+            current_notes.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
             lastPlaytime = playtime
         } else {
-            if (currentChord.length == 0) {
+            if (current_notes.length == 0) {
                 lastPlaytime = playtime
                 return
             }
 
             // Submit the chord and start the next one
-            chords.push(new Chord(currentChord, classicChordOrder, sequentialQuantize))
+            let resulting_chord = new Chord(current_notes, classicChordOrder, sequentialQuantize)
+            resulting_chord.index = index
+            
+            // Transpose to previous
+            let same_chord_that_existed_previously = chords_and_otherwise?.find((e) => e.index === index)
+            // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
+            if (same_chord_that_existed_previously && same_chord_that_existed_previously.notes[0].transposition() != 0) {
+                resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
+            }
+            
+            chords.push(resulting_chord)
+            index++
 
-            currentChord = []
-            currentChord.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
+            current_notes = []
+            current_notes.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
 
             lastPlaytime = playtime
         }
+
+        const { doBreak, newPenalty } = shouldBreak(current_notes[0], penalty)
+        penalty = newPenalty
+        if(doBreak) { chords.push({type: 'break'}) }
     })
 
     // Final chord insertion to make sure no notes are left
-    chords.push(new Chord(currentChord, classicChordOrder))
+    // chords.push(new Chord(currentChord, classicChordOrder))
+    let resulting_chord = new Chord(current_notes, classicChordOrder, sequentialQuantize)
+    resulting_chord.index = index
 
-    let resultingSheet = new Sheet(chords)
+    // Transpose to previous
+    let same_chord_that_existed_previously = chords_and_otherwise?.find((e) => e.index === index)
+    if (same_chord_that_existed_previously && same_chord_that_existed_previously.notes[0].transposition() != 0) {
+        resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
+    }
+            
+    chords.push(resulting_chord)
+    
+    index++
 
-    if (!hasTempo)
+    if (!previousTempo)
         console.log(`No tempo found in sheet, set to ${nextBPM}/${nextTempo}`); 
 
-    resultingSheet.missingTempo = !hasTempo
+    // resultingSheet.missingTempo = !hasTempo
 
-    return resultingSheet
+    return chords
 }
 
 const vpScale =
@@ -270,58 +332,90 @@ const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
 export const lowerOorScale = lowercases.slice(0, 15)
 export const upperOorScale = lowercases.slice(15, 27)
 
-/** Returns the transposition of a sheet (line) within [-deviation, +deviation] with the least "effort" to shift */
-function bestTransposition(sheet, deviation, stickTo = 0, strict = false, atLeast = 4, startFrom = 0) {
-    if(!sheet?.chords) return stickTo
+/* Higher is better */
+function score(chord) {
+    let good_notes = chord.notes.filter(note => note.outOfRange === false && note.valid === true)
+   
+    let lowercase_notes = good_notes.filter(note => lowercases.includes(note.char))
+    let uppercase_notes = good_notes.filter(note => !(lowercases.includes(note.char)))
 
-    function calculateScore(sheet) {
-        let monochord = []
-        for (let chord of sheet.chords) {
-            for (let note of chord.notes)
-                monochord.push({ char: note.char, oor: note.outOfRange, valid: note.valid })
+    return ((good_notes.length * 2) + Math.abs(uppercase_notes.length-lowercase_notes.length))
+}
+
+function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience = 0) {
+    if (!chord) return
+
+    // console.log(chord)
+    
+    // console.log('[btfc] entry:', chord.display())
+    if (not_chord(chord)) return stickTo
+    
+    let best_transpositions = [stickTo]
+    
+    // reconsider: oors are valid notes
+    let good_note_count = chord.notes.filter(note => note.outOfRange === false && note.valid === true).length
+    // console.log('goodnote count: ' + good_note_count)
+    
+    // let at_least_this_much_better = goodnote_count / 2
+
+    let best_score = score(chord.transpose(stickTo))
+    
+    let consider = (n) => {
+        let attempt_score = score(chord.transpose(n))
+        if (attempt_score > best_score) {
+            console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score})`)
+            best_score = attempt_score
+            best_transpositions = [n]
         }
-        // return monochord.filter(note => lowercases.includes(note.char) && note.oor === false && note.valid === true).length
-        let all = monochord.filter(note => note.oor === false && note.valid === true)
-        let lowercaseCount = all.filter(note => lowercases.includes(note.char))
-        let uppercaseCount = all.filter(note => !(lowercases.includes(note.char)))
-        return Math.abs(uppercaseCount.length-lowercaseCount.length)
+        else if (attempt_score == best_score) {
+            if(n == 0 && best_transpositions.includes(0)) return attempt_score // prevent 0 & -0
+            // console.log(`transposed by ${n} is equal to best transposition (${attempt_score} == ${best_score}), appending`)
+            best_transpositions.push(n)
+        }
+        return attempt_score
     }
+    
+    for (let i = +stickTo; i <= deviation; i++) {
+        // console.log(`transposed by +${+i}: ${chord.transpose(+i).display()}; score: ${score(chord.transpose(+i))}`)
+        consider(+i)
+        // console.log(`transposed by ${-i}: ${chord.transpose(-i).display()}; score: ${score(chord.transpose(-i))}`)
+        consider(-i)
+    }
+    
+    // console.log(`best transposition for ${chord.display()} is ${best_transpositions} (${chord.transpose(best_transpositions).display()})`)
 
-    let stickScore = calculateScore(sheet.transpose(stickTo))
+    return best_transpositions
+}
 
-    let most = stickScore
-    let best = stickTo
+function best_transposition_for_chords(chords, deviation, stickTo = 0, resilience = 4) {
+    // console.log('[btfcs] entry:', chords)
+    
+    let best_transpositions_for_each_chord = chords.map((chord) => best_transposition_for_chord(chord, deviation, stickTo, resilience))
+    // console.log('best transpositions for each chord: ', best_transpositions_for_each_chord)
+    
+    // // Most occurences of a single transposition (TODO: maybe reconsider)
+    let best_count = 0
+    let best_transposition_overall = 0
+    let seen = []
+    
+    // mono type thing
+    best_transpositions_for_each_chord = best_transpositions_for_each_chord.flat()
 
-    function consider(deviation) {
-        let contender = sheet.transpose(deviation)
-        let score = calculateScore(contender)
-        // console.log('atleast:', atLeast)
-        // console.log([`stickTo: ${stickTo}`,
-        //              `Most: ${most}`,
-        //              `Original: ${sheet.text()}`,
-        //              `Stuck: ${sheet.transpose(stickTo).text()}`,
-        //              `Transposed by ${deviation}: ${sheet.transpose(deviation).text()}`,
-        //              `Score: ${score}`,
-        //              `StartFrom: ${startFrom}`,
-        //              `Gained: ${score - most}`].join('\n'))
-        if (score > most) {
-            if (!strict) {
-                let difference = score - most
-                if (difference <= atLeast) { // Minimal lowercase gain, not worth it, don't consider
-                    return
-                }
-            }
-            // console.log(`Good to go with ${most}, transposed by ${deviation}, sheet: ${sheet.text()}`)
-            most = score
-            best = deviation
+    for (let transposition of best_transpositions_for_each_chord) {
+        if (seen.includes(transposition)) continue
+        seen.push(transposition)
+
+        let occurences = best_transpositions_for_each_chord.filter(x => x == transposition)
+        let count = occurences.length
+        if (count > best_count + resilience/2) {
+            best_count = count
+            best_transposition_overall = transposition
         }
     }
-
-    for (let i = 0; i <= deviation; i++) {
-        consider(stickTo - i)
-        consider(stickTo + i)
-    }
-    return best
+    
+    // console.log(best_transposition_overall)
+    
+    return best_transposition_overall
 }
 
 function separator(beat, difference) {
@@ -340,4 +434,11 @@ function separator(beat, difference) {
     else return '...... '
 }
 
-export { vpScale, Sheet, Note, Chord, generateSheet, bestTransposition, separator }
+export { 
+    vpScale, Note, Chord, 
+    generateChords as generateSheet, 
+    best_transposition_for_chords, 
+    best_transposition_for_chord,
+    separator,
+    is_chord, not_chord
+}

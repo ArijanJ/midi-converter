@@ -13,14 +13,17 @@
         beats: 4,
         quantize: 35,
         classicChordOrder: true,
-        sequentialQuantize: false,
+        sequentialQuantize: true,
+        curlyQuantizes: true,
         pShifts: 'Start',
         pOors: 'Inorder',
         oors: true,
         tempoMarks: false,
+        bpmChanges: true,
+        minSpeedChange: 10,
         oorSeparator: ':',
-        transposition: 0,
-        lbauto_atleast: 4,
+        // transposition: 0,
+        resilience: 2,
         font: fonts[0],
         capturingImage: false,
         missingTempo: false,
@@ -29,24 +32,16 @@
 </script>
 
 {#if show}
-<div style="display: inline-block">
-    <div class="flex flex-row gap-2">
-        <label class="m-1 flex flex-col align-middle" for="transpose">Transpose (sheet) by:</label>
-        <input id="transpose" type="number" bind:value={settings.transposition} min=-24 max=24 class="w-16 box-border">
-        <button on:click={() => { dispatch('auto') }}>Auto-transpose</button>
-    </div>
-</div>
 
 <hr class="my-2 mx-1">
 
 <div class="flex flex-col items-start align-middle">
-    <button style="margin-bottom: 0;" on:click={() => { dispatch('lineBasedAuto') }}>Line-based auto-transpose</button>
     <div class="flex flex-row mt-3">
         <label class="flex flex-row items-center"
                title="Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)" 
                for="atleast">Resilience (?):</label>
-        <input class="w-32" id="atleast" type="range" min=1 max=24 bind:value={settings.lbauto_atleast}>
-        <span style="display:flex; align-items: center">{settings.lbauto_atleast}</span>
+        <input class="w-32" id="atleast" type="range" min=0 max=12 bind:value={settings.resilience}>
+        <span style="display:flex; align-items: center">{settings.resilience}</span>
     </div>
 </div>
 
@@ -96,7 +91,7 @@
     {#if hasMIDI}
         <div class='beats'>
             <label class='slider-label' for='quantize-prompt'>Quantize: </label>
-            <input type='range' id="quantize-prompt" min=1 max=100 bind:value={settings.quantize}>
+            <input type='range' id="quantize-prompt" min=1 max=250 bind:value={settings.quantize}>
             <span>{settings.quantize} miliseconds</span>
         </div>
 
@@ -111,6 +106,11 @@
         </label>
     {/if}
 
+    <label for='curly-quantizes'>
+        <input type='checkbox' id="curly-quantizes" bind:checked={settings.curlyQuantizes}>
+        Curly braces for quantized chords
+    </label>
+
     <div></div>
     <label for='out-of-range'>
         <input type='checkbox' id="out-of-range" bind:checked={settings.oors}>
@@ -119,8 +119,23 @@
 
     <label for='tempo-checkbox'>
         <input type='checkbox' id="tempo-checkbox" bind:checked={settings.tempoMarks}>
-        Show tempo marks
+        Show tempo and out-of-range marks 
     </label>
+
+    {#if hasMIDI}
+        <label for='bpm-changes'>
+            <input type='checkbox' id="bpm-changes" bind:checked={settings.bpmChanges}>
+            Show BPM changes as comments
+        </label>
+        <div class="beats"> 
+            {#if settings.bpmChanges}
+                <label class='slider-label' for='min-speed-change'>Min. % speed change: </label>
+                <input type='range' id='min-speed-change' min=0 max=100 bind:value={settings.minSpeedChange}>
+                <span>At least {settings.minSpeedChange}%</span>
+            {/if}
+        </div>
+    {/if}
+
 
     {#if settings.oors && settings.tempoMarks}
     <div>
@@ -160,6 +175,10 @@
 </div>
 
 <style>
+    * {
+        user-select: none;
+    }
+
     label {
         max-width: fit-content;
         text-align: center;

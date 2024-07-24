@@ -56,5 +56,6 @@ button:hover {
 
 ::backdrop {
 	background-color: #4c4f51;
+	backdrop-filter: blur(3px);
 	opacity: 0.4;
 }
