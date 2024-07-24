@@ -80,7 +80,7 @@
                     }
                 }
                 console.log(chords_and_otherwise)
-                update_chords()
+                updateChords()
             }
             else if (decision == "export-and-restart") {
                 history.export(existingProject.name).then((piece) => {
@@ -120,8 +120,6 @@
     let tracks
 
 	let chords_and_otherwise
-    let refresh_chords = false // flips between false and true all the time, just here for updating purposes
-    let sheetText
 
     // [true, true, false, true, ...]
     let selectedTracks
@@ -153,7 +151,7 @@
 
             sheetReady = true
             chords_and_otherwise = existingProject.data
-            update_chords()
+            updateChords()
 
             return
         }
@@ -182,7 +180,7 @@
             chord.next = { notes: [ { playTime: only_chords[i+1]?.notes[0]?.playTime } ] }
         }) // trust
         
-        update_chords()
+        updateChords()
         repopulateTransposeComments()
 
         sheetReady = true
@@ -218,9 +216,7 @@
         renderSelection()
 	}
 
-    let update_chords = () => {
-        console.log('updating chords')
-        refresh_chords = !refresh_chords
+    let updateChords = () => {
         chords_and_otherwise = chords_and_otherwise
     }
 
@@ -257,6 +253,7 @@
     }
 
     let autoRegion = (left, right, opts = undefined) => {
+    
         let stickTo = opts?.stickTo ?? 0
         let skipSave = opts?.skipSave ?? false
     
@@ -269,7 +266,7 @@
         if (stickTo == 'same')
             stickTo = chords_in_region[0].notes[0].transposition()
 
-        let best = best_transposition_for_chords(chords_in_region, 11, stickTo, 0/* settings.resilience ?? 4 */)
+        let best = best_transposition_for_chords(chords_in_region, 11, stickTo, settings.resilience ?? 4)
         transposeRegion(left, right, best, { relative: false, skipSave: true })
         // console.log('best:', best)
 
@@ -315,7 +312,7 @@
             }
         }
         
-        update_chords()
+        updateChords()
     }
 
     let transposeChord = (index, by, opts /*relative = false, skipUpdate = false */) => {
@@ -328,7 +325,7 @@
         // console.log('transposing', chord, 'by', by)
         chord.transpose(by, relative, true) // mutate
 
-        if (!skipUpdate) update_chords()
+        if (!skipUpdate) updateChords()
     }
 
     let multiTransposeRegion = (left, right /* [{left, right}, {...}] */) => {
@@ -477,6 +474,8 @@
 
     function autosave() {
         if (filename) history.add(filename, settings, chords_and_otherwise).then(() => pieces = history.getAll())
+
+
         remaining = remainingSize()
         console.log('saving', chords_and_otherwise)
         return
@@ -553,7 +552,7 @@
         //     }
         // }
 
-        update_chords()
+        updateChords()
     }
 
     function selectAll() {
@@ -582,7 +581,7 @@
             chord.selected = true
         }
 
-        update_chords()
+        updateChords()
     }
 
     function setSelection(event_or_index) {
@@ -620,7 +619,7 @@
         let real_index = real_index_of(index)
 
         chords_and_otherwise.splice(real_index, 0, { type: "break" })
-        update_chords()
+        updateChords()
     }
     
     function joinRegion(left, right) {
@@ -632,7 +631,7 @@
             }
             if (i > real_index_of(right)) break
         }
-        update_chords()
+        updateChords()
     }
 </script>
 
@@ -640,7 +639,7 @@
     <title>MIDI Converter</title>
 </svelte:head>
 
-<button class="sticky" on:click={() => { console.log(real_index_of(1)) }}>do stuff</button>
+<!-- <button class="sticky" on:click={() => { repopulateTransposeComments() }}>do stuff</button> -->
 
 <dialog bind:this={existingProject.element} class="rounded-lg overflow-hidden"
         on:close={() => { existingProject.proceed() }}>

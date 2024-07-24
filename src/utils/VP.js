@@ -409,7 +409,7 @@ function best_transposition_for_chords(chords, deviation, stickTo = 0, resilienc
 
         let occurences = best_transpositions_for_each_chord.filter(x => x == transposition)
         let count = occurences.length
-        if (count > best_count) {
+        if (count > best_count + resilience) {
             best_count = count
             best_transposition_overall = transposition
         }
