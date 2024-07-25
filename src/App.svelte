@@ -672,7 +672,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
     {/if}
 </div>
 
-<div class="flex flex-row">
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div class="flex flex-row" on:click|self={resetSelection} on:keypress|self={resetSelection}>
     <div id="sidebar" class="m-1 flex flex-col sticky overflow-y-auto top-0" style="min-width:25em; max-width:25em; max-height: 99vh">
         <div>
             {#if sheetReady}
@@ -739,8 +740,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
     </section>
 
     {#if sheetReady == true}
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div class="flex flex-col items-start" on:contextmenu|preventDefault>
+        <div class="flex flex-col items-start"on:contextmenu|preventDefault>
             <SheetActions {settings}
                 on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode) }}
                 on:copyText={() => {
