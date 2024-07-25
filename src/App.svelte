@@ -604,6 +604,8 @@
     }
 </script>
 
+<svelte:window on:keydown={(e) => { if (e.key == "Escape") resetSelection() }}></svelte:window>
+
 <svelte:head>
     <title>MIDI Converter</title>
 </svelte:head>
