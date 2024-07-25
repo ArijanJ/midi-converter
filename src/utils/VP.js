@@ -274,11 +274,14 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             resulting_chord.index = index
             
             // Transpose to previous
-            let same_chord_that_existed_previously = real_index_of(chords_and_otherwise, index)
+            let same_chord_that_existed_previously = undefined
+            if (chords_and_otherwise)
+                same_chord_that_existed_previously = chords_and_otherwise[real_index_of(chords_and_otherwise, index)]
             // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
             if (same_chord_that_existed_previously && ![0, undefined].includes(same_chord_that_existed_previously?.notes?.[0].transposition())) {
                 resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
             }
+            else {console.log("not keeping")}
             
             chords.push(resulting_chord)
             index++
@@ -300,8 +303,9 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     resulting_chord.index = index
 
     // Transpose to previous
-    // Transpose to previous
-    let same_chord_that_existed_previously = real_index_of(chords_and_otherwise, index)
+    let same_chord_that_existed_previously = undefined
+    if (chords_and_otherwise)
+        same_chord_that_existed_previously = chords_and_otherwise[real_index_of(chords_and_otherwise, index)]
     // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
     if (same_chord_that_existed_previously && ![0, undefined].includes(same_chord_that_existed_previously?.notes?.[0].transposition())) {
         resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)

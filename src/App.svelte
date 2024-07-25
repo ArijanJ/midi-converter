@@ -198,6 +198,8 @@
         const require_regeneration = [
             "beats",
             "classicChordOrder",
+            "pShifts",
+            "pOors",
             "quantize",
             "sequentialQuantize",
             "minSpeedChange",
@@ -470,7 +472,7 @@
     }
 
     function autosave() {
-        // if (filename) history.add(filename, settings, chords_and_otherwise).then(() => pieces = history.getAll())
+        if (filename) history.add(filename, settings, chords_and_otherwise).then(() => pieces = history.getAll())
 
         remaining = remainingSize()
         // console.log('saving', chords_and_otherwise)
@@ -606,6 +608,8 @@
     <title>MIDI Converter</title>
 </svelte:head>
 
+<svelte:body on:click|self={resetSelection} on:keypress|self={resetSelection}></svelte:body>
+
 <!-- <button class="sticky" on:click={() => { repopulateTransposeComments() }}>do stuff</button> -->
 
 <dialog bind:this={existingProject.element} class="rounded-lg overflow-hidden"
@@ -740,7 +744,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
     </section>
 
     {#if sheetReady == true}
-        <div class="flex flex-col items-start"on:contextmenu|preventDefault>
+        <div class="flex flex-col items-start" on:click|self={resetSelection} on:keypress|self={resetSelection} on:contextmenu|preventDefault>
             <SheetActions {settings}
                 on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode) }}
                 on:copyText={() => {
