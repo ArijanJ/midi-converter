@@ -25,7 +25,7 @@ export function remainingSize() {
 }
 
 async function piece(name, settings, data, skip_compression = false) {
-    console.log(skip_compression)
+    // console.log(skip_compression)
     return {
         name: name,
         settings: settings,

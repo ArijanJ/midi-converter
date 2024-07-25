@@ -7,17 +7,18 @@
 <script>
     import { domToBlob } from "modern-screenshot";
     import { getMIDIFileFromArrayBuffer, getEvents, getTempo } from './utils/MIDI.js'
-	import { generateSheet as generateChords, best_transposition_for_chords, Chord as ChordObject, Note, is_chord, not_chord, real_index_of } from './utils/VP.js'
+	import { generateSheet as generateChords, best_transposition_for_chords, Chord as ChordObject, Note, is_chord, not_chord, index_of_index } from './utils/VP.js'
+    let real_index_of = (x) => index_of_index(chords_and_otherwise, x)
+    let chord_at = (x) => chords_and_otherwise[real_index_of(x)]
+
     import SheetOptions from './components/SheetOptions.svelte'
     import Track from './components/Track.svelte'
     import Chord from './components/Chord.svelte'
     import HistoryEntry from "./components/HistoryEntry.svelte";
 
-    import { colors } from "./utils/Rendering.js";
-
     let importer = {
         element: undefined, // main welcome screen div
-        hide: () => { importer.element.style.top = "-110vh"; resetSelection(); repopulateTransposeComments() },
+        hide: () => { importer.element.style.top = "-110vh"; softRegen(); resetSelection(); repopulateTransposeComments() },
         show: () => { importer.element.style.top = "0px" }
     }
 
@@ -28,6 +29,7 @@
                        'Mar'+'iage_d'+'Amour_(sample).json'
 
     import SheetActions from "./components/SheetActions.svelte";
+    import Guide from "./components/Guide.svelte";
 
     let existingProject = {
         element: undefined,
@@ -64,21 +66,7 @@
                 }
 
                 // ughhh, have to reconstruct the functions here cause they dont serialize
-                for(let i = 0; i < chords_and_otherwise.length; i++) {
-                    let chord = chords_and_otherwise[i]
-                    if(is_chord(chord)) {
-                        let new_notes = []
-                        for (let note of chord.notes) {
-                            let new_note = new Note(note.value, note.playTime, note.tempo, note.BPM, note.delta)
-                            new_note.original = note.original
-                            new_notes.push(new_note)
-                        }
-                        let new_chord = new ChordObject(new_notes, chord.classicChordOrder, chord.sequentialQuantize)
-                        new_chord.index = chord.index
-                        new_chord.next = chord.next
-                        chords_and_otherwise[i] = new_chord
-                    }
-                }
+                softRegen()
                 console.log(chords_and_otherwise)
                 updateChords()
             }
@@ -186,6 +174,41 @@
         sheetReady = true
     }
 
+    // Recreate the chord with existing data for e.g. reordering purposes
+    function softRegen() {
+        if(!chords_and_otherwise) return
+        for(let i = 0; i < chords_and_otherwise.length; i++) {
+            let chord = chords_and_otherwise[i]
+            if(is_chord(chord)) {
+                let new_notes = []
+                for (let note of chord.notes) {
+                    let new_note = new Note(note.value, note.playTime, note.tempo, note.BPM, note.delta, settings.pShifts, settings.pOors)
+                    new_note.original = note.original
+                    new_notes.push(new_note)
+                }
+                let new_chord = new ChordObject(new_notes, settings.classicChordOrder, settings.sequentialQuantize)
+                new_chord.index = chord.index
+                new_chord.next = chord.next
+
+                // new_note = new_note.sort((a, b) => a.displayValue - b.displayValue);
+                chords_and_otherwise[i].notes = new_notes
+
+                chords_and_otherwise[i] = new_chord
+            }
+        }
+
+    
+        // for (let chord of chords_and_otherwise) {
+        //     if(not_chord(chord)) continue
+        //     let notes_copy = []
+        //     for (let note of chord.notes) {
+        //         let new_note = new Note(note.value, note.playTime, note.tempo, note.BPM, note.delta, settings.pShifts, settings.pOors))
+        //         new_note.original = note.original
+        //     }
+        // }
+        updateChords()
+    }
+
     let oldSettings
     let settings
 
@@ -195,27 +218,33 @@
     } 
     catch (e) { settings = undefined; }
 	$: {
-        const require_regeneration = [
-            "beats",
+        if (!oldSettings) { oldSettings = { ...settings }; break $ }
+        
+        let changed = (key) => settings[key] != oldSettings[key]
+    
+        if (["beats",
             "classicChordOrder",
-            "pShifts",
-            "pOors",
             "quantize",
             "sequentialQuantize",
             "minSpeedChange",
             "bpmChanges",
-            "bpm",
-        ]
-        if (!oldSettings) { oldSettings = { ...settings }; break $ }
+            "bpm"].some(changed))
+                saveSheet() // Full regeneration needed
         
-        if (require_regeneration.some((key) => settings[key] != oldSettings[key]))
-            saveSheet()
+       // Regeneration that doesn't require a MIDIObject
+        if (["pShifts",
+             "pOors",
+             "classicChordOrder",
+             "quantize",
+             "sequentialQuantize"].some(changed))
+                softRegen()
         
-        oldSettings = { ...settings }
         if (MIDIObject)
             localStorage.setItem('preferences', JSON.stringify(settings))
         
         renderSelection()
+
+        oldSettings = { ...settings }
 	}
 
     let updateChords = () => {
@@ -223,7 +252,7 @@
     }
 
     let addComment = (index) => {
-        let real = real_index_of(chords_and_otherwise, index)
+        let real = real_index_of(index)
         chords_and_otherwise.splice(real, 0, { type: "comment", kind: "custom", text: "Add a comment..." })
         renderSelection()
     }
@@ -241,7 +270,7 @@
         let relative = opts?.relative ?? false
 
         for (let i = left; i <= chords_and_otherwise.length; i++) {
-            let chord = chords_and_otherwise[real_index_of(chords_and_otherwise, i)]
+            let chord = chord_at(i)
             if (not_chord(chord)) continue
 
             if (chord.index > right) break
@@ -249,6 +278,7 @@
         }
 
         if (opts?.skipSave === true) return
+        repopulateTransposeComments()
         renderSelection()
         autosave()
     }
@@ -259,7 +289,7 @@
     
         let chords_in_region = []
         for (let i = left; i <= right; i++) {
-            let selected_chord = chords_and_otherwise[real_index_of(chords_and_otherwise, i)]
+            let selected_chord = chords_and_otherwise[real_index_of(i)]
             chords_in_region.push(selected_chord)
         }
 
@@ -268,10 +298,8 @@
 
         let best = best_transposition_for_chords(chords_in_region, 11, stickTo, settings.resilience ?? 4)
         transposeRegion(left, right, best, { relative: false, skipSave: true })
-        // console.log('best:', best)
 
         repopulateTransposeComments()
-        
         if (!skipSave) autosave()
         
         return best
@@ -312,14 +340,16 @@
             }
         }
         
+        softRegen()
         updateChords()
+        renderSelection()
     }
 
-    let transposeChord = (index, by, opts /*relative = false, skipUpdate = false */) => {
-        let relative = opts.relative ?? false
-        let skipUpdate = opts.skipUpdate ?? false
+    let transposeChord = (index, by, opts /* { relative = false, skipUpdate = false } */) => {
+        let relative = opts?.relative ?? false
+        let skipUpdate = opts?.skipUpdate ?? false
         
-        let chord = chords_and_otherwise[real_index_of(chords_and_otherwise, index)]
+        let chord = chord_at(index)
         if(not_chord(chord)) return
 
         // console.log('transposing', chord, 'by', by)
@@ -331,7 +361,7 @@
     let multiTransposeRegion = (left, right /* [{left, right}, {...}] */) => {
         let regions = []
 
-        let idx = real_index_of(chords_and_otherwise, left)
+        let idx = real_index_of(left)
         for (let i = idx; i < chords_and_otherwise.length; i++) {
             let event = chords_and_otherwise[i] ?? undefined
             if (event.index >= right) {
@@ -347,7 +377,7 @@
 
         // console.log(regions)
 
-        let chord = chords_and_otherwise[real_index_of(chords_and_otherwise, regions[0].left)]
+        let chord = chords_and_otherwise[real_index_of(regions[0].left)]
 
         let previous_transposition = chord.notes[0]?.transposition() ?? 0
         // console.log('prevt:', previous_transposition);
@@ -367,7 +397,6 @@
 
     let sheetTransposes = () => {
         let transpose_comments = chords_and_otherwise.filter(e => e.kind == "transpose")
-
         return transpose_comments.map((e) => -parseInt(e.text.match(/\d+/))).join(' ')
     }
 
@@ -453,6 +482,7 @@
     }
 
     function clearFiles() {
+        chords_and_otherwise = undefined
         document.getElementById("drop").value = "";
     }
 
@@ -475,7 +505,7 @@
         if (filename) history.add(filename, settings, chords_and_otherwise).then(() => pieces = history.getAll())
 
         remaining = remainingSize()
-        // console.log('saving', chords_and_otherwise)
+        console.log('saving', chords_and_otherwise)
         return
     }
 
@@ -485,7 +515,6 @@
             i++
         } /* then */ return coll[i]
     }
-
 
     let has_selection = false
     let selection = {
@@ -497,9 +526,7 @@
         // print("Selection: ", selection)
     }
 
-    
-
-    function resetSelection() {
+    function resetSelection(e) {
         if (!sheetReady || !selection.left && !selection.right) return
 
         for (let i = selection.left; i < chords_and_otherwise.length; i++) {
@@ -536,7 +563,7 @@
     
         // Deselect everything
         for (let i = selection.left; i < chords_and_otherwise.length; i++) {
-            let chord = chords_and_otherwise[real_index_of(chords_and_otherwise, i)]
+            let chord = chords_and_otherwise[real_index_of(i)]
             if (not_chord(chord)) continue
             chord.selected = undefined
             if (i > chord.index) break
@@ -544,7 +571,7 @@
 
         // Select pertinent part
         for (let i = selection.left; i <= selection.right; i++) {
-            let chord = chords_and_otherwise[real_index_of(chords_and_otherwise, i)]
+            let chord = chords_and_otherwise[real_index_of(i)]
             if (!chord) continue
             if (chord.index > selection.right) break
 
@@ -560,7 +587,7 @@
         // Double-click to select line
         if (selection.left === index && selection.right === index) {
             // Find line bounds
-            let left = real_index_of(chords_and_otherwise, index)
+            let left = real_index_of(index)
             // console.log(left)
             while (is_chord(chords_and_otherwise[left])) {
                 left--
@@ -585,7 +612,7 @@
     }
 
     function splitLineAt(index) {
-        let real_index = real_index_of(chords_and_otherwise, index)
+        let real_index = real_index_of(index)
 
         chords_and_otherwise.splice(real_index, 0, { type: "break" })
         updateChords()
@@ -602,15 +629,25 @@
         }
         updateChords()
     }
+    
+    function continueTranspose(direction /* 'ltr' or 'rtl' */) {
+        let start = (direction == 'ltr' ? selection.left : selection.right)
+        let transposition = chords_and_otherwise[real_index_of(start)].notes[0].transposition()
+
+        transposeRegion(selection.left, selection.right, transposition)
+    }
 </script>
 
-<svelte:window on:keydown={(e) => { if (e.key == "Escape") resetSelection() }}></svelte:window>
+<svelte:window on:keydown={(e) => { 
+    if (e.key == "Escape") resetSelection() 
+    if (e.key == "b") { console.log(chord_at(selection.left)) }
+}}></svelte:window>
 
 <svelte:head>
     <title>MIDI Converter</title>
 </svelte:head>
 
-<svelte:body on:click|self={resetSelection} on:keypress|self={resetSelection}></svelte:body>
+<svelte:body on:click|self={resetSelection} on:keypress|self={() => {}}></svelte:body>
 
 <!-- <button class="sticky" on:click={() => { repopulateTransposeComments() }}>do stuff</button> -->
 
@@ -679,7 +716,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
 </div>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="flex flex-row" on:click|self={resetSelection} on:keypress|self={resetSelection}>
+<div class="flex flex-row" on:click|self={resetSelection} on:keypress|self={() => {}}>
     <div id="sidebar" class="m-1 flex flex-col sticky overflow-y-auto top-0" style="min-width:25em; max-width:25em; max-height: 99vh">
         <div>
             {#if sheetReady}
@@ -705,6 +742,11 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                     <button class="w-full block" on:click={() => { joinRegion(selection.left, selection.right) }}>Join selection</button>
                 </div>
                 <button on:click={() => { addComment(selection.left) }}>Add a comment</button>
+                <!-- Continue transpose L/R -->
+                <div class="flex flex-row justify-around items-stretch gap-2">
+                    <button class="w-full block" on:click={() => { continueTranspose('rtl') }}>Continue transposition (right to left)</button>
+                    <button class="w-full block" on:click={() => { continueTranspose('ltr') }}>Continue transposition (left to right)</button>
+                </div>
                 {/if}
             </div>
             <SheetOptions
@@ -713,21 +755,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                 hasMIDI={!(!MIDIObject)}
             />
         </div>
-        <div id="guide">
-            Click on a note to set selection beginning/ending<br>
-            Double-click on a note to select the whole line
-            <hr class="my-2 mx-1">
-            Timing:<br>
-            <span style="color: {colors.whole}">Whole note</span><br>
-            <span style="color: {colors.half}">Half note</span><br>
-            <span style="color: {colors.quarter}">Quarter note</span><br>
-            <span style="color: {colors.eighth}">Eighth note</span><br>
-            <span style="color: {colors.sixteenth}">Sixteenth note</span><br>
-            <span style="color: {colors.thirtysecond}">Thirty-second note</span><br><br>
-
-            <span style="color: {colors.quadruple}">Longer than whole</span><br>
-            <span style="color: {colors.sixtyfourth}">Shorter than thirty-second</span><br>
-        </div>
+        <Guide />
     </div>
 
     <section bind:this={trackChooser.element} id="track-chooser" class="z-40 w-full absolute flex flex-col gap-4 justify-center items-center content-center text-2xl"
@@ -746,7 +774,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
     </section>
 
     {#if sheetReady == true}
-        <div class="flex flex-col items-start" on:click|self={resetSelection} on:keypress|self={resetSelection} on:contextmenu|preventDefault>
+        <div class="flex flex-col items-start" on:click|self={resetSelection} on:keypress|self={() => {}} on:contextmenu|preventDefault>
             <SheetActions {settings}
                 on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode) }}
                 on:copyText={() => {
@@ -772,7 +800,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
             />
 
             <div style="background: #2D2A32; user-select: none" bind:this={container}>
-                <div style="width: max-content; font-family:{settings.font}" bind:clientWidth={notesContainerWidth} on:click|self={resetSelection} on:keypress|self={resetSelection}>
+                <div style="width: max-content; font-family:{settings.font}" bind:clientWidth={notesContainerWidth} on:click|self={resetSelection} on:keypress|self={() => {}}>
                     {#each chords_and_otherwise as inner, index }
                         <!-- not a chord -->
                         {#if inner.type} 

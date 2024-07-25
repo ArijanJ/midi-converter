@@ -35,10 +35,10 @@
 
 <hr class="my-2 mx-1">
 
-<div class="flex flex-col items-start align-middle">
+<div class="flex flex-col items-start align-middle" style="margin-top: -0.7em">
     <div class="flex flex-row mt-3">
         <label class="flex flex-row items-center"
-               title="Controls how much better a transposition should be than the previous transposition for line-based auto-transpose to act (higher = less transposing)" 
+               title="Defines how much better a transposition should be than the previous transposition for multi-transpose to act (higher = less transposing)" 
                for="atleast">Resilience (?):</label>
         <input class="w-32" id="atleast" type="range" min=0 max=12 bind:value={settings.resilience}>
         <span style="display:flex; align-items: center">{settings.resilience}</span>
@@ -48,7 +48,7 @@
 <hr class="my-2 mx-1">
 
 <div>
-    {#if hasMIDI}
+    <!-- {#if hasMIDI} -->
     <div class='select-div'>
         <label for='shifts-position'>Place shifted notes at:</label>
         <select disabled={settings.classicChordOrder} title={settings.classicChordOrder ? "Disable \"Classic chord order\" to customize this." : "" }
@@ -68,7 +68,7 @@
     </div>
 
     <hr class="my-2 mx-1">
-    {/if}
+    <!-- {/if} -->
 
     {#if hasMIDI}
         <div class='beats'>
@@ -96,17 +96,17 @@
             <input type='range' id="quantize-prompt" min=1 max=250 bind:value={settings.quantize}>
             <span>{settings.quantize} miliseconds</span>
         </div>
-
-        <label for='classic-chord-order'>
-            <input type='checkbox' id="classic-chord-order" bind:checked={settings.classicChordOrder}>
-            Classic chord order
-        </label>
-
-        <label for='order-quantizes'>
-            <input type='checkbox' id="order-quantizes" bind:checked={settings.sequentialQuantize}>
-            Sequential quantizes
-        </label>
     {/if}
+
+    <label for='classic-chord-order'>
+        <input type='checkbox' id="classic-chord-order" bind:checked={settings.classicChordOrder}>
+        Classic chord order
+    </label>
+
+    <label for='order-quantizes'>
+        <input type='checkbox' id="order-quantizes" bind:checked={settings.sequentialQuantize}>
+        Sequential quantizes
+    </label>
 
     <label for='curly-quantizes'>
         <input type='checkbox' id="curly-quantizes" bind:checked={settings.curlyQuantizes}>

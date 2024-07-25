@@ -14,6 +14,7 @@
     export let settings
 </script>
 
+<!-- svelte-ignore a11y-no-static-element-interactions -->
 <span
     class="chord-block"
     on:contextmenu|preventDefault
@@ -38,13 +39,16 @@
 <style>
     .chord-block {
         all: unset;
+        padding: 0.18em 0 0.18em 0;
+        margin: -0.18em 0 -0.18em 0;
+        box-sizing: border-box;
     }
     .chord-block:hover {
         /* filter: brightness(75%); */
         background-color: #3d3a42;
         cursor: pointer;
     }
-    .chord-block:active {
+    /* .chord-block:active {
         all: unset;
-    }
+    } */
 </style>

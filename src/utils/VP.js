@@ -81,8 +81,9 @@ class Chord {
 
             this.notes = this.#sortChord(no_dupes, classicChordOrder);
         } else if (is_quantized) {
-            if (sequentialQuantize)
-                this.notes = notes
+            if (sequentialQuantize) {
+                this.notes = notes.sort((a, b) => a.playTime - b.playTime);
+            }
             else {
                 this.notes = this.#sortChord(notes, classicChordOrder);
             }
@@ -276,7 +277,7 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             // Transpose to previous
             let same_chord_that_existed_previously = undefined
             if (chords_and_otherwise)
-                same_chord_that_existed_previously = chords_and_otherwise[real_index_of(chords_and_otherwise, index)]
+                same_chord_that_existed_previously = chords_and_otherwise[index_of_index(chords_and_otherwise, index)]
             // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
             if (same_chord_that_existed_previously && ![0, undefined].includes(same_chord_that_existed_previously?.notes?.[0].transposition())) {
                 resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
@@ -305,7 +306,7 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     // Transpose to previous
     let same_chord_that_existed_previously = undefined
     if (chords_and_otherwise)
-        same_chord_that_existed_previously = chords_and_otherwise[real_index_of(chords_and_otherwise, index)]
+        same_chord_that_existed_previously = chords_and_otherwise[index_of_index(chords_and_otherwise, index)]
     // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
     if (same_chord_that_existed_previously && ![0, undefined].includes(same_chord_that_existed_previously?.notes?.[0].transposition())) {
         resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
@@ -441,7 +442,7 @@ function separator(beat, difference) {
 }
 
 // chatgpt binary search
-function real_index_of(arr, targetIndex) {
+function index_of_index(arr, targetIndex) {
     if(!arr) return
     let left = 0;
     let right = arr.length - 1;
@@ -476,7 +477,7 @@ export {
     generateChords as generateSheet, 
     best_transposition_for_chords, 
     best_transposition_for_chord,
-    real_index_of,
+    index_of_index,
     separator,
     is_chord, not_chord
 }
