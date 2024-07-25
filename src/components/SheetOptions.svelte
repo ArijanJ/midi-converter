@@ -19,10 +19,10 @@
         pOors: 'Inorder',
         oors: true,
         tempoMarks: false,
+        oorMarks: false,
         bpmChanges: true,
         minSpeedChange: 10,
         oorSeparator: ':',
-        // transposition: 0,
         resilience: 2,
         font: fonts[0],
         lineHeight: 135,
@@ -120,9 +120,16 @@
         Include out of range (ctrl) notes
     </label>
 
+    <hr class="my-2 mx-1">
+
     <label for='tempo-checkbox'>
         <input type='checkbox' id="tempo-checkbox" bind:checked={settings.tempoMarks}>
-        Show tempo and out-of-range marks 
+        Show tempo/timing marks 
+    </label>
+
+    <label for='oormark-checkbox'>
+        <input type='checkbox' id="oormark-checkbox" bind:checked={settings.oorMarks}>
+        Show out of range (ctrl) text marks
     </label>
 
     {#if hasMIDI}
@@ -139,8 +146,7 @@
         </div>
     {/if}
 
-
-    {#if settings.oors && settings.tempoMarks}
+    {#if settings.oors && settings.oorMarks}
     <div>
         <label title="Helps tell you if notes are out-of-range, certain characters are restricted from use!" for="oor-separator">Out-of-range separator (?):</label>
         <div style="display: inline-flex">

@@ -115,13 +115,13 @@ function render_chord(chord, next, settings, selected) {
                 isChordWithOnlyEndOorsAndIsFirstEndOor ||
                 isChordWithMoreThanOneNonOorAndIsFirstEndOor
             ) {
-                if (settings.tempoMarks)
-                    res += `<span style="border-bottom: 2px solid ${color}; font-weight:900;">${settings.oorSeparator}${note.char}</span>`
-                else if (!settings.tempoMarks)
-                    res += `<span style="border-bottom: 2px solid ${color}; font-weight:900">${note.char}</span>`
+                
+                let inner = settings.oorMarks ? (settings.oorSeparator + note.char) : note.char
+                res += `<span style="display:inline-flex; justify-content: center; min-width: 0.6em; border-bottom: 2px solid; font-weight: 900">`
+                        + `${inner}</span>`
             }
             
-            if (settings.tempoMarks)
+            if (settings.oorMarks)
                 if (isLastStartOor && nonOors.length > 0)
                     res += `'`
         

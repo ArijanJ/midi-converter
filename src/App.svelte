@@ -409,6 +409,7 @@
      */
     function captureSheetAsImage(mode) {
         settings.capturingImage = true;
+        settings.oorMarks = false
 
         // Widen actual container to prevent cutoff
         container.firstChild.style.width = `${notesContainerWidth + 1}px`
@@ -779,6 +780,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                 on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode) }}
                 on:copyText={() => {
                     settings.tempoMarks = true
+                    settings.oorMarks = true
                     setTimeout(() => {
                         navigator.clipboard.writeText(container.firstChild.innerText)
                     }, 0)
