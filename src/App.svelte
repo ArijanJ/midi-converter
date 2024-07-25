@@ -773,7 +773,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                                 text += render_chord(inner, inner.next ?? undefined, settings, inner.selected).text;
                             }
                         }
-                        console.log(text)
+
+                        navigator.clipboard.writeText(text);
                     }, 0)
                 }}
                 on:copyTransposes={() => {navigator.clipboard.writeText(sheetTransposes())}}

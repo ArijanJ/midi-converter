@@ -14803,10 +14803,10 @@ var app = (function () {
     			set_style(div0, "width", "max-content");
     			set_style(div0, "font-family", /*settings*/ ctx[3].font);
     			add_render_callback(() => /*div0_elementresize_handler*/ ctx[66].call(div0));
-    			add_location(div0, file, 795, 16, 30483);
+    			add_location(div0, file, 796, 16, 30503);
     			set_style(div1, "background", "#2D2A32");
     			set_style(div1, "user-select", "none");
-    			add_location(div1, file, 794, 12, 30392);
+    			add_location(div1, file, 795, 12, 30412);
     			attr_dev(div2, "class", "flex flex-col items-start");
     			add_location(div2, file, 742, 8, 27738);
     		},
@@ -14914,7 +14914,7 @@ var app = (function () {
     	return block;
     }
 
-    // (824:24) {:else}
+    // (825:24) {:else}
     function create_else_block_1(ctx) {
     	let chord;
     	let current;
@@ -14967,14 +14967,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(824:24) {:else}",
+    		source: "(825:24) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (799:24) {#if inner.type}
+    // (800:24) {#if inner.type}
     function create_if_block_1(ctx) {
     	let if_block_anchor;
 
@@ -15023,14 +15023,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(799:24) {#if inner.type}",
+    		source: "(800:24) {#if inner.type}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (806:63) 
+    // (807:63) 
     function create_if_block_4(ctx) {
     	let t0;
     	let t1;
@@ -15052,7 +15052,7 @@ var app = (function () {
     			if_block1.c();
     			t1 = space();
     			br = element("br");
-    			add_location(br, file, 821, 32, 32267);
+    			add_location(br, file, 822, 32, 32287);
     		},
     		m: function mount(target, anchor) {
     			if (if_block0) if_block0.m(target, anchor);
@@ -15098,14 +15098,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(806:63) ",
+    		source: "(807:63) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (802:28) {#if inner.type === "break"}
+    // (803:28) {#if inner.type === "break"}
     function create_if_block_2(ctx) {
     	let if_block_anchor;
     	let if_block = /*next_thing*/ ctx[79]?.type != "comment" && create_if_block_3(ctx);
@@ -15141,21 +15141,21 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(802:28) {#if inner.type === \\\"break\\\"}",
+    		source: "(803:28) {#if inner.type === \\\"break\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (807:32) {#if previous_thing?.type != "comment" && inner.notop != true}
+    // (808:32) {#if previous_thing?.type != "comment" && inner.notop != true}
     function create_if_block_6(ctx) {
     	let br;
 
     	const block = {
     		c: function create() {
     			br = element("br");
-    			add_location(br, file, 807, 36, 31367);
+    			add_location(br, file, 808, 36, 31387);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, br, anchor);
@@ -15169,14 +15169,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(807:32) {#if previous_thing?.type != \\\"comment\\\" && inner.notop != true}",
+    		source: "(808:32) {#if previous_thing?.type != \\\"comment\\\" && inner.notop != true}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (819:32) {:else}
+    // (820:32) {:else}
     function create_else_block(ctx) {
     	let span;
     	let t_value = /*inner*/ ctx[76].text + "";
@@ -15189,7 +15189,7 @@ var app = (function () {
     			span = element("span");
     			t = text(t_value);
     			attr_dev(span, "class", "comment");
-    			add_location(span, file, 819, 36, 32125);
+    			add_location(span, file, 820, 36, 32145);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -15214,14 +15214,14 @@ var app = (function () {
     		block,
     		id: create_else_block.name,
     		type: "else",
-    		source: "(819:32) {:else}",
+    		source: "(820:32) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (810:32) {#if inner.kind == "custom" || inner.kind == "tempo"}
+    // (811:32) {#if inner.kind == "custom" || inner.kind == "tempo"}
     function create_if_block_5(ctx) {
     	let span;
     	let t_value = /*inner*/ ctx[76].text + "";
@@ -15240,7 +15240,7 @@ var app = (function () {
     			attr_dev(span, "class", "comment");
     			attr_dev(span, "contenteditable", "true");
     			set_style(span, "white-space", "pre-wrap");
-    			add_location(span, file, 810, 36, 31532);
+    			add_location(span, file, 811, 36, 31552);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -15272,21 +15272,21 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(810:32) {#if inner.kind == \\\"custom\\\" || inner.kind == \\\"tempo\\\"}",
+    		source: "(811:32) {#if inner.kind == \\\"custom\\\" || inner.kind == \\\"tempo\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (803:32) {#if next_thing?.type != "comment"}
+    // (804:32) {#if next_thing?.type != "comment"}
     function create_if_block_3(ctx) {
     	let br;
 
     	const block = {
     		c: function create() {
     			br = element("br");
-    			add_location(br, file, 803, 36, 31129);
+    			add_location(br, file, 804, 36, 31149);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, br, anchor);
@@ -15300,14 +15300,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(803:32) {#if next_thing?.type != \\\"comment\\\"}",
+    		source: "(804:32) {#if next_thing?.type != \\\"comment\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (797:20) {#each chords_and_otherwise as inner, index }
+    // (798:20) {#each chords_and_otherwise as inner, index }
     function create_each_block(ctx) {
     	let current_block_type_index;
     	let if_block;
@@ -15385,7 +15385,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(797:20) {#each chords_and_otherwise as inner, index }",
+    		source: "(798:20) {#each chords_and_otherwise as inner, index }",
     		ctx
     	});
 
@@ -16694,7 +16694,7 @@ var app = (function () {
     					}
     				}
 
-    				console.log(text);
+    				navigator.clipboard.writeText(text);
     			},
     			0
     		);
