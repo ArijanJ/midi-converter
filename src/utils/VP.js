@@ -3,7 +3,7 @@ const lastPossibleNote   =  108
 
 const capitalNotes = "!@#$%^&*()QWERTYUIOPASDFGHJKLZXCBVNM"
 
-let is_chord = (x) => 'index' in x 
+let is_chord = (x) => { try { return 'index' in x } catch { return false } }
 let not_chord = (x) => { try { return !is_chord(x) } catch { return true } } // !x || (x.type && (x.type == "break" || x.type == "comment"))
 class Note {
     constructor(value, playTime, tempo, BPM, delta, shifts='keep', oors='keep') {
@@ -274,11 +274,14 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             resulting_chord.index = index
             
             // Transpose to previous
-            let same_chord_that_existed_previously = real_index_of(chords_and_otherwise, index)
+            let same_chord_that_existed_previously = undefined
+            if (chords_and_otherwise)
+                same_chord_that_existed_previously = chords_and_otherwise[real_index_of(chords_and_otherwise, index)]
             // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
-            if (same_chord_that_existed_previously && same_chord_that_existed_previously.notes[0].transposition() != 0) {
+            if (same_chord_that_existed_previously && ![0, undefined].includes(same_chord_that_existed_previously?.notes?.[0].transposition())) {
                 resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
             }
+            else {console.log("not keeping")}
             
             chords.push(resulting_chord)
             index++
@@ -300,11 +303,14 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     resulting_chord.index = index
 
     // Transpose to previous
-    let same_chord_that_existed_previously = real_index_of(chords_and_otherwise, index)
-    if (same_chord_that_existed_previously && same_chord_that_existed_previously.notes[0].transposition() != 0) {
+    let same_chord_that_existed_previously = undefined
+    if (chords_and_otherwise)
+        same_chord_that_existed_previously = chords_and_otherwise[real_index_of(chords_and_otherwise, index)]
+    // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
+    if (same_chord_that_existed_previously && ![0, undefined].includes(same_chord_that_existed_previously?.notes?.[0].transposition())) {
         resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
     }
-            
+
     chords.push(resulting_chord)
     
     index++

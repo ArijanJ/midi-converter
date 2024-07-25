@@ -48,6 +48,7 @@
 <hr class="my-2 mx-1">
 
 <div>
+    {#if hasMIDI}
     <div class='select-div'>
         <label for='shifts-position'>Place shifted notes at:</label>
         <select disabled={settings.classicChordOrder} title={settings.classicChordOrder ? "Disable \"Classic chord order\" to customize this." : "" }
@@ -67,6 +68,7 @@
     </div>
 
     <hr class="my-2 mx-1">
+    {/if}
 
     {#if hasMIDI}
         <div class='beats'>
