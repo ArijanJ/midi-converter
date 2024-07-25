@@ -127,7 +127,7 @@ function render_chord(chord, next, settings, selected) {
                     text += note.char
                 }
 
-                res += `<span style="border-bottom: 2px solid ${color}; font-weight:900">${note.char}</span>`
+                res += `<span style="display:inline-flex; justify-content: center; min-width: 10px; border-bottom: 2px solid; font-weight: 900">${note.char}</span>`
 
             }
             
