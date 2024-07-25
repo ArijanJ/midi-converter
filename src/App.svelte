@@ -13,7 +13,7 @@
     import Chord from './components/Chord.svelte'
     import HistoryEntry from "./components/HistoryEntry.svelte";
 
-    import { colors } from "./utils/Rendering.js";
+    import {colors, render_chord} from "./utils/Rendering.js";
 
     let importer = {
         element: undefined, // main welcome screen div
@@ -746,7 +746,34 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                 on:copyText={() => {
                     settings.tempoMarks = true
                     setTimeout(() => {
-                        navigator.clipboard.writeText(container.firstChild.innerText)
+                        // navigator.clipboard.writeText(container.firstChild.innerText)
+
+                        // TODO: disgusting but quick fix, for copying text that includes oor text notation while keeping oor displayed as underlined, replace later
+                        let text = "";
+                        for (const [index, inner] of Object.entries(chords_and_otherwise)) {
+                            // not a chord
+                            if (inner.type) {
+                                const next_thing = chords_and_otherwise[+index+1];
+                                const previous_thing = chords_and_otherwise[+index-1];
+                                if (inner.type === "break") {
+                                    if (next_thing?.type != "comment") {
+                                        text += "\n";
+                                    }
+                                }
+                                else if (inner.type === "comment") {
+                                    if (previous_thing?.type != "comment" && inner.notop != true) {
+                                        text += "\n";
+                                    }
+
+                                    text += inner.text + "\n";
+                                }
+                            }
+                            else {
+                                // chord
+                                text += render_chord(inner, inner.next ?? undefined, settings, inner.selected).text;
+                            }
+                        }
+                        console.log(text)
                     }, 0)
                 }}
                 on:copyTransposes={() => {navigator.clipboard.writeText(sheetTransposes())}}

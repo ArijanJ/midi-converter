@@ -32,7 +32,7 @@
         }
     }}
 >
-    {@html render_chord(chord, next, settings, selected)}
+    {@html render_chord(chord, next, settings, selected).html}
 </span>
 
 <style>

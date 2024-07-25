@@ -63,7 +63,7 @@ function render_chord(chord, next, settings, selected) {
 
     let curr_note = chord?.notes?.[0]
     let next_note = next?.notes?.[0]
-    if (!curr_note) return "";
+    if (!curr_note) return {html: "", text: ""};
     
     let beat = 0, difference = 0
 
@@ -75,6 +75,7 @@ function render_chord(chord, next, settings, selected) {
         color = color_for_chord(beat, difference)
     }
 
+    let text = "";
     let res = `<span style="color:${color}; ${selected ? "background-color: " + selection_color + ";" : ""}">`;
 
     let isChord = chord.notes.length > 1 && chord.notes.find((note) => note.valid === true)
@@ -86,13 +87,17 @@ function render_chord(chord, next, settings, selected) {
     if (isChord) {
         if (chord.is_quantized && settings.curlyQuantizes === true) {
             res += "{"
-        } else
+            text += "{"
+        } else {
             res += "["
+            text += "["
+        }
     }
 
     for (const note of chord.notes) {
         if (!note.valid) {
             res += "_";
+            text += "_";
             continue;
         }
 
@@ -115,33 +120,49 @@ function render_chord(chord, next, settings, selected) {
                 isChordWithOnlyEndOorsAndIsFirstEndOor ||
                 isChordWithMoreThanOneNonOorAndIsFirstEndOor
             ) {
-                if (settings.tempoMarks)
-                    res += `<span style="border-bottom: 2px solid ${color}; font-weight:900;">${settings.oorSeparator}${note.char}</span>`
-                else if (!settings.tempoMarks)
-                    res += `<span style="border-bottom: 2px solid ${color}; font-weight:900">${note.char}</span>`
+                if (settings.tempoMarks) {
+                    text += `${settings.oorSeparator}${note.char}`
+                }
+                else {
+                    text += note.char
+                }
+
+                res += `<span style="border-bottom: 2px solid ${color}; font-weight:900">${note.char}</span>`
+
             }
             
             if (settings.tempoMarks)
                 if (isLastStartOor && nonOors.length > 0)
-                    res += `'`
+                    text += `'`
         
         } else if (!draw_as_oor && !note.outOfRange) {
             res += note.char
+            text += note.char
         }
     } // end note loop
 
     if (isChord) {
         if (chord.is_quantized && settings.curlyQuantizes === true) {
             res += "}"
-        } else
+            text += "}"
+        } else {
             res += "]"
+            text += "]"
+        }
     }
 
     // Separator
+    const sep = separator(beat ?? undefined, difference)
     res += settings.tempoMarks ? 
-        colored_string(separator(beat ?? undefined, difference), color)
+        colored_string(sep, color)
         : ' ';
-    return res + "</span>";
+
+    text += settings.tempoMarks ?
+        sep
+        : ' ';
+
+    // console.log(text)
+    return {html: res + "</span>", text: text};
 }
 
 export { colors, render_chord, color_for_chord, colored_string }
