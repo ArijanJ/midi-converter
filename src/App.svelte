@@ -397,7 +397,10 @@
 
     let sheetTransposes = () => {
         let transpose_comments = chords_and_otherwise.filter(e => e.kind == "transpose")
-        return transpose_comments.map((e) => -parseInt(e.text.match(/\d+/))).join(' ')
+        return transpose_comments.map((e) => {
+            const match = e.text.match(/Transpose by:\s(\+?(-?\d+))/);
+            return match ? match[2] : null;
+        }).join(' ');
     }
 
     /**
