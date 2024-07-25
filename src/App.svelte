@@ -800,7 +800,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
             />
 
             <div style="background: #2D2A32; user-select: none" bind:this={container}>
-                <div style="width: max-content; font-family:{settings.font}" bind:clientWidth={notesContainerWidth} on:click|self={resetSelection} on:keypress|self={() => {}}>
+                <div style="width: max-content; font-family:{settings.font}; line-height:{settings.lineHeight}%" bind:clientWidth={notesContainerWidth} on:click|self={resetSelection} on:keypress|self={() => {}}>
                     {#each chords_and_otherwise as inner, index }
                         <!-- not a chord -->
                         {#if inner.type} 

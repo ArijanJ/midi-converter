@@ -25,6 +25,7 @@
         // transposition: 0,
         resilience: 2,
         font: fonts[0],
+        lineHeight: 135,
         capturingImage: false,
         missingTempo: false,
         bpm: 120
@@ -170,6 +171,15 @@
                 <option value={font}>{font}</option>
             {/each}
         </select>
+    </div>
+
+    <div class="flex flex-col items-start align-middle" style="margin-top: -0.3em">
+        <div class="flex flex-row mt-3">
+            <label class="flex flex-row items-center"
+                   for="line-height">Line height:</label>
+            <input class="w-32" id="line-height" type="range" min=110 max=160 bind:value={settings.lineHeight}>
+            <span style="display:flex; align-items: center">{settings.lineHeight}</span>
+        </div>
     </div>
 
     <hr class="my-2 mx-1">

@@ -38,10 +38,16 @@
 
 <style>
     .chord-block {
-        all: unset;
-        padding: 0.18em 0 0.18em 0;
-        margin: -0.18em 0 -0.18em 0;
-        box-sizing: border-box;
+        /* all: unset; */
+        position:relative
+        /* padding: 20px;
+        margin: -20px; */
+    }
+    .chord-block::before {
+        content: '';
+        position: absolute;
+        height: 126%;
+        width: 100%;
     }
     .chord-block:hover {
         /* filter: brightness(75%); */
