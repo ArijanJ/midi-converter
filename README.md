@@ -11,12 +11,10 @@ Available at https://arijanj.github.io/midi-converter.
 $ npm install   # then 
 $ npm run dev   # to watch & reload or 
 $ npm run build # to build static site
-``````
+```
 
-### Deploying to GitHub pages
-```
-$ npm run build # before pushing public/
-```
+> [!NOTE]
+> Any pushes to main will start the [`Build and publish`](./.github/workflows/nodepages.yml) workflow
 
 ## Further reading
 If you're interested in VP, you can check out the following resources:
