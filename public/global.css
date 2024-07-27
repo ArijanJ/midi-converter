@@ -1,8 +1,10 @@
 html, body {
 	position: relative;
 	width: 100%;
-	height: 100%;
+	height: 100%;align-self: w;
 	font-size: 10pt;
+	accent-color: #ff966d;
+	/* accent-color: dimgrey; */
 }
 
 body {

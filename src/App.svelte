@@ -66,8 +66,6 @@
                 }
 
                 softRegen()
-                console.log(chords_and_otherwise)
-                updateChords()
             }
             else if (decision == "export-and-restart") {
                 history.export(existingProject.name).then((piece) => {
@@ -160,7 +158,12 @@
     let saveSheet = () => {
         if (!MIDIObject) { console.log('no midiobject'); return }
         let events = getEvents(MIDIObject, selectedTracks)
-		chords_and_otherwise = generateChords(events, settings, chords_and_otherwise)
+        let res = generateChords(events, settings, chords_and_otherwise)
+
+        chords_and_otherwise = res.chords
+        settings.missingTempo = !res.hasTempo
+        
+        console.log(chords_and_otherwise)
 
         let only_chords = chords_and_otherwise.filter(e => is_chord(e))
         only_chords.forEach((chord, i) => { 
@@ -173,7 +176,11 @@
         sheetReady = true
     }
 
-    // Recreate the chord with existing data for e.g. reordering purposes
+    /**
+     * Recreate the chord with existing data (for e.g. reordering purposes)
+     * 
+     * Calls updateChords()
+     */
     function softRegen() {
         if(!chords_and_otherwise) return
         for(let i = 0; i < chords_and_otherwise.length; i++) {
@@ -196,15 +203,6 @@
             }
         }
 
-    
-        // for (let chord of chords_and_otherwise) {
-        //     if(not_chord(chord)) continue
-        //     let notes_copy = []
-        //     for (let note of chord.notes) {
-        //         let new_note = new Note(note.value, note.playTime, note.tempo, note.BPM, note.delta, settings.pShifts, settings.pOors))
-        //         new_note.original = note.original
-        //     }
-        // }
         updateChords()
     }
 
@@ -213,7 +211,7 @@
 
     try { 
         settings = JSON.parse(localStorage.getItem('preferences')); 
-        settings.beats = 4 // doesn't make sense to save this
+        settings.beats = 4; settings.bpm = 120 // doesn't make sense to save this
     } 
     catch (e) { settings = undefined; }
 	$: {
@@ -307,7 +305,9 @@
 
     let repopulateTransposeComments = () => {
         if(!chords_and_otherwise) return
-        chords_and_otherwise = chords_and_otherwise.filter(e => e.kind != "transpose")
+
+        // console.log(chords_and_otherwise)
+        chords_and_otherwise = chords_and_otherwise.filter(e => { /* console.log(e); */ return e.kind != "transpose" })
 
         let first_note = next_not(chords_and_otherwise, not_chord, 0).notes[0]
         let initial_transposition = first_note.transposition()
@@ -341,7 +341,6 @@
         }
         
         softRegen()
-        updateChords()
         renderSelection()
     }
 

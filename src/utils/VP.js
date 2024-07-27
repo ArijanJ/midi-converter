@@ -58,6 +58,7 @@ class Chord {
         
         this.classicChordOrder = classicChordOrder
         this.sequentialQuantize = sequentialQuantize
+        
 
         for (let note of notes) {
             if (note.playTime != previous_note.playTime) {
@@ -88,6 +89,10 @@ class Chord {
                 this.notes = this.#sortChord(notes, classicChordOrder);
             }
         }
+    }
+    
+    get transposition() {
+        return this.chord?.notes?.[0]?.transposition
     }
     
     transpose = (by, relative = false, mutate = false) => {
@@ -179,7 +184,51 @@ class Chord {
     }
 }
 
-function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, chords_and_otherwise = undefined) {
+/**
+ * Make a BPM change comment
+ * 
+ * @param {number} previousBPM 
+ * @param {number} newBPM 
+ * @param {('simple'|'advanced')} type - settings.bpmType
+ * @param {number} minimum - If the difference is less than {@link minimum}, return undefined
+ * @returns {(object|undefined)} - Comment or nothing
+ */
+function BPMComment(previousBPM, newBPM, type, minimum) /*  */ {
+    let faster = newBPM > previousBPM
+
+    let larger = faster ? newBPM : previousBPM
+    let smaller = faster ? previousBPM : newBPM
+
+    let percent = Math.round(((larger - smaller) / smaller) * 100)
+    if (percent < minimum) return
+
+    if (!type) { type = "detailed" }
+    switch (type) {
+        case "simple":
+            let char = newBPM > previousBPM ? ">" : "<"
+            let text = ""
+            let notop = false // Whether to put the comment on the same line
+
+            for (let i = 0; i < Math.floor(percent / 10); i++)
+                text += char
+
+            if (text.length > 20) { // would be spam, not worth
+                text = `${char} ${percent}% ${faster ? "faster" : "slower"} ${char}`
+                notop = false
+            }
+
+            return { type: 'comment', kind: 'tempo', text, notop }
+
+        case "detailed":
+            return { 
+                type: 'comment', kind: 'tempo', 
+                text: `${percent}% ${faster ? 'faster' : 'slower'} - BPM changed to ${Math.round(newBPM)}`
+            }
+    }
+}
+
+const SET_TEMPO = 0x51
+function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, previous_chords = undefined) {
     const error_range = 0.5
     let penalty = 0.000
 
@@ -198,8 +247,6 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
         return {doBreak: false, newPenalty: penalty}
     }
 
-    // console.log(settings)
-
     let quantize = settings.quantize
     let shifts = settings.pShifts
     let oors = settings.pOors
@@ -217,16 +264,26 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     let nextBPM = bpm
     let nextTempo = bpm*4166.66 // Magic number
 
-    function validNoteSpeed(event) {
-        return event.tempo && event.tempoBPM && event.tempo !== 0 && event.tempoBPM !== 0
-    }
+    const validNoteSpeed = (event) => { event.tempo && event.tempoBPM && event.tempo !== 0 && event.tempoBPM !== 0 }
 
     let index = 0
-    let did_chord_quantize_math = false
+
+    const possibly_transpose_to_previous = (chord, index) => {
+        let real_index_of = (x) => index_of_index(previous_chords, x)
+        let chord_at = (x) => previous_chords[real_index_of(x)]
+
+        if (!previous_chords) return
+        let chord_previously = chord_at(index)
+
+        if (chord_previously && ![0, undefined].includes(chord_previously.transposition)) {
+            chord.transpose(chord_previously.notes[0].transposition(), false, true)
+            console.log('pttp', chord)
+        }
+    }
+            
     // Generate chords
     events.forEach(element => {
-        // if event is SET_TEMPO
-        if (element.subtype == 0x51 && validNoteSpeed(element)) {
+        if (element.subtype == SET_TEMPO && validNoteSpeed(element)) {
             nextTempo = element.tempo
             nextBPM = element.tempoBPM
             if (previousTempo == undefined) {
@@ -235,35 +292,8 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             }
             else if (previousTempo != undefined && (previousTempo != element.tempo) && (previousBPM != element.tempoBPM)) {
                 if(settings.bpmChanges) {
-                    let newBPM = Math.round(element.tempoBPM)
-                    
-                    let larger = newBPM > previousBPM ? newBPM : previousBPM
-                    let smaller = newBPM < previousBPM ? newBPM : previousBPM
-                    
-                    let percent = ((larger - smaller) / smaller) * 100
-                    
-                    if (percent < settings.minSpeedChange) return
-                    // chords.push({ type: 'comment', text: `BPM change to ${Math.round(element.tempoBPM)} (${Math.round(percent)}% ${newBPM > previousBPM ? 'faster' : 'slower'})` })
-
-                    if (settings.bpmType == "simple") {
-                        let char = newBPM > previousBPM ? ">" : "<"
-                        let text = ""
-                        let notop = false
-
-                        for (let i = 0; i < Math.floor(percent / 10); i++)
-                            text += char
-
-                        if (text.length > 20) { // would be spam, not worth
-                            text = `${char} ${Math.round(percent)}% ${newBPM > previousBPM ? "faster" : "slower"} ${char}`
-                            notop = false
-                        }
-
-                        chords.push({ type: 'comment', kind: 'tempo', text, notop })
-                    }
-                    else {
-                        let text = `${Math.round(percent)}% ${newBPM > previousBPM ? 'faster' : 'slower'} - BPM changed to ${Math.round(element.tempoBPM)}`
-                        chords.push({ type: 'comment', kind: 'tempo', text })
-                    }
+                    let comment = BPMComment(Math.round(previousBPM), Math.round(element.tempoBPM), settings.bpmType, settings.minSpeedChange)
+                    if (comment) chords.push(comment)
                 }
             }
             previousBPM = element.tempoBPM
@@ -271,14 +301,11 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             return
         } 
         // event is NOTE_ON
-        const key      = element.param1
+        const key      = element.param1; if (!key) return
         const playtime = element.playTime
         const delta    = element.delta
-        
-        if (!key) return
 
-        if (lastPlaytime == undefined)
-            lastPlaytime = playtime
+        if (lastPlaytime == undefined) lastPlaytime = playtime
 
         if (Math.abs(playtime - lastPlaytime) < quantize) {
             current_notes.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
@@ -293,15 +320,7 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             let resulting_chord = new Chord(current_notes, classicChordOrder, sequentialQuantize)
             resulting_chord.index = index
             
-            // Transpose to previous
-            let same_chord_that_existed_previously = undefined
-            if (chords_and_otherwise)
-                same_chord_that_existed_previously = chords_and_otherwise[index_of_index(chords_and_otherwise, index)]
-            // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
-            if (same_chord_that_existed_previously && ![0, undefined].includes(same_chord_that_existed_previously?.notes?.[0].transposition())) {
-                resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
-            }
-            else {console.log("not keeping")}
+            possibly_transpose_to_previous(resulting_chord, index)
             
             chords.push(resulting_chord)
             index++
@@ -318,29 +337,20 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     })
 
     // Final chord insertion to make sure no notes are left
-    // chords.push(new Chord(currentChord, classicChordOrder))
     let resulting_chord = new Chord(current_notes, classicChordOrder, sequentialQuantize)
     resulting_chord.index = index
 
-    // Transpose to previous
-    let same_chord_that_existed_previously = undefined
-    if (chords_and_otherwise)
-        same_chord_that_existed_previously = chords_and_otherwise[index_of_index(chords_and_otherwise, index)]
-    // console.log(same_chord_that_existed_previously, index, chords_and_otherwise)
-    if (same_chord_that_existed_previously && ![0, undefined].includes(same_chord_that_existed_previously?.notes?.[0].transposition())) {
-        resulting_chord.transpose(same_chord_that_existed_previously.notes[0].transposition(), false, true)
-    }
+    possibly_transpose_to_previous(resulting_chord, index)
 
     chords.push(resulting_chord)
-    
     index++
 
     if (!previousTempo)
         console.log(`No tempo found in sheet, set to ${nextBPM}/${nextTempo}`); 
+    
+    // console.log(chords)
 
-    // resultingSheet.missingTempo = !hasTempo
-
-    return chords
+    return { chords: chords, hasTempo: !(!previousTempo) }
 }
 
 const vpScale =

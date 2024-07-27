@@ -82,7 +82,7 @@
         <i>Some settings are not available because the original MIDI data is missing.</i>
     {/if}
 
-    {#if settings.missingTempo == true}
+    {#if settings.missingTempo == true && hasMIDI}
         <div class='tempo'>
             <label class='slider-label' for='tempo'
                 title="You're able to change this because your MIDI file doesn't have tempo/BPM.">
@@ -115,7 +115,6 @@
         Curly braces for quantized chords
     </label>
 
-    <div></div>
     <label for='out-of-range'>
         <input type='checkbox' id="out-of-range" bind:checked={settings.oors}>
         Include out of range (ctrl) notes
@@ -132,31 +131,6 @@
         <input type='checkbox' id="oormark-checkbox" bind:checked={settings.oorMarks}>
         Show out of range (ctrl) text marks
     </label>
-
-    {#if settings.bpmChanges}<hr class="my-2 mx-1">{/if}
-
-    {#if hasMIDI}
-        <label for='bpm-changes'>
-            <input type='checkbox' id="bpm-changes" bind:checked={settings.bpmChanges}>
-            Show BPM changes as comments
-        </label>
-
-        {#if settings.bpmChanges}
-        <div class='select-div'>
-            <label for='bpmType'>BPM comments:</label>
-            <select name='bpmType' id='bpmType' bind:value={settings.bpmType}>
-                <option value='detailed'>Detailed</option>
-                <option value='simple'>Simple</option>
-            </select>
-        </div>
-
-        <div class="beats"> 
-                <label class='slider-label' for='min-speed-change'>Min. % speed change: </label>
-                <input type='range' id='min-speed-change' min=0 max=100 bind:value={settings.minSpeedChange}>
-                <span>At least {settings.minSpeedChange}%</span>
-        </div>
-        {/if}
-    {/if}
 
     {#if settings.oors && settings.oorMarks}
     <div>
@@ -178,6 +152,31 @@
             >
         </div>
     </div>
+    {/if}
+
+    {#if settings.bpmChanges}<hr class="my-2 mx-1">{/if}
+
+    {#if hasMIDI && !settings.missingTempo}
+        <label for='bpm-changes'>
+            <input type='checkbox' id="bpm-changes" bind:checked={settings.bpmChanges}>
+            Show BPM changes as comments
+        </label>
+
+        {#if settings.bpmChanges}
+        <div class='select-div'>
+            <label for='bpmType'>BPM comments:</label>
+            <select name='bpmType' id='bpmType' bind:value={settings.bpmType}>
+                <option value='detailed'>Detailed</option>
+                <option value='simple'>Simple</option>
+            </select>
+        </div>
+
+        <div class="beats"> 
+                <label class='slider-label' for='min-speed-change'>Min. % speed change: </label>
+                <input type='range' id='min-speed-change' min=0 max=100 bind:value={settings.minSpeedChange}>
+                <span>At least {settings.minSpeedChange}%</span>
+        </div>
+        {/if}
     {/if}
 
     <hr class="my-2 mx-1">
