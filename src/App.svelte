@@ -623,13 +623,13 @@
     }
     
     function joinRegion(left, right) {
-        let start = real_index_of(chords_and_otherwise, left)
+        let start = real_index_of(left)
         for (let i = start; i < chords_and_otherwise.length; i++) {
             if (chords_and_otherwise[i]?.type == "break") {
                 chords_and_otherwise.splice(i, 1)
                 i--
             }
-            if (i > real_index_of(chords_and_otherwise, right)) break
+            if (i > real_index_of(right)) break
         }
         updateChords()
     }
