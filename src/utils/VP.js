@@ -248,12 +248,13 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
                     if (settings.bpmType == "simple") {
                         let char = newBPM > previousBPM ? ">" : "<"
                         let text = ""
-                        let notop = true
-                        for (let i = 0; i < Math.floor(percent / 10); i++) {
+                        let notop = false
+
+                        for (let i = 0; i < Math.floor(percent / 10); i++)
                             text += char
-                        }
-                        if (text.length > 20) { // spam not worth
-                            text = `${Math.round(percent)}% ${newBPM > previousBPM ? 'faster' : 'slower'} - BPM changed to ${Math.round(element.tempoBPM)}`
+
+                        if (text.length > 20) { // would be spam, not worth
+                            text = `${char} ${Math.round(percent)}% ${newBPM > previousBPM ? "faster" : "slower"} ${char}`
                             notop = false
                         }
 
