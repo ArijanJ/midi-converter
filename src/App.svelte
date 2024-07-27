@@ -721,7 +721,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="flex flex-row" on:click|self={resetSelection} on:keypress|self={() => {}}>
-    <div id="sidebar" class="m-1 flex flex-col sticky overflow-y-auto top-0" style="min-width:25em; max-width:25em; max-height: 99vh">
+    <div id="sidebar" class="mx-1 my-0 flex flex-col sticky overflow-y-auto top-0" style="min-width:25em; max-width:25em; max-height: 99vh; max-height: 99dvh">
         <div>
             {#if sheetReady}
                 <p class="mb-2">You are currently editing: {filename}</p>
