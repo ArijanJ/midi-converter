@@ -368,7 +368,7 @@
                 regions.push({ left, right: event.index })
                 break
             }
-            if (event.type == "break") {
+            if (event.type == "break" || !chords_and_otherwise[i+1]) {
                 let next_chord = next_not(chords_and_otherwise, not_chord, i)
                 regions.push({ left, right: next_chord.index })
                 left = next_chord.index
