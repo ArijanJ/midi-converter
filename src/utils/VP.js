@@ -244,7 +244,25 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
                     
                     if (percent < settings.minSpeedChange) return
                     // chords.push({ type: 'comment', text: `BPM change to ${Math.round(element.tempoBPM)} (${Math.round(percent)}% ${newBPM > previousBPM ? 'faster' : 'slower'})` })
-                    chords.push({ type: 'comment', kind: 'tempo', text: `${Math.round(percent)}% ${newBPM > previousBPM ? 'faster' : 'slower'} - BPM changed to ${Math.round(element.tempoBPM)}` })
+
+                    if (settings.bpmType == "simple") {
+                        let char = newBPM > previousBPM ? ">" : "<"
+                        let text = ""
+                        let notop = true
+                        for (let i = 0; i < Math.floor(percent / 10); i++) {
+                            text += char
+                        }
+                        if (text.length > 20) { // spam not worth
+                            text = `${Math.round(percent)}% ${newBPM > previousBPM ? 'faster' : 'slower'} - BPM changed to ${Math.round(element.tempoBPM)}`
+                            notop = false
+                        }
+
+                        chords.push({ type: 'comment', kind: 'tempo', text, notop })
+                    }
+                    else {
+                        let text = `${Math.round(percent)}% ${newBPM > previousBPM ? 'faster' : 'slower'} - BPM changed to ${Math.round(element.tempoBPM)}`
+                        chords.push({ type: 'comment', kind: 'tempo', text })
+                    }
                 }
             }
             previousBPM = element.tempoBPM

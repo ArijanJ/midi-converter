@@ -65,7 +65,6 @@
                     window.location.reload()
                 }
 
-                // ughhh, have to reconstruct the functions here cause they dont serialize
                 softRegen()
                 console.log(chords_and_otherwise)
                 updateChords()
@@ -228,6 +227,7 @@
             "sequentialQuantize",
             "minSpeedChange",
             "bpmChanges",
+            "bpmType",
             "bpm"].some(changed))
                 saveSheet() // Full regeneration needed
         
