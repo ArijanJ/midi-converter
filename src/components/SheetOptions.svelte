@@ -154,7 +154,7 @@
     </div>
     {/if}
 
-    {#if settings.bpmChanges}<hr class="my-2 mx-1">{/if}
+    <hr class="my-2 mx-1">
 
     {#if hasMIDI && !settings.missingTempo}
         <label for='bpm-changes'>

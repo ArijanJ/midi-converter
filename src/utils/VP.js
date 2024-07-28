@@ -3,11 +3,14 @@ const lastPossibleNote   =  108
 
 const capitalNotes = "!@#$%^&*()QWERTYUIOPASDFGHJKLZXCBVNM"
 
-let is_chord = (x) => { try { return 'index' in x } catch { return false } }
+let is_chord = (x) => { try { return 'notes' in x } catch { return false } }
 let not_chord = (x) => { try { return !is_chord(x) } catch { return true } } // !x || (x.type && (x.type == "break" || x.type == "comment"))
 class Note {
-    constructor(value, playTime, tempo, BPM, delta, shifts='keep', oors='keep') {
-        this.original   =  value
+    constructor(value, playTime, tempo, BPM, delta, shifts='keep', oors='keep', skipOrdering=false) {
+        if(typeof(value) == 'object') // Copy constructor
+            var { original, value, playTime, tempo, BPM, delta, shifts, oors } = value
+
+        this.original   =  original ?? value
         this.value      =  value
         this.playTime   =  playTime
         this.delta      =  delta
@@ -15,11 +18,13 @@ class Note {
         this.tempo      =  tempo
         this.BPM        =  BPM
         
-        // Only correct at runtime
-        this.transposition = () => this.value - this.original
-
         this.valid      = (value >= 21 && value <= 108)
         this.outOfRange = (value <= 35 || value >=  97)
+        
+        if(skipOrdering) {
+            this.displayValue = value
+            return
+        }
 
         // Make sure that capital notes go before lowercase ones
         if (capitalNotes.includes(this.char)) {
@@ -42,15 +47,19 @@ class Note {
         else this.displayValue = value
     }
     
-    new_with_saved_original(newValue) {
-        let result = new Note(newValue, this.playTime, this.tempo, this.BPM, this.delta, this.shifts, this.oors)
-        result.original = this.original
+    get transposition() {
+        return this.value - this.original
+    }
+    
+    static new_with_saved_original(note, newValue, skipOrdering = false) {
+        let result = new Note(newValue, note.playTime, note.tempo, note.BPM, note.delta, note.shifts, note.oors, skipOrdering)
+        result.original = note.original
         return result
     }
 }
 
 class Chord {
-    constructor(notes, classicChordOrder = true, sequentialQuantize = true) {
+    constructor(notes, classicChordOrder = true, sequentialQuantize = true, skipProcessing = false) {
         let is_quantized = false
         let previous_note = notes[0]
         
@@ -59,6 +68,10 @@ class Chord {
         this.classicChordOrder = classicChordOrder
         this.sequentialQuantize = sequentialQuantize
         
+        if(skipProcessing) {
+            this.notes = notes
+            return
+        }
 
         for (let note of notes) {
             if (note.playTime != previous_note.playTime) {
@@ -92,22 +105,20 @@ class Chord {
     }
     
     get transposition() {
-        return this.chord?.notes?.[0]?.transposition
+        return this.notes?.[0]?.transposition
     }
     
-    transpose = (by, relative = false, mutate = false) => {
-        if (relative) {
-            by = this.notes[0].transposition() + by
-        }
+    transpose = (by, relative = false, mutate = false, skipOrdering = false) => {
+        if (relative)
+            by = this.transposition + by
         
         let new_chord = new Chord(this.notes, this.classicChordOrder, this.sequentialQuantize)
-        for (let i = 0; i < new_chord.notes.length; i++) {
-            let assignee = mutate ? this : new_chord 
-            let new_notes = assignee.notes.map(note => note.new_with_saved_original(note.original + by)) // create a note with the correct "original" value
-            new_chord = new Chord(new_notes, this.classicChordOrder, this.sequentialQuantize)
-            assignee.notes = new_chord.notes
-        }
+        let assignee = mutate ? this : new_chord 
 
+        let new_notes = assignee.notes.map(note => Note.new_with_saved_original(note, note.original + by, skipOrdering)) // create a note with the correct "original" value
+        new_chord = new Chord(new_notes, this.classicChordOrder, this.sequentialQuantize, skipOrdering)
+
+        assignee.notes = new_chord.notes
         return new_chord
     }
     
@@ -264,7 +275,7 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     let nextBPM = bpm
     let nextTempo = bpm*4166.66 // Magic number
 
-    const validNoteSpeed = (event) => { event.tempo && event.tempoBPM && event.tempo !== 0 && event.tempoBPM !== 0 }
+    const validNoteSpeed = (event) => event.tempo && event.tempoBPM && event.tempo !== 0 && event.tempoBPM !== 0
 
     let index = 0
 
@@ -276,8 +287,8 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
         let chord_previously = chord_at(index)
 
         if (chord_previously && ![0, undefined].includes(chord_previously.transposition)) {
-            chord.transpose(chord_previously.notes[0].transposition(), false, true)
-            console.log('pttp', chord)
+            chord.transpose(chord_previously.notes[0].transposition, false, true)
+            // console.log('pttp', chord)
         }
     }
             
@@ -344,12 +355,10 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
 
     chords.push(resulting_chord)
     index++
-
+    
     if (!previousTempo)
         console.log(`No tempo found in sheet, set to ${nextBPM}/${nextTempo}`); 
     
-    // console.log(chords)
-
     return { chords: chords, hasTempo: !(!previousTempo) }
 }
 
@@ -368,38 +377,49 @@ const lowercases = '1234567890qwertyuiopasdfghjklzxcvbnm'
 export const lowerOorScale = lowercases.slice(0, 15)
 export const upperOorScale = lowercases.slice(15, 27)
 
-/* Higher is better */
-function score(chord) {
-    let good_notes = chord.notes.filter(note => note.outOfRange === false && note.valid === true)
-   
-    let lowercase_notes = good_notes.filter(note => lowercases.includes(note.char))
-    let uppercase_notes = good_notes.filter(note => !(lowercases.includes(note.char)))
-
-    return ((good_notes.length * 2) + Math.abs(uppercase_notes.length-lowercase_notes.length))
-}
-
+/**
+ * Does not mutate
+ * @param {object} chord 
+ * @param {number} deviation 
+ * @param {number} stickTo 
+ * @param {number} resilience 
+ * @returns {number[]} best multiple transpositions
+ */
 function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience = 0) {
     if (!chord) return
 
-    // console.log(chord)
-    
     // console.log('[btfc] entry:', chord.display())
     if (not_chord(chord)) return stickTo
     
     let best_transpositions = [stickTo]
     
-    // reconsider: oors are valid notes
-    let good_note_count = chord.notes.filter(note => note.outOfRange === false && note.valid === true).length
-    // console.log('goodnote count: ' + good_note_count)
-    
-    // let at_least_this_much_better = goodnote_count / 2
+    /** 
+     * Scores a chord based on how ... homogeneous? it is (higher is better)
+     */
+    function score(chord) {
+        let good_notes = 0
+        let lowercase_notes = 0
+        let uppercase_notes = 0
 
-    let best_score = score(chord.transpose(stickTo))
+        for (let note of chord.notes) {
+            // reconsider: oors are valid notes
+            if (note.outOfRange) continue
+            if (!note.valid) continue
+            
+            good_notes++
+
+            lowercases.includes(note.char) ? lowercase_notes++ : uppercase_notes++
+        }
+
+        return ((good_notes * 2) + Math.abs(uppercase_notes-lowercase_notes))
+    }
+
+    let best_score = score(chord.transpose(stickTo, false, false, true))
     
     let consider = (n) => {
         let attempt_score = score(chord.transpose(n))
-        if (attempt_score > best_score) {
-            // console.log(`transposed by ${n} is better than ${best_transpositions} (${attempt_score} > ${best_score})`)
+        if (attempt_score > best_score + resilience) {
+            // console.log(`transposed by ${n} is better (${attempt_score} > ${best_score})`)
             best_score = attempt_score
             best_transpositions = [n]
         }
@@ -410,49 +430,75 @@ function best_transposition_for_chord(chord, deviation, stickTo = 0, resilience 
         }
         return attempt_score
     }
+
+    // console.log('btfc prelude done')
     
-    for (let i = +stickTo; i <= deviation; i++) {
+    let limit = stickTo + deviation
+    for (let i = +stickTo; i <= limit; i++) {
         // console.log(`transposed by +${+i}: ${chord.transpose(+i).display()}; score: ${score(chord.transpose(+i))}`)
         consider(+i)
         // console.log(`transposed by ${-i}: ${chord.transpose(-i).display()}; score: ${score(chord.transpose(-i))}`)
         consider(-i)
+        // console.log('considered', i)
     }
     
-    // console.log(`best transposition for ${chord.display()} is ${best_transpositions} (${chord.transpose(best_transpositions).display()})`)
-
+    // console.log(`best transposition for ${chord.display()} is ${best_transpositions}`)
     return best_transpositions
 }
 
-function best_transposition_for_chords(chords, deviation, stickTo = 0, resilience = 4) {
-    // console.log('[btfcs] entry:', chords)
+/**
+ * Converts all chords into one before processing it
+ * @param {number[]} [ignores=[]] 
+ */
+function best_transposition_for_monochord(chords, deviation, stickTo = 0, resilience = 4, ignores = []) {
+    let notes = []
     
-    let best_transpositions_for_each_chord = chords.map((chord) => best_transposition_for_chord(chord, deviation, stickTo, resilience))
-    // console.log('best transpositions for each chord: ', best_transpositions_for_each_chord)
-    
-    // // Most occurences of a single transposition (TODO: maybe reconsider)
-    let best_count = 0
-    let best_transposition_overall = 0
-    let seen = []
-    
-    // mono type thing
-    best_transpositions_for_each_chord = best_transpositions_for_each_chord.flat()
-
-    for (let transposition of best_transpositions_for_each_chord) {
-        if (seen.includes(transposition)) continue
-        seen.push(transposition)
-
-        let occurences = best_transpositions_for_each_chord.filter(x => x == transposition)
-        let count = occurences.length
-        if (count > best_count + resilience/2) {
-            best_count = count
-            best_transposition_overall = transposition
+    for (let chord of chords) {
+        if (not_chord(chord)) continue
+        for (let note of chord.notes) {
+            notes.push(new Note(note, 0, 0, 0, 0, 0, 0, true)) // ...
         }
     }
+
+    let monochord = new Chord(notes, false, false, true)
     
-    // console.log(best_transposition_overall)
-    
-    return best_transposition_overall
+    let bests = best_transposition_for_chord(monochord, deviation, stickTo, resilience)
+    let result =  bests.filter(x => !ignores.includes(x))[0] ?? bests[0] // If impossible to ignore, return the first one
+        
+    // console.log('all bests', bests)
+    // console.log('returning', result)
+    return result
 }
+
+// function best_transposition_for_chords(chords, deviation, stickTo = 0, resilience = 4) {
+//     // console.log('[btfcs] entry:', chords)
+    
+//     let best_transpositions_for_each_chord = chords.map((chord) => best_transposition_for_chord(chord, deviation, stickTo, resilience))
+//     // console.log('best transpositions for each chord: ', best_transpositions_for_each_chord)
+    
+//     // // Most occurences of a single transposition (TODO: maybe reconsider)
+//     let best_count = 0
+//     let best_transposition_overall = 0
+//     let seen = []
+    
+//     best_transpositions_for_each_chord = best_transpositions_for_each_chord.flat()
+
+//     for (let transposition of best_transpositions_for_each_chord) {
+//         if (seen.includes(transposition)) continue
+//         seen.push(transposition)
+
+//         let occurences = best_transpositions_for_each_chord.filter(x => x == transposition)
+//         let count = occurences.length
+//         if (count > best_count + resilience/2) {
+//             best_count = count
+//             best_transposition_overall = transposition
+//         }
+//     }
+    
+//     // console.log(best_transposition_overall)
+    
+//     return best_transposition_overall
+// }
 
 function separator(beat, difference) {
     if (difference < beat / 4)
@@ -504,8 +550,9 @@ function index_of_index(arr, targetIndex) {
 export { 
     vpScale, Note, Chord, 
     generateChords as generateSheet, 
-    best_transposition_for_chords, 
+    // best_transposition_for_chords, 
     best_transposition_for_chord,
+    best_transposition_for_monochord,
     index_of_index,
     separator,
     is_chord, not_chord

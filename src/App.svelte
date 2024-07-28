@@ -7,7 +7,7 @@
 <script>
     import { domToBlob } from "modern-screenshot";
     import { getMIDIFileFromArrayBuffer, getEvents, getTempo } from './utils/MIDI.js'
-	import { generateSheet as generateChords, best_transposition_for_chords, Chord as ChordObject, Note, is_chord, not_chord, index_of_index } from './utils/VP.js'
+	import { generateSheet as generateChords, best_transposition_for_monochord, Chord as ChordObject, Note, is_chord, not_chord, index_of_index } from './utils/VP.js'
     let real_index_of = (x) => index_of_index(chords_and_otherwise, x)
     let chord_at = (x) => chords_and_otherwise[real_index_of(x)]
 
@@ -163,8 +163,6 @@
         chords_and_otherwise = res.chords
         settings.missingTempo = !res.hasTempo
         
-        console.log(chords_and_otherwise)
-
         let only_chords = chords_and_otherwise.filter(e => is_chord(e))
         only_chords.forEach((chord, i) => { 
             chord.next = { notes: [ { playTime: only_chords[i+1]?.notes[0]?.playTime } ] }
@@ -282,8 +280,9 @@
     }
 
     let autoRegion = (left, right, opts = undefined) => {
-        let stickTo = opts?.stickTo ?? 0
+        let stickTo = opts?.stickTo
         let skipSave = opts?.skipSave ?? false
+        let ignorePrevious = opts?.ignorePrevious ?? false
     
         let chords_in_region = []
         for (let i = left; i <= right; i++) {
@@ -294,7 +293,8 @@
         if (stickTo == 'same')
             stickTo = chords_in_region[0].notes[0].transposition()
 
-        let best = best_transposition_for_chords(chords_in_region, 11, stickTo, settings.resilience ?? 4)
+        let ignores = ignorePrevious ? [chords_in_region[0].notes[0].transposition] : []
+        let best = best_transposition_for_monochord(chords_in_region, 11, stickTo, settings.resilience ?? 4, ignores)
         transposeRegion(left, right, best, { relative: false, skipSave: true })
 
         repopulateTransposeComments()
@@ -310,7 +310,7 @@
         chords_and_otherwise = chords_and_otherwise.filter(e => { /* console.log(e); */ return e.kind != "transpose" })
 
         let first_note = next_not(chords_and_otherwise, not_chord, 0).notes[0]
-        let initial_transposition = first_note.transposition()
+        let initial_transposition = first_note.transposition
 
         // Add first transpose comment
         chords_and_otherwise.splice(0, 0, { type: "comment", kind: "transpose", text: `Transpose by: ${-initial_transposition}`, notop: true  })
@@ -321,7 +321,7 @@
             let current = chords_and_otherwise[i]
             if (not_chord(current)) continue
 
-            let transposition = current.notes[0].transposition()
+            let transposition = current.notes[0].transposition
             let difference = transposition - previous_transposition
 
             if (difference != 0) {
@@ -378,13 +378,13 @@
 
         let chord = chords_and_otherwise[real_index_of(regions[0].left)]
 
-        let previous_transposition = chord.notes[0]?.transposition() ?? 0
+        let previous_transposition = chord.notes[0]?.transposition ?? 0
         // console.log('prevt:', previous_transposition);
         for (let region of regions) {
             // console.log('transposing region', region.left, region.right)
             let best = autoRegion(region.left, region.right, { 
                 stickTo: previous_transposition, 
-                skipSave: true 
+                skipSave: true,
             })
             previous_transposition = best
             // console.log('prevt:', previous_transposition);
@@ -635,7 +635,7 @@
     
     function continueTranspose(direction /* 'ltr' or 'rtl' */) {
         let start = (direction == 'ltr' ? selection.left : selection.right)
-        let transposition = chords_and_otherwise[real_index_of(start)].notes[0].transposition()
+        let transposition = chords_and_otherwise[real_index_of(start)].notes[0].transposition
 
         transposeRegion(selection.left, selection.right, transposition)
     }
@@ -738,18 +738,20 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                     <button class="w-full block" on:click={() => { transposeRegion(selection.left, selection.right, 1, { relative: true }); repopulateTransposeComments() }}>Transpose selection down</button>
                     <button class="w-full block" on:click={() => { transposeRegion(selection.left, selection.right, -1, { relative: true }); repopulateTransposeComments() }}>Transpose selection up</button>
                 </div>
-                <button on:click={() => { autoRegion(selection.left, selection.right) }}>Auto-transpose (single)</button>
+                <button on:click={() => { autoRegion(selection.left, selection.right, {ignorePrevious: true})}}>Auto-transpose (single)</button>
                 <button on:click={() => { multiTransposeRegion(selection.left, selection.right) }}>Auto-transpose (multi)</button>
-                <div class="flex flex-row justify-around items-stretch gap-2">
-                    <button class="w-full block" on:click={() => { splitLineAt(selection.left) }}>Split selection</button>
-                    <button class="w-full block" on:click={() => { joinRegion(selection.left, selection.right) }}>Join selection</button>
-                </div>
-                <button on:click={() => { addComment(selection.left) }}>Add a comment</button>
+
                 <!-- Continue transpose L/R -->
                 <div class="flex flex-row justify-around items-stretch gap-2">
                     <button class="w-full block" on:click={() => { continueTranspose('rtl') }}>Continue transposition (right to left)</button>
                     <button class="w-full block" on:click={() => { continueTranspose('ltr') }}>Continue transposition (left to right)</button>
                 </div>
+                <hr class="my-2 mx-1">
+                <div class="flex flex-row justify-around items-stretch gap-2">
+                    <button class="w-full block" on:click={() => { splitLineAt(selection.left) }}>Split selection</button>
+                    <button class="w-full block" on:click={() => { joinRegion(selection.left, selection.right) }}>Join selection</button>
+                </div>
+                <button on:click={() => { addComment(selection.left) }}>Add a comment</button>
                 {/if}
             </div>
             <SheetOptions
