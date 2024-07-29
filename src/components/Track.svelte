@@ -5,5 +5,5 @@
 
 <div id="track" class="flex flex-row align-middle">
     <input id="trackbox{idx}" type="checkbox" style="transform: scale(1.5)" bind:checked={selected}>
-    <label for="trackbox{idx}" class="mx-2">Track {idx} ({track.getTrackLength()} events)</label>
+    <label for="trackbox{idx}" class="mx-2">Track {idx} ({track})</label>
 </div>

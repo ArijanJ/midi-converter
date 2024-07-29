@@ -6,7 +6,7 @@
 
 <script>
     import { domToBlob } from "modern-screenshot";
-    import { getMIDIFileFromArrayBuffer, getEvents, getTempo } from './utils/MIDI.js'
+    import { getMIDIFileFromArrayBuffer, getEvents, getTracks, getTempo } from './utils/MIDI.js'
 	import { generateSheet as generateChords, best_transposition_for_monochord, Chord as ChordObject, Note, is_chord, not_chord, index_of_index } from './utils/VP.js'
     let real_index_of = (x) => index_of_index(chords_and_otherwise, x)
     let chord_at = (x) => chords_and_otherwise[real_index_of(x)]
@@ -147,7 +147,7 @@
             if(!getTempo(MIDIObject).ticksPerBeat)
                 console.error("No ticksPerBeat in this midi file")
 
-            tracks = MIDIObject.tracks
+            tracks = getTracks(MIDIObject)
             selectedTracks = tracks.map(() => true)
 
             sheetReady = false
@@ -158,6 +158,9 @@
     let saveSheet = () => {
         if (!MIDIObject) { console.log('no midiobject'); return }
         let events = getEvents(MIDIObject, selectedTracks)
+
+        // console.log(MIDIObject.getEvents())
+        
         let res = generateChords(events, settings, chords_and_otherwise)
 
         chords_and_otherwise = res.chords
