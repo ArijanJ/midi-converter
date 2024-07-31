@@ -157,6 +157,7 @@
 
     let saveSheet = () => {
         if (!MIDIObject) { console.log('no midiobject'); return }
+        console.log(MIDIObject.tracks)
         let events = getEvents(MIDIObject, selectedTracks)
 
         // console.log(MIDIObject.getEvents())
@@ -772,8 +773,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                     transition: all 0.6s ease-in-out;">
         <div id="tracks" class="flex flex-col gap-2">
         {#if tracks}
-            {#each tracks as track, idx}
-                <Track {track} idx={idx+1}
+            {#each tracks as { name, length }, idx}
+                <Track {name} {length} idx={idx+1}
                 bind:selected={selectedTracks[idx]} />
             {/each}
         {/if}

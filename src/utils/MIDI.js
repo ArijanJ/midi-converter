@@ -50,20 +50,14 @@ function getTracks(MIDIObject) {
     let tracks = []
 
     MIDIObject.tracks.forEach((track) => {
-        tracks.push("Unknown")
+        tracks.push({ name: "Unknown", length: track.getTrackLength() })
     })
 
-    
     let track_index = 0
     for (let event of MIDIObject.getEvents()) {
-        if (event.type == MIDIEvents.EVENT_META &&
-            event.subtype == MIDIEvents.EVENT_META_TRACK_NAME) {
-            
-
+        if (event.type == MIDIEvents.EVENT_META && event.subtype == MIDIEvents.EVENT_META_TRACK_NAME) {
             let name = new TextDecoder().decode(new Uint8Array(event.data))
-            console.log(name)
-            tracks[track_index] = name
-            
+            tracks[track_index].name = name
             track_index++
         }
     }
