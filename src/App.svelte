@@ -144,6 +144,8 @@
         await fileInput.files[0].arrayBuffer().then((arrbuf) =>{
             MIDIObject = getMIDIFileFromArrayBuffer(arrbuf)
 
+            let tempo = getTempo(MIDIObject).ticksPerBeat
+
             if(!getTempo(MIDIObject).ticksPerBeat)
                 console.error("No ticksPerBeat in this midi file")
 
@@ -159,10 +161,8 @@
         if (!MIDIObject) { console.log('no midiobject'); return }
         console.log(MIDIObject.tracks)
         let events = getEvents(MIDIObject, selectedTracks)
-
-        // console.log(MIDIObject.getEvents())
         
-        let res = generateChords(events, settings, chords_and_otherwise)
+        let res = generateChords(events, settings, chords_and_otherwise, getTempo(MIDIObject).ticksPerBeat)
 
         chords_and_otherwise = res.chords
         settings.missingTempo = !res.hasTempo

@@ -1,3 +1,5 @@
+import MIDIEvents from "midievents"
+
 const firstPossibleNote  =  21
 const lastPossibleNote   =  108
 
@@ -239,9 +241,57 @@ function BPMComment(previousBPM, newBPM, type, minimum) /*  */ {
 }
 
 const SET_TEMPO = 0x51
-function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, previous_chords = undefined) {
+function generateChords(events /* note_on, set_tempo and time_signature */, settings, previous_chords = undefined, ticks_per_quarter = 480) {
     const error_range = 0.5
     let penalty = 0.000
+    
+    let previous_tick = 0
+    
+    // current_time_signature = events.find(event => (event.type == MIDIEvents.EVENT_META && event.subtype == MIDIEvents.EVENT_META_TIME_SIGNATURE))
+    // console.log('time sigs', events.filter(event => (event.type == MIDIEvents.EVENT_META && event.subtype == MIDIEvents.EVENT_META_TIME_SIGNATURE)))
+    
+    // let previous_time_signature = { data: [0, 0, 0, 0] } // Make sure to change initially
+    let currentOffset = 0
+
+    let current_time_signature = { data: [4, 2, 24, 8] } // Assume 4/4 if none available
+    let set_time_signature = (event) => {
+        current_time_signature = {
+            break_acked: false,
+            numerator: event.data[0],
+            denominator: event.data[1],
+            metronome: event.data[2],
+            thirtyseconds: event.data[3],
+            tempo: current_time_signature.tempo ?? 500000,
+            get ticks_per_bar() {
+                return this.numerator * ticks_per_quarter
+            }
+        }
+    }
+    
+    let lastCompareTime = 0
+    function didEnoughBars(note) {
+        if (current_time_signature.break_acked === false) {
+            current_time_signature.break_acked = true
+            return true // Always break on time signature changes (is this correct? :shrug:)
+        }
+        
+        let error_range = +0.5
+        if (!note) return false
+        
+        let goal = current_time_signature.tempo/1000 * (current_time_signature.numerator)
+        currentOffset += note.playTime - lastCompareTime
+        
+        console.log('goal:', goal, 'currentOffset:', currentOffset)
+        console.log('diff', note.playTime - lastCompareTime)
+        
+        lastCompareTime = note.playTime
+
+        if (currentOffset + error_range >= goal) {
+            console.log("breaking")
+            return true
+        }
+        return false
+    }
 
     function shouldBreak(note, penalty) {
         // console.log("tobreak:", note)
@@ -294,29 +344,47 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             
     // Generate chords
     events.forEach(element => {
-        if (element.subtype == SET_TEMPO && validNoteSpeed(element)) {
-            nextTempo = element.tempo
-            nextBPM = element.tempoBPM
-            if (previousTempo == undefined) {
-                if(settings.bpmChanges)
-                    chords.push({ type: 'comment', kind: 'tempo', text: `Tempo: ${Math.round(element.tempoBPM)} BPM` })
+        if (element.type == MIDIEvents.EVENT_META) {
+            switch (element.subtype) {
+                case MIDIEvents.EVENT_META_TIME_SIGNATURE:
+                    set_time_signature(element)
+                    console.log('current_time_signature:', current_time_signature)
+                    return
+
+                case MIDIEvents.EVENT_META_SET_TEMPO:
+                    console.log('new tempo:', element.tempo)
+                    current_time_signature.tempo = element.tempo
+                    current_time_signature.break_acked = false
+                    
+                    nextTempo = element.tempo
+                    nextBPM = element.tempoBPM
+                    if (previousTempo == undefined) {
+                        if(settings.bpmChanges)
+                            chords.push({ type: 'comment', kind: 'tempo', text: `Tempo: ${Math.round(element.tempoBPM)} BPM` })
+                    }
+                    else if (previousTempo != undefined && (previousTempo != element.tempo) && (previousBPM != element.tempoBPM)) {
+                        if(settings.bpmChanges) {
+                            let comment = BPMComment(Math.round(previousBPM), Math.round(element.tempoBPM), settings.bpmType, settings.minSpeedChange)
+                            if (comment) chords.push(comment)
+                        }
+                    }
+                    previousBPM = element.tempoBPM
+                    previousTempo = element.tempo
+                    return
             }
-            else if (previousTempo != undefined && (previousTempo != element.tempo) && (previousBPM != element.tempoBPM)) {
-                if(settings.bpmChanges) {
-                    let comment = BPMComment(Math.round(previousBPM), Math.round(element.tempoBPM), settings.bpmType, settings.minSpeedChange)
-                    if (comment) chords.push(comment)
-                }
-            }
-            previousBPM = element.tempoBPM
-            previousTempo = element.tempo
-            return
         } 
+        
+        if (element.type != MIDIEvents.EVENT_MIDI && element.subtype != MIDIEvents.EVENT_MIDI_NOTE_ON)
+            return
+        
         // event is NOTE_ON
         const key      = element.param1; if (!key) return
         const playtime = element.playTime
         const delta    = element.delta
 
         if (lastPlaytime == undefined) lastPlaytime = playtime
+        
+        console.log('note:', element)
 
         if (Math.abs(playtime - lastPlaytime) < quantize) {
             current_notes.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
@@ -342,9 +410,10 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             lastPlaytime = playtime
         }
 
-        const { doBreak, newPenalty } = shouldBreak(current_notes[0], penalty)
-        penalty = newPenalty
-        if(doBreak) { chords.push({type: 'break'}) }
+        if(didEnoughBars(current_notes[0])) { 
+            chords.push({type: 'break'}) 
+            currentOffset = 0
+        }
     })
 
     // Final chord insertion to make sure no notes are left

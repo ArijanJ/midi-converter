@@ -7,6 +7,7 @@ function getMIDIFileFromArrayBuffer(array_buffer) {
 
 function getTempo(MIDIObject) {
     if (MIDIObject.header.getTimeDivision() === MIDIFile.Header.TICKS_PER_BEAT) {
+        console.log('tpb', MIDIObject.header.getTicksPerBeat())
         return { ticksPerBeat: MIDIObject.header.getTicksPerBeat() }
     } else {
         return { 
@@ -24,8 +25,18 @@ function getEvents(MIDIObject, tracks) {
     events.forEach((event) => {
         // console.log(event)
         
-        if (event.subtype == MIDIEvents.EVENT_META_SET_TEMPO)
+        if(event.type == MIDIEvents.EVENT_META) {
+            let pushabes = [
+                MIDIEvents.EVENT_META_SET_TEMPO,
+                MIDIEvents.EVENT_META_TIME_SIGNATURE,
+            ]
+            
+            if (!pushabes.includes(event.subtype)) return
+            
             totalEvents.push(event)
+            
+            return
+        }
 
         if (event.subtype != EVENT_MIDI_NOTE_ON) return
 
