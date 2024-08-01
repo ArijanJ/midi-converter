@@ -266,6 +266,8 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
                 return this.numerator * ticks_per_quarter
             }
         }
+
+        current_time_signature.tickResolution = current_time_signature.tempo / ticks_per_quarter
     }
     
     let lastCompareTime = 0
@@ -277,7 +279,8 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
         
         let error_range = +0.5
         if (!note) return false
-        
+
+        console.log("TIME AND TICKS:", note.playTime, Math.round(note.playTime * 1000 / current_time_signature.tickResolution))
         let goal = current_time_signature.tempo/1000 * (current_time_signature.numerator)
         currentOffset += note.playTime - lastCompareTime
         
@@ -354,6 +357,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
                 case MIDIEvents.EVENT_META_SET_TEMPO:
                     console.log('new tempo:', element.tempo)
                     current_time_signature.tempo = element.tempo
+                    current_time_signature.tickResolution = element.tempo / ticks_per_quarter
                     current_time_signature.break_acked = false
                     
                     nextTempo = element.tempo
