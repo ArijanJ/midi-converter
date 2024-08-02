@@ -144,6 +144,8 @@
         await fileInput.files[0].arrayBuffer().then((arrbuf) =>{
             MIDIObject = getMIDIFileFromArrayBuffer(arrbuf)
 
+            let tempo = getTempo(MIDIObject).ticksPerBeat
+
             if(!getTempo(MIDIObject).ticksPerBeat)
                 console.error("No ticksPerBeat in this midi file")
 
@@ -157,12 +159,10 @@
 
     let saveSheet = () => {
         if (!MIDIObject) { console.log('no midiobject'); return }
-        console.log(MIDIObject.tracks)
+        // console.log(MIDIObject.tracks)
         let events = getEvents(MIDIObject, selectedTracks)
-
-        // console.log(MIDIObject.getEvents())
         
-        let res = generateChords(events, settings, chords_and_otherwise)
+        let res = generateChords(events, settings, chords_and_otherwise, getTempo(MIDIObject).ticksPerBeat)
 
         chords_and_otherwise = res.chords
         settings.missingTempo = !res.hasTempo
@@ -190,13 +190,14 @@
             if(is_chord(chord)) {
                 let new_notes = []
                 for (let note of chord.notes) {
-                    let new_note = new Note(note.value, note.playTime, note.tempo, note.BPM, note.delta, settings.pShifts, settings.pOors)
+                    let new_note = new Note(note.value, note.playTime, note.ticks, note.tempo, note.BPM, note.delta, settings.pShifts, settings.pOors)
                     new_note.original = note.original
                     new_notes.push(new_note)
                 }
                 let new_chord = new ChordObject(new_notes, settings.classicChordOrder, settings.sequentialQuantize)
                 new_chord.index = chord.index
                 new_chord.next = chord.next
+                if('reflow' in chord) new_chord.reflow = chord.reflow
 
                 // new_note = new_note.sort((a, b) => a.displayValue - b.displayValue);
                 chords_and_otherwise[i].notes = new_notes
@@ -213,7 +214,7 @@
 
     try { 
         settings = JSON.parse(localStorage.getItem('preferences')); 
-        settings.beats = 4; settings.bpm = 120 // doesn't make sense to save this
+        settings.beats = 4; settings.breaks = 'realistic'; settings.bpm = 120 // doesn't make sense to save this
     } 
     catch (e) { settings = undefined; }
 	$: {
@@ -222,6 +223,7 @@
         let changed = (key) => settings[key] != oldSettings[key]
     
         if (["beats",
+            "breaks",
             "classicChordOrder",
             "quantize",
             "sequentialQuantize",
@@ -647,7 +649,13 @@
 
 <svelte:window on:keydown={(e) => { 
     if (e.key == "Escape") resetSelection() 
-    if (e.key == "b") { console.log(chord_at(selection.left)) }
+    if (e.key == "b") { 
+        let chord_to_print = chord_at(selection.left)
+        console.log('-----------')
+        console.log(chord_to_print)
+        console.log(chord_to_print.notes[0])
+        console.log('-----------')
+    }
 }}></svelte:window>
 
 <svelte:head>
@@ -752,10 +760,15 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                 </div>
                 <hr class="my-2 mx-1">
                 <div class="flex flex-row justify-around items-stretch gap-2">
-                    <button class="w-full block" on:click={() => { splitLineAt(selection.left) }}>Split selection</button>
                     <button class="w-full block" on:click={() => { joinRegion(selection.left, selection.right) }}>Join selection</button>
+                    <button class="w-full block" on:click={() => { splitLineAt(selection.left) }}>Split selection</button>
                 </div>
-                <button on:click={() => { addComment(selection.left) }}>Add a comment</button>
+                <div class="flex flex-row justify-around items-stretch gap-2">
+                    <button class="w-full block" disabled={settings.breaks != 'realistic'}
+                            title={settings.breaks != 'realistic' ? "Only available with 'Realistic' breaks mode" : "" }
+                            on:click={() => { chord_at(selection.left-1).reflow = true; saveSheet() }}>Make measure beginning</button>
+                    <button class="w-full block" on:click={() => { addComment(selection.left) }}>Add a comment</button>
+                </div>
                 {/if}
             </div>
             <SheetOptions
@@ -821,22 +834,28 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                                     <br>
                                 {/if}
                             {:else if inner.type === "comment"}
-                                {#if previous_thing?.type != "comment" && inner.notop != true}
+                                {#if previous_thing?.type != "comment" && inner.notop != true && inner.kind != 'inline'}
                                     <br>
                                 {/if}
-                                {#if inner.kind == "custom" || inner.kind == "tempo"}
+                                {#if inner.kind == "custom" || inner.kind == "tempo" || inner.kind == "inline"}
                                     <span class="comment" on:click|stopPropagation 
                                       on:keypress|stopPropagation 
                                       contenteditable="true" 
                                       on:contextmenu|preventDefault
                                       style="white-space:pre-wrap;"
                                       on:focusout={(e) => { updateComment(index, e.target.innerText) }}>
+                                        {#if inner.kind == 'inline'}
+                                          {@html inner.text}
+                                        {:else}
                                           {inner.text}
+                                        {/if}
                                     </span>
                                 {:else}
                                     <span on:contextmenu|preventDefault class="comment">{inner.text}</span>
                                 {/if}
-                                <br>
+                                {#if inner.kind != 'inline'}
+                                    <br>
+                                {/if}
                             {/if}
                         {:else}
                             <!-- if it's an actual chord -->

@@ -11,6 +11,7 @@
 
     export let settings = {
         beats: 4,
+        breaks: 'realistic',
         quantize: 35,
         classicChordOrder: true,
         sequentialQuantize: true,
@@ -73,11 +74,20 @@
     <!-- {/if} -->
 
     {#if hasMIDI}
-        <div class='beats'>
-            <label class='slider-label' for='beats-for-newline'>Break lines: </label>
-            <input type='range' id='beats-for-newline' min=1 max=32 bind:value={settings.beats}>
-            <span>Every {settings.beats == 1 ? "1 beat" : `${settings.beats} beats`}</span>
+        <div class='select-div'>
+            <label for='breaks-choice'>Break lines how?</label>
+            <select name='breaks-choice' id='breaks-choice' bind:value={settings.breaks}>
+                <option value='realistic'>Realistically</option>
+                <option value='manual'>Manually</option>
+            </select>
         </div>
+        {#if settings.breaks == 'manual'}
+            <div class='beats'>
+                <label class='slider-label' for='beats-for-newline'>Break lines: </label>
+                <input type='range' id='beats-for-newline' min=1 max=32 bind:value={settings.beats}>
+                <span>Every {settings.beats == 1 ? "1 beat" : `${settings.beats} beats`}</span>
+            </div>
+        {/if}
     {:else}
         <i>Some settings are not available because the original MIDI data is missing.</i>
     {/if}

@@ -48,8 +48,12 @@ input, button, select, textarea {
 	border: 1px solid dimgrey;
 }
 
-select:disabled {
+select:disabled, button:disabled {
 	background-color: #262626 !important;
+}
+
+select:hover:disabled, button:hover:disabled {
+	cursor: not-allowed
 }
 
 button:hover {

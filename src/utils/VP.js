@@ -1,3 +1,5 @@
+import MIDIEvents from "midievents"
+
 const firstPossibleNote  =  21
 const lastPossibleNote   =  108
 
@@ -6,13 +8,14 @@ const capitalNotes = "!@#$%^&*()QWERTYUIOPASDFGHJKLZXCBVNM"
 let is_chord = (x) => { try { return 'notes' in x } catch { return false } }
 let not_chord = (x) => { try { return !is_chord(x) } catch { return true } } // !x || (x.type && (x.type == "break" || x.type == "comment"))
 class Note {
-    constructor(value, playTime, tempo, BPM, delta, shifts='keep', oors='keep', skipOrdering=false) {
+    constructor(value, playTime, ticks, tempo, BPM, delta, shifts='keep', oors='keep', skipOrdering=false) {
         if(typeof(value) == 'object') // Copy constructor
             var { original, value, playTime, tempo, BPM, delta, shifts, oors } = value
 
         this.original   =  original ?? value
         this.value      =  value
         this.playTime   =  playTime
+        this.ticks      =  ticks
         this.delta      =  delta
         this.char       =  vpScale[value - firstPossibleNote]
         this.tempo      =  tempo
@@ -52,7 +55,7 @@ class Note {
     }
     
     static new_with_saved_original(note, newValue, skipOrdering = false) {
-        let result = new Note(newValue, note.playTime, note.tempo, note.BPM, note.delta, note.shifts, note.oors, skipOrdering)
+        let result = new Note(newValue, note.playTime, note.ticks, note.tempo, note.BPM, note.delta, note.shifts, note.oors, skipOrdering)
         result.original = note.original
         return result
     }
@@ -239,11 +242,82 @@ function BPMComment(previousBPM, newBPM, type, minimum) /*  */ {
 }
 
 const SET_TEMPO = 0x51
-function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, previous_chords = undefined) {
-    const error_range = 0.5
-    let penalty = 0.000
+function generateChords(events /* note_on, set_tempo and time_signature */, settings, previous_chords = undefined, ticks_per_beat = 480) {
 
-    function shouldBreak(note, penalty) {
+    let current_time_signature = { data: [4, 2, 24, 8] } // Assume 4/4 if none available
+    let set_time_signature = (event) => {
+        // console.log('got new', event)
+        current_time_signature = {
+            scheduled_break: true,
+            numerator: event.data?.[0] ?? current_time_signature.numerator,
+            denominator: event.data?.[1] ?? current_time_signature.denominator,
+            metronome: event.data?.[2] ?? current_time_signature.metronome,
+            thirtyseconds: event.data?.[3] ?? current_time_signature.thirtyseconds,
+            tempo: event.tempo ?? 500000,
+            get tick_resolution() { // only used for converting from playTime into ticks
+                return current_time_signature.tempo / ticks_per_beat               
+            }
+        }
+    }
+    
+    let current_beat = 0
+    let next_beat_border = 0
+    function break_realistically(note, index = undefined) {
+        if (previous_chords && index) {
+            // console.log(note)
+            if (previous_chords?.[index_of_index(previous_chords, index)]?.reflow === true) {
+                chords.push({type: 'break'})
+                // console.log('reflow break')
+                current_beat = undefined
+            }
+        }
+
+        if (current_time_signature.scheduled_break === true) {
+            // chords.push({type: 'comment', kind: 'inline', text: ' <scheduled break> '})
+            chords.push({type: 'break'})
+            // console.log('scheduled break')
+            current_time_signature.scheduled_break = false
+            current_beat = undefined // set our own starting tick when we see this
+        }
+
+        let current_ticks = note.ticks
+
+        if (current_beat === undefined) { // starting point, may be some delay before first note of bar plays
+            current_beat = 0
+            next_beat_border += note.ticks - next_beat_border + ticks_per_beat
+            // console.log('starting point', next_beat_border)
+            // chords.push({type: 'comment', kind: 'inline', text: `<br>setting goal to ${next_beat_border}<br>`})
+        }
+        
+        // console.log(note)
+        // console.log(`curr: ${current_ticks}, next: ${next_beat_border}`)
+
+        // chords.push({type: 'comment', kind: 'inline', text: `<${current_ticks}>`})
+        
+        if (current_ticks >= next_beat_border) {
+            // chords.push({type: 'comment', kind: 'inline', text: `and a ${current_beat+1} (${current_ticks}/${next_beat_border})<br>`})
+            current_beat++
+            next_beat_border+=ticks_per_beat
+        }
+
+        // Did [x] beats already pass? (for 3/4, 3 beats need to pass for it to be a new bar)
+        // TODO: Is 4/2 handled differently?
+        if (current_beat == current_time_signature.numerator) {
+            // chords.push({type: 'comment', kind: 'inline', text: ' /bar '})
+            // console.log(`________ reached ${current_time_signature.numerator}`)
+
+            // chords.push({type: 'comment', kind: 'inline', text: `and a break<br>`})
+            chords.push({type: 'break'})
+            current_beat = 0
+        }
+
+        // console.log(`this note is at ${current_beat} beats`)
+    }
+
+    // Legacy (non-"realistic" breaks)
+    let penalty = 0
+    const error_range = 0.5
+    function shouldBreak(note, penalty) { 
         // console.log("tobreak:", note)
         if (!note) return false
         let tempo_ms = note.tempo / 1000 // turn 6/52174 into 652.174
@@ -256,7 +330,7 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             return {doBreak: true, newPenalty: penalty + normalizedplaytime}
         }
         return {doBreak: false, newPenalty: penalty}
-    }
+    } 
 
     let quantize = settings.quantize
     let shifts = settings.pShifts
@@ -275,8 +349,6 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
     let nextBPM = bpm
     let nextTempo = bpm*4166.66 // Magic number
 
-    const validNoteSpeed = (event) => event.tempo && event.tempoBPM && event.tempo !== 0 && event.tempoBPM !== 0
-
     let index = 0
 
     const possibly_transpose_to_previous = (chord, index) => {
@@ -285,41 +357,63 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
 
         if (!previous_chords) return
         let chord_previously = chord_at(index)
+        if (chord_previously?.reflow === true) { chord.reflow = true }
 
         if (chord_previously && ![0, undefined].includes(chord_previously.transposition)) {
             chord.transpose(chord_previously.notes[0].transposition, false, true)
             // console.log('pttp', chord)
         }
     }
-            
+    
     // Generate chords
     events.forEach(element => {
-        if (element.subtype == SET_TEMPO && validNoteSpeed(element)) {
-            nextTempo = element.tempo
-            nextBPM = element.tempoBPM
-            if (previousTempo == undefined) {
-                if(settings.bpmChanges)
-                    chords.push({ type: 'comment', kind: 'tempo', text: `Tempo: ${Math.round(element.tempoBPM)} BPM` })
+        if (element.type == MIDIEvents.EVENT_META) {
+            switch (element.subtype) {
+                case MIDIEvents.EVENT_META_TIME_SIGNATURE:
+                    set_time_signature(element)
+                    // offset = Math.round(element.playTime * 1000 / current_time_signature.tick_resolution)
+                    // console.log('TIME_SIGNATURE event: ', current_time_signature)
+                    // Note comments are pushed below, so this comment will show up above the actual affected notes
+                    // chords.push({ type: 'comment', kind: 'inline', text: `<br>(switch to ${current_time_signature.numerator}/${2**current_time_signature.denominator})<br>` })
+                    return
+
+                case MIDIEvents.EVENT_META_SET_TEMPO:
+                    set_time_signature(element)
+                    // current_bar++
+                    // console.log('new TEMPO event: ', current_time_signature)
+                    // chords.push({ type: 'comment', kind: 'inline', text: '<new tempo>' })
+                    
+                    nextTempo = element.tempo
+                    nextBPM = element.tempoBPM
+                    if (previousTempo == undefined) {
+                        if(settings.bpmChanges)
+                            chords.push({ type: 'comment', kind: 'tempo', text: `Tempo: ${Math.round(element.tempoBPM)} BPM` })
+                    }
+                    else if (previousTempo != undefined && (previousTempo != element.tempo) && (previousBPM != element.tempoBPM)) {
+                        if(settings.bpmChanges) {
+                            let comment = BPMComment(Math.round(previousBPM), Math.round(element.tempoBPM), settings.bpmType, settings.minSpeedChange)
+                            if (comment) chords.push(comment)
+                        }
+                    }
+                    previousBPM = element.tempoBPM
+                    previousTempo = element.tempo
+                    return
             }
-            else if (previousTempo != undefined && (previousTempo != element.tempo) && (previousBPM != element.tempoBPM)) {
-                if(settings.bpmChanges) {
-                    let comment = BPMComment(Math.round(previousBPM), Math.round(element.tempoBPM), settings.bpmType, settings.minSpeedChange)
-                    if (comment) chords.push(comment)
-                }
-            }
-            previousBPM = element.tempoBPM
-            previousTempo = element.tempo
-            return
         } 
+        
+        if (element.type != MIDIEvents.EVENT_MIDI && element.subtype != MIDIEvents.EVENT_MIDI_NOTE_ON)
+            return
+        
         // event is NOTE_ON
         const key      = element.param1; if (!key) return
         const playtime = element.playTime
         const delta    = element.delta
+        const ticks    = element.ticks
 
         if (lastPlaytime == undefined) lastPlaytime = playtime
-
+        
         if (Math.abs(playtime - lastPlaytime) < quantize) {
-            current_notes.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
+            current_notes.push(new Note(key, playtime, ticks, nextTempo, nextBPM, delta, shifts, oors))
             lastPlaytime = playtime
         } else {
             if (current_notes.length == 0) {
@@ -337,14 +431,22 @@ function generateChords(events /* Only NOTE_ON & SET_TEMPO events */, settings, 
             index++
 
             current_notes = []
-            current_notes.push(new Note(key, playtime, nextTempo, nextBPM, delta, shifts, oors))
+            current_notes.push(new Note(key, playtime, ticks, nextTempo, nextBPM, delta, shifts, oors))
 
             lastPlaytime = playtime
         }
 
-        const { doBreak, newPenalty } = shouldBreak(current_notes[0], penalty)
-        penalty = newPenalty
-        if(doBreak) { chords.push({type: 'break'}) }
+        switch (settings.breaks) {
+            case 'realistic':
+                // chords = chords.filter((e) => e.kind != "break") // Clean up
+                break_realistically(current_notes[0], index-1)
+                break
+
+            case 'manual':
+                const { doBreak, newPenalty } = shouldBreak(current_notes[0], penalty)
+                penalty = newPenalty
+                if(doBreak) { chords.push({type: 'break'}) }
+        }
     })
 
     // Final chord insertion to make sure no notes are left
@@ -456,7 +558,7 @@ function best_transposition_for_monochord(chords, deviation, stickTo = 0, resili
     for (let chord of chords) {
         if (not_chord(chord)) continue
         for (let note of chord.notes) {
-            notes.push(new Note(note, 0, 0, 0, 0, 0, 0, true)) // ...
+            notes.push(new Note(note, 0, 0, 0, 0, 0, 0, 0, true)) // ...
         }
     }
 
