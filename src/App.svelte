@@ -566,6 +566,12 @@
         renderSelection()
     }
 
+    function selectToBottom() {
+        selection.right = chords_and_otherwise.length - 1
+
+        renderSelection()
+    }
+
     function renderSelection(e) {
         if(!chords_and_otherwise) return
         // console.log('rendering', selection)
@@ -592,6 +598,11 @@
 
     function setSelection(event_or_index) {
         let index = event_or_index.detail?.index ?? event_or_index
+        if (event_or_index.detail?.toBottom) {
+            selection.left = index
+            selectToBottom()
+            return;
+        }
 
         // Double-click to select line
         if (selection.left === index && selection.right === index) {

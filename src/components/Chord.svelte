@@ -24,6 +24,7 @@
                 dispatch("select", { index: +index, by: -1 });
                 break;
             case 1: // Middle mouse button
+                dispatch("select", { index: +index, by: -1, toBottom: true });
                 e.preventDefault();
                 break;
             case 2: // Right mouse button
