@@ -592,6 +592,11 @@
 
     function setSelection(event_or_index) {
         let index = event_or_index.detail?.index ?? event_or_index
+        if (event_or_index.detail?.toBottom) {
+            resetSelection()
+            selection.left = index
+            index = chords_and_otherwise.length - 1
+        }
 
         // Double-click to select line
         if (selection.left === index && selection.right === index) {

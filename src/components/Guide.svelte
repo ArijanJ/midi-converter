@@ -4,7 +4,8 @@
 
 <div id="guide">
     Click on a note to set selection beginning/ending<br>
-    Double-click on a note to select the whole line
+    Double-click on a note to select the whole line<br>
+    Middle-click to select everything below the note<br>
     <hr class="my-2 mx-1">
     Timing:<br>
     <span style="color: {colors.quadruple}">Longer than whole note</span><br>
