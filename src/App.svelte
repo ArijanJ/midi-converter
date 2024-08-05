@@ -783,6 +783,10 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
             />
         </div>
         <Guide />
+        <hr class="mx-2 my-1">
+        <a target="_blank" class="underline text-white" href="https://github.com/ArijanJ/midi-converter/issues">
+            Suggestions, bug reports, or just need help?
+        </a>
     </div>
 
     <section bind:this={trackChooser.element} id="track-chooser" class="z-40 w-full absolute flex flex-col gap-4 justify-center items-center content-center text-2xl"

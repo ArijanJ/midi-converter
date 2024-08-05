@@ -260,6 +260,11 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
         }
     }
     
+    const debug = false
+    let debug_comment = debug 
+        ? (text) => {chords.push({type: 'comment', kind: 'inline', text})}
+        : () => {}
+
     let current_beat = 0
     let next_beat_border = 0
     function break_realistically(note, index = undefined) {
@@ -273,7 +278,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
         }
 
         if (current_time_signature.scheduled_break != false) {
-            // chords.push({type: 'comment', kind: 'inline', text: ' <scheduled break> '})
+            debug_comment(' <scheduled break> ')
             if(current_time_signature.scheduled_break.break !== false)
                 chords.push({type: 'break'})
 
@@ -287,7 +292,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
             current_beat = 0
             next_beat_border += note.ticks - next_beat_border + ticks_per_beat
             // console.log('starting point', next_beat_border)
-            // chords.push({type: 'comment', kind: 'inline', text: `<br>setting goal to ${next_beat_border}<br>`})
+            debug_comment(`<br>setting goal to ${next_beat_border}<br></br>`)
         }
         
         // console.log(note)
@@ -296,7 +301,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
         // chords.push({type: 'comment', kind: 'inline', text: `<${current_ticks}>`})
         
         if (current_ticks >= next_beat_border) {
-            // chords.push({type: 'comment', kind: 'inline', text: `and a ${current_beat+1} (${current_ticks}/${next_beat_border})<br>`})
+            debug_comment(`and a ${current_beat+1} (${current_ticks}/${next_beat_border})`)
             current_beat++
             next_beat_border+=ticks_per_beat
         }
@@ -305,9 +310,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
         // TODO: Is 4/2 handled differently?
         if (current_beat == current_time_signature.numerator) {
             // chords.push({type: 'comment', kind: 'inline', text: ' /bar '})
-            // console.log(`________ reached ${current_time_signature.numerator}`)
-
-            // chords.push({type: 'comment', kind: 'inline', text: `and a break<br>`})
+            debug_comment(`and a break`)
             chords.push({type: 'break'})
             current_beat = 0
         }
@@ -375,7 +378,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
                     // offset = Math.round(element.playTime * 1000 / current_time_signature.tick_resolution)
                     // console.log('TIME_SIGNATURE event: ', current_time_signature)
                     // Note comments are pushed below, so this comment will show up above the actual affected notes
-                    // chords.push({ type: 'comment', kind: 'inline', text: `<br>(switch to ${current_time_signature.numerator}/${2**current_time_signature.denominator})<br>` })
+                    debug_comment(`<br>(switch to ${current_time_signature.numerator}/${2**current_time_signature.denominator})<br>`)
                     return
 
                 case MIDIEvents.EVENT_META_SET_TEMPO:
@@ -383,7 +386,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
                     current_time_signature.scheduled_break = { break: false }
                     // current_bar++
                     // console.log('new TEMPO event: ', current_time_signature)
-                    // chords.push({ type: 'comment', kind: 'inline', text: '<new tempo>' })
+                    debug_comment(` <new tempo: ${current_time_signature.numerator}/${2 ** current_time_signature.denominator}>`)
                     
                     nextTempo = element.tempo
                     nextBPM = element.tempoBPM
