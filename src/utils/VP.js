@@ -272,10 +272,11 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
             }
         }
 
-        if (current_time_signature.scheduled_break === true) {
+        if (current_time_signature.scheduled_break != false) {
             // chords.push({type: 'comment', kind: 'inline', text: ' <scheduled break> '})
-            chords.push({type: 'break'})
-            // console.log('scheduled break')
+            if(current_time_signature.scheduled_break.break !== false)
+                chords.push({type: 'break'})
+
             current_time_signature.scheduled_break = false
             current_beat = undefined // set our own starting tick when we see this
         }
@@ -379,6 +380,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
 
                 case MIDIEvents.EVENT_META_SET_TEMPO:
                     set_time_signature(element)
+                    current_time_signature.scheduled_break = { break: false }
                     // current_bar++
                     // console.log('new TEMPO event: ', current_time_signature)
                     // chords.push({ type: 'comment', kind: 'inline', text: '<new tempo>' })
