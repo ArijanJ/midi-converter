@@ -223,7 +223,10 @@ function BPMComment(previousBPM, newBPM, type, minimum) /*  */ {
             let text = ""
             let notop = false // Whether to put the comment on the same line
 
-            for (let i = 0; i < Math.floor(percent / 10); i++)
+            let increments = Math.floor(percent / 10)
+            if (increments === 0) increments++
+
+            for (let i = 0; i < increments; i++)
                 text += char
 
             if (text.length > 20) { // would be spam, not worth
