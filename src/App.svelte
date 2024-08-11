@@ -136,7 +136,7 @@
 
             sheetReady = true
             chords_and_otherwise = existingProject.data
-            updateChords()
+            softRegen()
 
             return
         }
