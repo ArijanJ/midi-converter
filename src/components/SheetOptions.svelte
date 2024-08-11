@@ -26,6 +26,7 @@
         minSpeedChange: 10,
         oorSeparator: ':',
         resilience: 2,
+        stickyAutoTransposition: false,
         font: fonts[0],
         lineHeight: 135,
         capturingImage: false,
@@ -45,6 +46,12 @@
                for="atleast">Resilience (?):</label>
         <input class="w-32" id="atleast" type="range" min=0 max=12 bind:value={settings.resilience}>
         <span style="display:flex; align-items: center">{settings.resilience}</span>
+    </div>
+    <div class="flex flex-row mt-3">
+        <label class="flex flex-row items-center"
+               title="Defines whether or not the transposed region(s) should be related to previous regions"
+               for="sticky-auto-transposition">Sticky auto-transposition (?):</label>
+        <input class="mx-1" type='checkbox' id="sticky-auto-transposition" bind:checked={settings.stickyAutoTransposition}>
     </div>
 </div>
 
