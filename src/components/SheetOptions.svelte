@@ -50,7 +50,7 @@
     <div class="flex flex-row mt-3">
         <label class="flex flex-row items-center"
                title="Defines whether or not the transposed region(s) should be related to previous regions"
-               for="atleast">Sticky auto-transposition (?):</label>
+               for="sticky-auto-transposition">Sticky auto-transposition (?):</label>
         <input class="mx-1" type='checkbox' id="sticky-auto-transposition" bind:checked={settings.stickyAutoTransposition}>
     </div>
 </div>
