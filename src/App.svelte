@@ -286,7 +286,7 @@
     }
 
     let autoRegion = (left, right, opts = undefined) => {
-        let stickTo = opts?.stickTo
+        let stickTo = settings.stickyAutoTransposition ? opts?.stickTo : 0
         let skipSave = opts?.skipSave ?? false
         let ignorePrevious = opts?.ignorePrevious ?? false
     
@@ -389,7 +389,7 @@
         for (let region of regions) {
             // console.log('transposing region', region.left, region.right)
             let best = autoRegion(region.left, region.right, { 
-                stickTo: previous_transposition, 
+                stickTo: previous_transposition,
                 skipSave: true,
             })
             previous_transposition = best
