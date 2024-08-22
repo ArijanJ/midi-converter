@@ -100,9 +100,9 @@ function render_chord(chord, next, settings, selected) {
         
         if (draw_as_oor === true) {
             let nonOors = chord.notes.filter(note => note.outOfRange === false)
-            let startOors = chord.notes.filter(note => note.outOfRange === true)
-            let endOors = chord.notes.filter(note => note.outOfRange === true)
-        
+            let startOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value - 1024)
+            let endOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value + 1024)
+
             const isFirstStartOor = (note === startOors[0])
             const isLastStartOor = (note === startOors[startOors.length-1])
             const isFirstEndOorWithoutChord = !isChord && note === endOors[0];
