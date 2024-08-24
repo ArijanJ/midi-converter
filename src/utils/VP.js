@@ -5,7 +5,7 @@ const lastPossibleNote   =  108
 
 const capitalNotes = "!@#$%^&*()QWERTYUIOPASDFGHJKLZXCBVNM"
 
-let is_chord = (x) => { try { return 'notes' in x } catch { return false } }
+let is_chord = (x) => { try { return 'notes' in x && x.notes.length != 0 } catch { return false } }
 let not_chord = (x) => { try { return !is_chord(x) } catch { return true } } // !x || (x.type && (x.type == "break" || x.type == "comment"))
 class Note {
     constructor(value, playTime, ticks, tempo, BPM, delta, shifts='keep', oors='keep', skipOrdering=false) {
@@ -63,6 +63,9 @@ class Note {
 
 class Chord {
     constructor(notes, classicChordOrder = true, sequentialQuantize = true, skipProcessing = false) {
+        if('notes' in notes) // It's actually another chord - copy constructor
+            var { notes, classicChordOrder, sequentialQuantize } = notes       
+        
         let is_quantized = false
         let previous_note = notes[0]
         

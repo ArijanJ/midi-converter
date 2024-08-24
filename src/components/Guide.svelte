@@ -7,6 +7,8 @@
     Double-click on a note to select the whole line<br>
     Middle-click to select everything below the note<br>
     <hr class="my-2 mx-1">
+    Note that <span title="Break every x beats, quantize, and any tempo/BPM changes" class="underline cursor-pointer">some settings</span> must fully regenerate your sheet, so you may lose some manual changes.<br>
+    <hr class="my-2 mx-1">
     Timing:<br>
     <span style="color: {colors.quadruple}">Longer than whole note</span><br>
     <span style="color: {colors.whole}">Whole note (s.... f)</span><br>

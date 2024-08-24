@@ -30,6 +30,7 @@
 
     import SheetActions from "./components/SheetActions.svelte";
     import Guide from "./components/Guide.svelte";
+    import ChordEditor from "./components/ChordEditor.svelte";
 
     let existingProject = {
         element: undefined,
@@ -144,8 +145,6 @@
         await fileInput.files[0].arrayBuffer().then((arrbuf) =>{
             MIDIObject = getMIDIFileFromArrayBuffer(arrbuf)
 
-            let tempo = getTempo(MIDIObject).ticksPerBeat
-
             if(!getTempo(MIDIObject).ticksPerBeat)
                 console.error("No ticksPerBeat in this midi file")
 
@@ -179,7 +178,7 @@
     }
 
     /**
-     * Recreate the chord with existing data (for e.g. reordering purposes)
+     * Recreate all chords with existing data (e.g. for reordering purposes)
      * 
      * Calls updateChords()
      */
@@ -224,7 +223,6 @@
     
         if (["beats",
             "breaks",
-            "classicChordOrder",
             "quantize",
             "sequentialQuantize",
             "minSpeedChange",
@@ -650,6 +648,22 @@
 
         transposeRegion(selection.left, selection.right, transposition)
     }
+    
+    let editChordDialog = undefined
+    let chordToEdit = undefined
+    let editChord = () => {
+        let chord = chord_at(selection.left)
+        if (not_chord(chord)) return
+        chordToEdit = chord
+
+        editChordDialog.showModal()
+    }
+    
+    let chordChanged = (e) => {
+        chords_and_otherwise[real_index_of(chordToEdit.index)].notes = e.detail.notes
+        updateChords()
+        autosave()
+    }
 </script>
 
 <svelte:window on:keydown={(e) => { 
@@ -662,6 +676,10 @@
         console.log('-----------')
     }
 }}></svelte:window>
+
+<!-- Only shown if needed -->
+<ChordEditor chord={chordToEdit} {settings} bind:dialog={editChordDialog} 
+             on:chordChanged={chordChanged}/>
 
 <svelte:head>
     <title>MIDI Converter</title>
@@ -774,6 +792,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                             on:click={() => { chord_at(selection.left-1).reflow = true; saveSheet() }}>Make measure beginning</button>
                     <button class="w-full block" on:click={() => { addComment(selection.left) }}>Add a comment</button>
                 </div>
+
+                <button on:click={() => { editChord() }}>Edit chord</button>
                 {/if}
             </div>
             <SheetOptions
