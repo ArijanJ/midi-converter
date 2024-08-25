@@ -254,7 +254,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
     let set_time_signature = (event) => {
         // console.log('got new', event)
         current_time_signature = {
-            scheduled_break: true,
+            is_new: true,
             numerator: event.data?.[0] ?? current_time_signature.numerator,
             denominator: event.data?.[1] ?? current_time_signature.denominator,
             metronome: event.data?.[2] ?? current_time_signature.metronome,
@@ -266,64 +266,51 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
         }
     }
     
-    let current_beat = 0
-    let next_beat_border = 0
     let previously_reflowed = [] // idk how else to fix this
 
     let debug_comment = (window.debug_timing !== undefined)
         ? (text) => { chords.push({ type: 'comment', kind: 'inline', text }) }
         : () => { }
 
-    function break_realistically(note, index = undefined) {
+    let next_break = 0
+    // 0 = very start of the song
+    // undefined = set our own next loop
 
+    function break_realistically(note, index = undefined) {
         if (previous_chords && index && !previously_reflowed.includes(index)) {
-            // console.log(note)
             if (previous_chords?.[index_of_index(previous_chords, index)]?.reflow === true) {
                 chords.push({type: 'break', why: 'reflow'})
-                current_beat = undefined
+                next_break = undefined
                 previously_reflowed.push(index)
             }
         }
 
-        if (current_time_signature.scheduled_break != false) {
-            debug_comment(' <scheduled break> ')
-            if(current_time_signature.scheduled_break.break !== false)
-                chords.push({type: 'break', why: 'scheduled'})
-
-            current_time_signature.scheduled_break = false
-            current_beat = undefined // set our own starting tick when we see this
-        }
-
         let current_ticks = note.ticks
 
-        if (current_beat === undefined) { // starting point, may be some delay before first note of bar plays
-            current_beat = 0
-            next_beat_border += note.ticks - next_beat_border + ticks_per_beat
-            // console.log('starting point', next_beat_border)
-            debug_comment(`<br>setting goal to ${next_beat_border}<br></br>`)
-        }
-        
-        // console.log(note)
-        // console.log(`curr: ${current_ticks}, next: ${next_beat_border}`)
-
-        // chords.push({type: 'comment', kind: 'inline', text: `<${current_ticks}>`})
-        
-        if (current_ticks >= next_beat_border) {
-            debug_comment(`and a ${current_beat+1} (${current_ticks}/${next_beat_border})`)
-            current_beat++
-            next_beat_border+=ticks_per_beat
+        if (current_time_signature.is_new) {
+            current_time_signature.is_new = false
+            debug_comment(' (scheduled break) ')
+            chords.push({type: 'break', why: 'scheduled'})
+            if(next_break !== 0) next_break = undefined
+            // ^ Still has possibility to get messed up if multiple non-notes come through here before the first note
         }
 
-        // Did [x] beats already pass? (for 3/4, 3 beats need to pass for it to be a new bar)
-        // TODO: Is 4/2 handled differently?
-        if (current_beat == current_time_signature.numerator) {
+        if(!next_break) {
+            // console.log('time sig is', current_time_signature)
+            if(next_break !== 0)
+                next_break = current_ticks
+            next_break += ticks_per_beat * current_time_signature.numerator
+            debug_comment(`<br>setting goal to ${next_break}<br>`)
+        }
+        
+        debug_comment(`(${current_ticks} / ${next_break})`)
+        
+        if(current_ticks >= next_break) {
             // chords.push({type: 'comment', kind: 'inline', text: ' /bar '})
-            debug_comment(`and a break`)
-            chords.push({type: 'break', why: 'beats'})
-            current_beat = 0
+            debug_comment(`and a break<br>`)
+            chords.push({type: 'break', why: 'ticks'})
+            next_break += ticks_per_beat * current_time_signature.numerator
         }
-
-        // console.log(`this note is at ${current_beat} beats`)
     }
 
     // Legacy (non-"realistic" breaks)
@@ -391,8 +378,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
 
                 case MIDIEvents.EVENT_META_SET_TEMPO:
                     set_time_signature(element)
-                    current_time_signature.scheduled_break = { break: false }
-                    // current_bar++
+                    // current_time_signature.is_new = { break: false }
                     // console.log('new TEMPO event: ', current_time_signature)
                     debug_comment(` <new tempo: ${current_time_signature.numerator}/${2 ** current_time_signature.denominator}>`)
                     
