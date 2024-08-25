@@ -195,7 +195,10 @@
                 }
                 let new_chord = new ChordObject(new_notes, settings.classicChordOrder, settings.sequentialQuantize)
                 new_chord.index = chord.index
-                new_chord.next = chord.next
+
+                let next_valid_chord = next_not(chords_and_otherwise, not_chord, real_index_of(chord.index+1))
+                if(!next_valid_chord) next_valid_chord = chord
+                new_chord.next = { notes: [{playTime: next_valid_chord.notes[0].playTime}] }
                 if('reflow' in chord) new_chord.reflow = chord.reflow
 
                 // new_note = new_note.sort((a, b) => a.displayValue - b.displayValue);
@@ -526,7 +529,13 @@
     let has_selection = false
     let selection = {
         left: undefined,
-        right: undefined
+        right: undefined,
+        clear: () => {
+            selection.left = undefined
+            selection.right = undefined
+            updateChords()
+            renderSelection()
+        },
     }
     $: {
         has_selection = selection.left != undefined && selection.right != undefined
@@ -660,8 +669,11 @@
     }
     
     let chordChanged = (e) => {
+        if(e.detail.notes.length === 0) 
+            selection.clear() 
+
         chords_and_otherwise[real_index_of(chordToEdit.index)].notes = e.detail.notes
-        updateChords()
+        softRegen()
         autosave()
     }
 </script>
