@@ -266,20 +266,18 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
         }
     }
     
-    const debug = false
-    let debug_comment = debug 
-        ? (text) => {chords.push({type: 'comment', kind: 'inline', text})}
-        : () => {}
-
     let current_beat = 0
     let next_beat_border = 0
     let previously_reflowed = [] // idk how else to fix this
+
+    let debug_comment = (window.debug_timing !== undefined)
+        ? (text) => { chords.push({ type: 'comment', kind: 'inline', text }) }
+        : () => { }
+
     function break_realistically(note, index = undefined) {
-        let debug_comment = (window.debug_timing !== undefined)
-            ? (text) => { chords.push({ type: 'comment', kind: 'inline', text }) }
-            : () => { }
-        
+
         if (previous_chords && index && !previously_reflowed.includes(index)) {
+            // console.log(note)
             if (previous_chords?.[index_of_index(previous_chords, index)]?.reflow === true) {
                 chords.push({type: 'break', why: 'reflow'})
                 current_beat = undefined
@@ -302,8 +300,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
             current_beat = 0
             next_beat_border += note.ticks - next_beat_border + ticks_per_beat
             // console.log('starting point', next_beat_border)
-            debug_comment(`<br>setting goal to ${next_beat_border}<br>`)
-            chords.push({type: 'break', why: 'nostart'})
+            debug_comment(`<br>setting goal to ${next_beat_border}<br></br>`)
         }
         
         // console.log(note)
@@ -313,22 +310,17 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
         
         if (current_ticks >= next_beat_border) {
             debug_comment(`and a ${current_beat+1} (${current_ticks}/${next_beat_border})`)
-            // Makes it possible for a single note to skip multiple beats
-            // e.g., current_beat is 1920 and next_beat is 480
-            let beats_to_add = (current_ticks - next_beat_border) / ticks_per_beat + 1
-            current_beat+=beats_to_add
-            debug_comment(`adding ${beats_to_add} beats`)
-            next_beat_border += ticks_per_beat * beats_to_add
+            current_beat++
+            next_beat_border+=ticks_per_beat
         }
 
         // Did [x] beats already pass? (for 3/4, 3 beats need to pass for it to be a new bar)
         // TODO: Is 4/2 handled differently?
-        if (current_beat >= current_time_signature.numerator) {
+        if (current_beat == current_time_signature.numerator) {
             // chords.push({type: 'comment', kind: 'inline', text: ' /bar '})
-            debug_comment(`and a break<br>`)
+            debug_comment(`and a break`)
             chords.push({type: 'break', why: 'beats'})
-            current_beat = current_beat - current_time_signature.numerator
-            // next_beat_border+=ticks_per_beat
+            current_beat = 0
         }
 
         // console.log(`this note is at ${current_beat} beats`)
