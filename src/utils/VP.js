@@ -322,7 +322,7 @@ function generateChords(events /* note_on, set_tempo and time_signature */, sett
             debug_comment(`and a break`)
             chords.push({type: 'break', why: 'beats'})
             current_beat = 0
-            next_beat_border+=ticks_per_beat
+            // next_beat_border+=ticks_per_beat
         }
 
         // console.log(`this note is at ${current_beat} beats`)
