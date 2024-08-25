@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher } from "svelte"
+    import { createEventDispatcher, onMount } from "svelte"
     import { render_chord } from "../utils/Rendering"
 
     import { Note, Chord } from "../utils/VP"
@@ -11,11 +11,13 @@
     // Stores the chord while it's being edited (not saved yet in case the user wants to cancel)
     let tempBuffer = undefined
 
-    let overrides = {shifts: undefined, oors: undefined}
+    let overrides = {shifts: undefined, oors: undefined, sequential: undefined}
     let hasOverrides = () => {
-        return !([undefined, 'keep'].includes(overrides.shifts) && [undefined, 'keep'].includes(overrides.oors))
+        return !([undefined, 'keep'].includes(overrides.shifts) 
+                  && [undefined, 'keep'].includes(overrides.oors)
+                  && [undefined].includes(overrides.sequential))
     }    
-
+    
     export let chord = undefined
     $: {
         if (chord?.notes?.length > 0) {
@@ -52,6 +54,7 @@
     }
     
     let updateWithOverrides = () => {
+        console.log('updating with overrides:', overrides)
         let newNotes = tempBuffer.notes.map(n => {
             let newNote = new Note(n.value, n.playTime, n.ticks,
                 n.tempo, n.BPM, n.delta,
@@ -62,7 +65,7 @@
             newNote.original = n.original
             return newNote 
         })
-        let newChord = new Chord(newNotes, false)
+        let newChord = new Chord(newNotes, false, overrides.sequential ?? settings.sequentialQuantize)
         if(hasOverrides()) {
             newChord.overrides = overrides
         }
@@ -74,7 +77,7 @@
         let newChord = new Chord(notes, false)
         if(hasOverrides()) {
             newChord.overrides = tempBuffer.overrides
-            // console.log('sending overrides:', tempBuffer.overrides)
+            console.log('sending overrides:', tempBuffer.overrides)
         }
         dispatch('chordChanged', newChord)
     }
@@ -82,7 +85,7 @@
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<dialog bind:this={dialog} on:close={() => {overrides = {shifts: 'keep', oors: 'keep'}; dispatch('closed')}} 
+<dialog bind:this={dialog} on:close={() => {overrides = {shifts: 'keep', oors: 'keep', sequential: undefined}; dispatch('closed')}} 
         on:click|self={() => {dialog.close(); dispatch('closed')}} 
         class="rounded-lg overflow-hidden p-2">
     <div class="flex flex-col items-center gap-2">
@@ -146,6 +149,18 @@
                             </select>
                         </div>
                     </div>
+                {/if}
+                {#if tempBuffer.is_quantized && tempBuffer.notes.length > 1}
+                <div class='flex flex-row gap-2'>
+                    <label for='sequential'>Sequential quantize:</label>
+                    <input type='checkbox' id='sequential' bind:checked={overrides.sequential}
+                            on:change={() => { 
+                                if (!('overrides' in tempBuffer))
+                                    tempBuffer.overrides = {}
+                                tempBuffer.overrides.sequential = overrides.sequential
+                                updateWithOverrides()
+                            }}>
+                </div>
                 {/if}
                 <hr class="my-2 mx-1 border-gray-500 border-1 w-full">
                 <button on:click={() => { dialog.close(); applyChanges() }}>Apply</button>
