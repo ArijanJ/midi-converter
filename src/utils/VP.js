@@ -33,12 +33,12 @@ class Note {
         if (capitalNotes.includes(this.char)) {
             if (shifts === 'Start') this.displayValue = value - lastPossibleNote
             else if (shifts == 'End') this.displayValue = value + lastPossibleNote
+            else this.displayValue = value
         }
         else if (this.outOfRange) {
             if (oors === 'Start') this.displayValue = value - 1024
             else if (oors == 'End') this.displayValue = value + 1024
-            else {
-                // Inorder
+            else if (oors == 'Inorder') {
                 if (lowerOorScale.includes(this.char)) {
                     this.displayValue = value - 1024
                 }
@@ -46,6 +46,7 @@ class Note {
                     this.displayValue = value + 1024
                 }
             }
+            else this.displayValue = value
         }
         else this.displayValue = value
     }

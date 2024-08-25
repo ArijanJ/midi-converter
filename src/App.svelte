@@ -189,11 +189,12 @@
             if(is_chord(chord)) {
                 let new_notes = []
                 for (let note of chord.notes) {
-                    let new_note = new Note(note.value, note.playTime, note.ticks, note.tempo, note.BPM, note.delta, settings.pShifts, settings.pOors)
+                    let new_note = new Note(note.value, note.playTime, note.ticks, note.tempo, note.BPM, note.delta, chord.overrides?.shifts ?? settings.pShifts, chord.overrides?.oors ?? settings.pOors)
                     new_note.original = note.original
                     new_notes.push(new_note)
                 }
-                let new_chord = new ChordObject(new_notes, settings.classicChordOrder, settings.sequentialQuantize)
+                let new_chord = new ChordObject(new_notes, !chord.overrides?.shifts && settings.classicChordOrder == true, settings.sequentialQuantize)
+                if(chord.overrides) new_chord.overrides = JSON.parse(JSON.stringify(chord.overrides))
                 new_chord.index = chord.index
 
                 let next_valid_chord = next_not(chords_and_otherwise, not_chord, real_index_of(chord.index+1))
@@ -530,12 +531,6 @@
     let selection = {
         left: undefined,
         right: undefined,
-        clear: () => {
-            selection.left = undefined
-            selection.right = undefined
-            updateChords()
-            renderSelection()
-        },
     }
     $: {
         has_selection = selection.left != undefined && selection.right != undefined
@@ -543,7 +538,7 @@
     }
 
     function resetSelection(e) {
-        if (!sheetReady || !selection.left && !selection.right) return
+        if (!sheetReady || selection.left === undefined && !selection.right === undefined) return
 
         for (let i = selection.left; i < chords_and_otherwise.length; i++) {
             const chord = chords_and_otherwise[i]
@@ -556,12 +551,6 @@
 
         selection.left = undefined
         selection.right = undefined
-
-        // for (let event of chords_and_otherwise) {
-        //     if (is_chord(event)) {
-        //         event.selected = undefined
-        //     }
-        // }
 
         updateChords()
     }
@@ -669,10 +658,9 @@
     }
     
     let chordChanged = (e) => {
-        if(e.detail.notes.length === 0) 
-            selection.clear() 
-
-        chords_and_otherwise[real_index_of(chordToEdit.index)].notes = e.detail.notes
+        let recipient = chord_at(chordToEdit.index)
+        recipient.notes = e.detail.notes
+        if(e.detail.overrides) recipient.overrides = e.detail.overrides
         softRegen()
         autosave()
     }
@@ -691,7 +679,7 @@
 
 <!-- Only shown if needed -->
 <ChordEditor chord={chordToEdit} {settings} bind:dialog={editChordDialog} 
-             on:chordChanged={chordChanged}/>
+             on:chordChanged={chordChanged} on:closed={resetSelection}/>
 
 <svelte:head>
     <title>MIDI Converter</title>

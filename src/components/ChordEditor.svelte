@@ -11,6 +11,11 @@
     // Stores the chord while it's being edited (not saved yet in case the user wants to cancel)
     let tempBuffer = undefined
 
+    let overrides = {shifts: undefined, oors: undefined}
+    let hasOverrides = () => {
+        return !([undefined, 'keep'].includes(overrides.shifts) && [undefined, 'keep'].includes(overrides.oors))
+    }    
+
     export let chord = undefined
     $: {
         if (chord?.notes?.length > 0) {
@@ -22,15 +27,16 @@
     export let settings = undefined
     export let dialog = undefined
 
-    let noteToAdd = undefined
-
     let removeNote = (i) => {
         if(i.detail) {
             // This is now a MIDI note value passed from the Keyboard
             i = tempBuffer.notes.findIndex(note => note.original === i.detail)
         }
+        console.log('removing', i, tempBuffer.notes[i])
+
         tempBuffer.notes.splice(i, 1)
-        tempBuffer = new Chord(tempBuffer) // regen for correct sorting
+        
+        updateWithOverrides()
     }
 
     let addNote = (event) => {
@@ -41,19 +47,44 @@
         clone.value = clone.original + transposition
 
         tempBuffer.notes.push(new Note(clone))
-        tempBuffer = new Chord(tempBuffer) // regen for correct sorting
+        
+        updateWithOverrides()
+    }
+    
+    let updateWithOverrides = () => {
+        let newNotes = tempBuffer.notes.map(n => {
+            let newNote = new Note(n.value, n.playTime, n.ticks,
+                n.tempo, n.BPM, n.delta,
+                tempBuffer.overrides?.shifts ?? 'keep',
+                tempBuffer.overrides?.oors ?? 'keep', 
+                false
+            )
+            newNote.original = n.original
+            return newNote 
+        })
+        let newChord = new Chord(newNotes, false)
+        if(hasOverrides()) {
+            newChord.overrides = overrides
+        }
+        tempBuffer = newChord
     }
 
     let applyChanges = () => {
         let notes = tempBuffer.notes.map(n => new Note(n))
-        let newChord = new Chord(notes)
+        let newChord = new Chord(notes, false)
+        if(hasOverrides()) {
+            newChord.overrides = tempBuffer.overrides
+            // console.log('sending overrides:', tempBuffer.overrides)
+        }
         dispatch('chordChanged', newChord)
     }
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<dialog bind:this={dialog} on:click|self={() => {dialog.close()}} class="rounded-lg overflow-hidden p-2">
+<dialog bind:this={dialog} on:close={() => {overrides = {shifts: 'keep', oors: 'keep'}; dispatch('closed')}} 
+        on:click|self={() => {dialog.close(); dispatch('closed')}} 
+        class="rounded-lg overflow-hidden p-2">
     <div class="flex flex-col items-center gap-2">
         <div id="chord" style="background-color: #2D2A32" class="text-2xl p-1 rounded-md">
             {@html render_chord(tempBuffer, undefined, settings, false)}
@@ -80,13 +111,43 @@
                     on:noteon={addNote}
                     on:noteoff={removeNote}/>
 
-                <!-- Don't really need this I suppose? -->
-                <!-- <div id="buttons">
-                    <input type="text" class="w-12" bind:value={noteToAdd}>
-                    <button>Add from QWERTY (at {firstNote.transposition} transposition)</button>
-                </div> -->
+                {#if tempBuffer.notes.length > 1}
+                    <hr class="my-2 mx-1 border-gray-500 border-1 w-full">
+                    <p>Overrides (optional):</p>
+                    <div class="flex flex-row gap-2">
+                        <div class='select-div'>
+                            <label for='shifts-position'>Shifted notes at:</label>
+                            <select name='shifts-position' id='shifts-position' bind:value={overrides.shifts}
+                                    on:change={() => { 
+                                        if (!('overrides' in tempBuffer))
+                                            tempBuffer.overrides = {}
+                                        tempBuffer.overrides.shifts = overrides.shifts
+                                        updateWithOverrides()
+                                    }}>
+                                <option selected value='keep'>Keep</option>
+                                <option value='Start'>Start</option>
+                                <option value='End'>End</option>
+                            </select>
+                        </div>
 
-                <hr class="my-2 mx-1 border-black border-1 w-full">
+                        <div class='select-div'>
+                            <label for='oors-position'>Out of range notes at:</label>
+                            <select name='oors-position' id='oors-position' bind:value={overrides.oors}
+                            on:change={() => { 
+                                if (!('overrides' in tempBuffer))
+                                    tempBuffer.overrides = {}
+                                tempBuffer.overrides.oors = overrides.oors
+                                updateWithOverrides()
+                            }}>
+                                <option selected value='keep'>Keep</option>
+                                <option value='Inorder'>Inorder</option>
+                                <option value='Start'>Start</option>
+                                <option value='End'>End</option>
+                            </select>
+                        </div>
+                    </div>
+                {/if}
+                <hr class="my-2 mx-1 border-gray-500 border-1 w-full">
                 <button on:click={() => { dialog.close(); applyChanges() }}>Apply</button>
             </div>
         {/if}
