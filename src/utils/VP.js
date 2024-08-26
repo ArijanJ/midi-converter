@@ -38,7 +38,7 @@ class Note {
         else if (this.outOfRange) {
             if (oors === 'Start') this.displayValue = value - 1024
             else if (oors == 'End') this.displayValue = value + 1024
-            else if (oors == 'Inorder') {
+            else { /* Inorder or anything else */
                 if (lowerOorScale.includes(this.char)) {
                     this.displayValue = value - 1024
                 }
@@ -46,7 +46,6 @@ class Note {
                     this.displayValue = value + 1024
                 }
             }
-            else this.displayValue = value
         }
         else this.displayValue = value
     }
