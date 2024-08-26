@@ -195,7 +195,7 @@
                 }
                 let new_chord = new ChordObject(
                     new_notes,
-                    !chord.overrides?.shifts && settings.classicChordOrder == true, 
+                    chord.overrides?.shifts == true && settings.classicChordOrder == true,
                     chord.overrides?.sequential ?? settings.sequentialQuantize
                 )
                 if(chord.overrides) new_chord.overrides = JSON.parse(JSON.stringify(chord.overrides))
