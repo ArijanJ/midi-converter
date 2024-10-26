@@ -24,7 +24,7 @@
 
     import history, { decompress, remainingSize } from './utils/History'
     let remaining = remainingSize()
-    const sample_uri = 'https://gist.githubusercontent.com/ArijanJ/' + 
+    const sample_uri = 'https://gist.githubusercontent.com/ArijanJ/' +
                        '80f86cbe9dcf8384dbdf9578c83102a6/raw/4ec84c63f655866e6d0d4e1c75949a22537c417e/' +
                        'Mar'+'iage_d'+'Amour_(sample).json'
 
@@ -111,7 +111,6 @@
     let selectedTracks
 
     let container
-    let notesContainerWidth
 
     async function onFileChange() {
         filename = basename(fileInput.files[0].name)
@@ -160,17 +159,17 @@
         if (!MIDIObject) { console.log('no midiobject'); return }
         // console.log(MIDIObject.tracks)
         let events = getEvents(MIDIObject, selectedTracks)
-        
+
         let res = generateChords(events, settings, chords_and_otherwise, getTempo(MIDIObject).ticksPerBeat)
 
         chords_and_otherwise = res.chords
         settings.missingTempo = !res.hasTempo
-        
+
         let only_chords = chords_and_otherwise.filter(e => is_chord(e))
-        only_chords.forEach((chord, i) => { 
+        only_chords.forEach((chord, i) => {
             chord.next = { notes: [ { playTime: only_chords[i+1]?.notes[0]?.playTime } ] }
         }) // trust
-        
+
         updateChords()
         repopulateTransposeComments()
 
@@ -179,7 +178,7 @@
 
     /**
      * Recreate all chords with existing data (e.g. for reordering purposes)
-     * 
+     *
      * Calls updateChords()
      */
     function softRegen() {
@@ -219,16 +218,16 @@
     let oldSettings
     let settings
 
-    try { 
-        settings = JSON.parse(localStorage.getItem('preferences')); 
+    try {
+        settings = JSON.parse(localStorage.getItem('preferences'));
         settings.beats = 4; settings.breaks = 'realistic'; settings.bpm = 120 // doesn't make sense to save this
-    } 
+    }
     catch (e) { settings = undefined; }
 	$: {
         if (!oldSettings) { oldSettings = { ...settings }; break $ }
-        
+
         let changed = (key) => settings[key] != oldSettings[key]
-    
+
         if (["beats",
             "breaks",
             "quantize",
@@ -238,7 +237,7 @@
             "bpmType",
             "bpm"].some(changed))
                 saveSheet() // Full regeneration needed
-        
+
        // Regeneration that doesn't require a MIDIObject
         if (["pShifts",
              "pOors",
@@ -246,10 +245,10 @@
              "quantize",
              "sequentialQuantize"].some(changed))
                 softRegen()
-        
+
         if (MIDIObject)
             localStorage.setItem('preferences', JSON.stringify(settings))
-        
+
         renderSelection()
 
         oldSettings = { ...settings }
@@ -264,7 +263,7 @@
         chords_and_otherwise.splice(real, 0, { type: "comment", kind: "custom", text: "Add a comment..." })
         renderSelection()
     }
-    
+
     let updateComment = (index, text) => {
         if (text == '')
             chords_and_otherwise.splice(index, 1)
@@ -295,7 +294,7 @@
         let stickTo = settings.stickyAutoTransposition ? opts?.stickTo : 0
         let skipSave = opts?.skipSave ?? false
         let ignorePrevious = opts?.ignorePrevious ?? false
-    
+
         let chords_in_region = []
         for (let i = left; i <= right; i++) {
             let selected_chord = chords_and_otherwise[real_index_of(i)]
@@ -311,7 +310,7 @@
 
         repopulateTransposeComments()
         if (!skipSave) autosave()
-        
+
         return best
     }
 
@@ -344,14 +343,14 @@
                 let non_comment_index = i-1
 
                 // Make sure to add the transpose before all other comments for consistency
-                while (chords_and_otherwise[non_comment_index]?.type == "comment") 
+                while (chords_and_otherwise[non_comment_index]?.type == "comment")
                     non_comment_index--
 
                 chords_and_otherwise.splice(non_comment_index+1, 0, { type: "comment", kind: "transpose", text })
                 previous_transposition = transposition
             }
         }
-        
+
         softRegen()
         renderSelection()
     }
@@ -359,7 +358,7 @@
     let transposeChord = (index, by, opts /* { relative = false, skipUpdate = false } */) => {
         let relative = opts?.relative ?? false
         let skipUpdate = opts?.skipUpdate ?? false
-        
+
         let chord = chord_at(index)
         if(not_chord(chord)) return
 
@@ -394,7 +393,7 @@
         // console.log('prevt:', previous_transposition);
         for (let region of regions) {
             // console.log('transposing region', region.left, region.right)
-            let best = autoRegion(region.left, region.right, { 
+            let best = autoRegion(region.left, region.right, {
                 stickTo: previous_transposition,
                 skipSave: true,
             })
@@ -423,13 +422,16 @@
      */
     function captureSheetAsImage(mode) {
         settings.capturingImage = true;
-        settings.oorMarks = false
+        settings.oorMarks = false;
 
-        // Widen actual container to prevent cutoff
-        container.firstChild.style.width = `${notesContainerWidth + 1}px`
+        let notesContainer = container.firstChild;
+
+        // Increase actual container's size to prevent cutoff
+        notesContainer.style.width = `calc(${notesContainer.clientWidth}px + 1em)`
+        notesContainer.style.height = `calc(${notesContainer.clientHeight}px + 1em)`
 
         setTimeout(() =>
-            domToBlob(container, {width: notesContainerWidth, scale: 2}).then((blob) => {
+            domToBlob(container, {scale: 2}).then((blob) => {
                 if (mode === "copy") {
                     copyCapturedImage(blob);
                 }
@@ -440,7 +442,7 @@
                 settings.capturingImage = false;
 
                 // Restore original element size
-                container.firstChild.style.width = 'max-content'
+                notesContainer.style.width = notesContainer.style.height = 'max-content'
             }
         ), 250)
     }
@@ -547,9 +549,9 @@
         for (let i = selection.left; i < chords_and_otherwise.length; i++) {
             const chord = chords_and_otherwise[i]
             if (not_chord(chord)) continue
-            
+
             if (chord.index > selection.right) break
-            
+
             chord.selected = undefined
         }
 
@@ -569,7 +571,7 @@
     function renderSelection(e) {
         if(!chords_and_otherwise) return
         // console.log('rendering', selection)
-    
+
         // Deselect everything
         for (let i = selection.left; i < chords_and_otherwise.length; i++) {
             let chord = chords_and_otherwise[real_index_of(i)]
@@ -631,7 +633,7 @@
         chords_and_otherwise.splice(real_index, 0, { type: "break" })
         updateChords()
     }
-    
+
     function joinRegion(left, right) {
         let start = real_index_of(left)
         for (let i = start; i < chords_and_otherwise.length; i++) {
@@ -643,14 +645,14 @@
         }
         updateChords()
     }
-    
+
     function continueTranspose(direction /* 'ltr' or 'rtl' */) {
         let start = (direction == 'ltr' ? selection.left : selection.right)
         let transposition = chords_and_otherwise[real_index_of(start)].notes[0].transposition
 
         transposeRegion(selection.left, selection.right, transposition)
     }
-    
+
     let editChordDialog = undefined
     let chordToEdit = undefined
     let editChord = () => {
@@ -660,7 +662,7 @@
 
         editChordDialog.showModal()
     }
-    
+
     let chordChanged = (e) => {
         let recipient = chord_at(chordToEdit.index)
         recipient.notes = e.detail.notes
@@ -670,9 +672,9 @@
     }
 </script>
 
-<svelte:window on:keydown={(e) => { 
-    if (e.key == "Escape") resetSelection() 
-    if (e.key == "b") { 
+<svelte:window on:keydown={(e) => {
+    if (e.key == "Escape") resetSelection()
+    if (e.key == "b") {
         let chord_to_print = chord_at(selection.left)
         console.log('-----------')
         console.log(chord_to_print)
@@ -682,7 +684,7 @@
 }}></svelte:window>
 
 <!-- Only shown if needed -->
-<ChordEditor chord={chordToEdit} {settings} bind:dialog={editChordDialog} 
+<ChordEditor chord={chordToEdit} {settings} bind:dialog={editChordDialog}
              on:chordChanged={chordChanged} on:closed={resetSelection}/>
 
 <svelte:head>
@@ -856,10 +858,10 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
             />
 
             <div style="background: #2D2A32; user-select: none" bind:this={container}>
-                <div style="width: max-content; font-family:{settings.font}; line-height:{settings.lineHeight}%" bind:clientWidth={notesContainerWidth} on:click|self={resetSelection} on:keypress|self={() => {}}>
+                <div style="width: max-content; font-family:{settings.font}; line-height:{settings.lineHeight}%" on:click|self={resetSelection} on:keypress|self={() => {}}>
                     {#each chords_and_otherwise as inner, index }
                         <!-- not a chord -->
-                        {#if inner.type} 
+                        {#if inner.type}
                             {@const next_thing = chords_and_otherwise[+index+1]}
                             {@const previous_thing = chords_and_otherwise[+index-1]}
                             {#if inner.type === "break"}
@@ -871,9 +873,9 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                                     <br>
                                 {/if}
                                 {#if inner.kind == "custom" || inner.kind == "tempo" || inner.kind == "inline"}
-                                    <span class="comment" on:click|stopPropagation 
-                                      on:keypress|stopPropagation 
-                                      contenteditable="true" 
+                                    <span class="comment" on:click|stopPropagation
+                                      on:keypress|stopPropagation
+                                      contenteditable="true"
                                       on:contextmenu|preventDefault
                                       style="white-space:pre-wrap;"
                                       on:focusout={(e) => { updateComment(index, e.target.innerText) }}>
@@ -892,10 +894,10 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                             {/if}
                         {:else}
                             <!-- if it's an actual chord -->
-                            <Chord chord={inner} 
+                            <Chord chord={inner}
                                    next={inner.next ?? undefined}
-                                   selected={inner.selected} 
-                                   index={inner.index} 
+                                   selected={inner.selected}
+                                   index={inner.index}
                                    on:select={setSelection}
                                    {settings}
                                 />
