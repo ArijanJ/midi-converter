@@ -170,6 +170,12 @@
             chord.next = { notes: [ { playTime: only_chords[i+1]?.notes[0]?.playTime } ] }
         }) // trust
 
+        // Couldn't parse realistically, switch to manual
+        // TODO: bad ux if user wants to change back to realistically for some reason
+        if(chords_and_otherwise.filter(e => e.type == "break").length <= 1) {
+            settings.breaks = "manual"
+        }
+
         updateChords()
         repopulateTransposeComments()
 
@@ -681,6 +687,7 @@
         console.log(chord_to_print.notes[0])
         console.log('-----------')
     }
+    if (e.key == "B") { console.log(chords_and_otherwise) }
 }}></svelte:window>
 
 <!-- Only shown if needed -->
