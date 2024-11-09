@@ -124,7 +124,9 @@
 
     <label for='order-quantizes'>
         <input type='checkbox' id="order-quantizes" bind:checked={settings.sequentialQuantize}>
-        Sequential quantizes
+        <span class="cursor-help" title="Whether quantized chords should follow their original sequential order, or use regular chord sorting">
+            Sequential quantizes
+        </span>
     </label>
 
     <label for='curly-quantizes'>
