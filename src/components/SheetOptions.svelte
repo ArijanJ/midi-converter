@@ -1,6 +1,6 @@
 <script>
     import { createEventDispatcher } from 'svelte'
-    import {vpScale} from "../utils/VP";
+    import { vpScale } from "../utils/VP";
 
     let dispatch = createEventDispatcher()
 
@@ -31,18 +31,36 @@
         lineHeight: 135,
         capturingImage: false,
         missingTempo: false,
-        bpm: 120
+        bpm: 120,
+        tracks: [{}] // populated from main, default = all selected
     }
 </script>
 
 {#if show}
+
+{#if settings.tracks?.length != 0 && hasMIDI}
+    <hr class="my-2 mx-1">
+
+    {#each settings.tracks as track, idx}
+        <label for="trackbox{idx+1}">
+            <input id="trackbox{idx+1}" type="checkbox"
+                checked={track.selected}
+                on:change={() => { // TODO: use (e)
+                    track.selected = !track.selected;
+                    settings.tracks = settings.tracks.map((track) => ({ ...track }))
+                }}
+            />
+            Track {idx+1} ({track.name || "None"}) - {track.length} events
+        </label>
+    {/each}
+{/if}
 
 <hr class="my-2 mx-1">
 
 <div class="flex flex-col items-start align-middle" style="margin-top: -0.7em">
     <div class="flex flex-row mt-3">
         <label class="flex flex-row items-center"
-               title="Defines how much better a transposition should be than the previous transposition for multi-transpose to act (higher = less transposing)" 
+               title="Defines how much better a transposition should be than the previous transposition for multi-transpose to act (higher = less transposing)"
                for="atleast">Resilience (?):</label>
         <input class="w-32" id="atleast" type="range" min=0 max=12 bind:value={settings.resilience}>
         <span style="display:flex; align-items: center">{settings.resilience}</span>
@@ -143,7 +161,7 @@
 
     <label for='tempo-checkbox'>
         <input type='checkbox' id="tempo-checkbox" bind:checked={settings.tempoMarks}>
-        Show tempo/timing marks 
+        Show tempo/timing marks
     </label>
 
     <label for='oormark-checkbox'>
@@ -190,7 +208,7 @@
             </select>
         </div>
 
-        <div class="beats"> 
+        <div class="beats">
                 <label class='slider-label' for='min-speed-change'>Min. % speed change: </label>
                 <input type='range' id='min-speed-change' min=0 max=100 bind:value={settings.minSpeedChange}>
                 <span>At least {settings.minSpeedChange}%</span>
@@ -245,7 +263,7 @@
         margin-top: 0.2em;
         margin-bottom: 0;
     }
-    
+
     select option {
         background: #2D2A32;
     }
@@ -268,7 +286,7 @@
     input[type="text"] {
         margin-bottom: 0;
     }
-    
+
     .beats, .select-label, .tempo {
         display: flex;
         flex-direction: row;

@@ -12,7 +12,6 @@
     let chord_at = (x) => chords_and_otherwise[real_index_of(x)]
 
     import SheetOptions from './components/SheetOptions.svelte'
-    import Track from './components/Track.svelte'
     import Chord from './components/Chord.svelte'
     import HistoryEntry from "./components/HistoryEntry.svelte";
 
@@ -94,21 +93,12 @@
         if (fileInput) filename = basename(fileInput.files[0]?.name) ?? existingProject.name
     }
 
-    let trackChooser = {
-        element: undefined,
-        hide: () => { trackChooser.element.style.top = "-110vh" },
-        show: () => { trackChooser.element.style.top = "0px" }
-    }
-
 	let sheetReady = false
 
 	let MIDIObject
     let tracks
 
 	let chords_and_otherwise
-
-    // [true, true, false, true, ...]
-    let selectedTracks
 
     let container
 
@@ -148,17 +138,16 @@
                 console.error("No ticksPerBeat in this midi file")
 
             tracks = getTracks(MIDIObject)
-            selectedTracks = tracks.map(() => true)
+            settings.tracks = tracks.map((t) => { t.selected = true; return t }) // initial population
 
             sheetReady = false
-            trackChooser.show()
         })
     }
 
     let saveSheet = () => {
         if (!MIDIObject) { console.log('no midiobject'); return }
         // console.log(MIDIObject.tracks)
-        let events = getEvents(MIDIObject, selectedTracks)
+        let events = getEvents(MIDIObject, settings.tracks.map((t) => t.selected))
 
         let res = generateChords(events, settings, chords_and_otherwise, getTempo(MIDIObject).ticksPerBeat)
 
@@ -241,7 +230,8 @@
             "minSpeedChange",
             "bpmChanges",
             "bpmType",
-            "bpm"].some(changed))
+            "bpm",
+            "tracks"].some(changed))
                 saveSheet() // Full regeneration needed
 
        // Regeneration that doesn't require a MIDIObject
@@ -326,7 +316,9 @@
         // console.log(chords_and_otherwise)
         chords_and_otherwise = chords_and_otherwise.filter(e => { /* console.log(e); */ return e.kind != "transpose" })
 
-        let first_note = next_not(chords_and_otherwise, not_chord, 0).notes[0]
+        let first_note = next_not(chords_and_otherwise, not_chord, 0)?.notes?.[0]
+        if (!first_note) return
+
         let initial_transposition = first_note.transposition
 
         // Add first transpose comment
@@ -821,21 +813,6 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
             Suggestions, bug reports, or just need help?
         </a>
     </div>
-
-    <section bind:this={trackChooser.element} id="track-chooser" class="z-40 w-full absolute flex flex-col gap-4 justify-center items-center content-center text-2xl"
-             style="top: -110vh; height: 100vh; background: rgb(45,42,50);
-                    background: linear-gradient(45deg, rgba(45,42,50,1) 0%, rgba(50,40,40,1) 50%, rgba(71,57,37,1) 100%);
-                    transition: all 0.6s ease-in-out;">
-        <div id="tracks" class="flex flex-col gap-2">
-        {#if tracks}
-            {#each tracks as { name, length }, idx}
-                <Track {name} {length} idx={idx+1}
-                bind:selected={selectedTracks[idx]} />
-            {/each}
-        {/if}
-        </div>
-        <button on:click={() => { saveSheet(); trackChooser.hide() }}>Import selected tracks</button>
-    </section>
 
     {#if sheetReady == true}
         <div class="flex flex-col items-start" on:click|self={resetSelection} on:keypress|self={() => {}} on:contextmenu|preventDefault>
