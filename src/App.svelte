@@ -128,6 +128,14 @@
             chords_and_otherwise = existingProject.data
             softRegen()
 
+            const first_transpose = chords_and_otherwise.find(x => x.kind === "transpose")
+
+            // compatability with older json files which don't include: transpose indexes,
+            if (!first_transpose.text.includes("#")) {
+                // if exported with the latest json version, this will not need to run again
+                repopulateTransposeComments()
+            }
+
             return
         }
 
@@ -322,7 +330,8 @@
         let initial_transposition = first_note.transposition
 
         // Add first transpose comment
-        chords_and_otherwise.splice(0, 0, { type: "comment", kind: "transpose", text: `Transpose by: ${-initial_transposition}`, notop: true  })
+        chords_and_otherwise.splice(0, 0, { type: "comment", kind: "transpose", text: `Transpose by: ${-initial_transposition} #1`, notop: true  })
+        let transpose_index = 1
 
         let previous_transposition = initial_transposition
 
@@ -337,6 +346,7 @@
                 // Add comment
                 let text = `Transpose by: ${-transposition > 0 ? '+' : ''}${-transposition}`
                 text += ` (${-difference > 0 ? '+' : ''}${-difference})`
+                text += ` #${++transpose_index}`
 
                 let non_comment_index = i-1
 
@@ -870,7 +880,16 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                                         {/if}
                                     </span>
                                 {:else}
-                                    <span on:contextmenu|preventDefault class="comment">{inner.text}</span>
+                                    <span on:contextmenu|preventDefault class="comment">
+                                        {#if inner.kind === "transpose"}
+                                            {@const [transposeText, transposeIndex] = inner.text.split(" #")}
+
+                                            {transposeText}
+                                            <span style="font-size: 10px; opacity: 0.25;">#{transposeIndex}</span>
+                                        {:else}
+                                            {inner.text}
+                                        {/if}
+                                    </span>
                                 {/if}
                                 {#if inner.kind != 'inline'}
                                     <br>
