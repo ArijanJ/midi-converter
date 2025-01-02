@@ -832,7 +832,10 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                     settings.tempoMarks = true
                     settings.oorMarks = true
                     setTimeout(() => {
-                        navigator.clipboard.writeText(container.firstChild.innerText)
+                        let text = container.firstChild.innerText
+                        text = text.replace(/(Transpose by: [^#]*)(#\d+)/g, '$1') // removes all "#{number}" occurrences
+
+                        navigator.clipboard.writeText(text)
                     }, 0)
                 }}
                 on:copyTransposes={() => {navigator.clipboard.writeText(sheetTransposes())}}
