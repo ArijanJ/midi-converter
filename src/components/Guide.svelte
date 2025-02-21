@@ -18,4 +18,5 @@
     <span style="color: {colors.sixteenth}">Sixteenth note (s-f)</span><br>
     <span style="color: {colors.thirtysecond}">Thirty-second note</span><br>
     <span style="color: {colors.sixtyfourth}">Shorter than thirty-second</span><br>
+    <span>Click <a target="_blank" href="https://youtu.be/ceGak_tzS5s" class="underline">here</a> for a video explanation of this timing.</span>
 </div>
