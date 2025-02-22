@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
 
     export let settings
-
+    
     let dispatch = createEventDispatcher()
 </script>
 
@@ -29,8 +29,6 @@
     {/if}
 
     <button on:click={ () => dispatch("copyTransposes") }>Copy Transposes</button>
-
-    <button on:click={ () => dispatch("addTitle") }>Add title</button>
 
     <button on:click={ () => dispatch("export") }>Export</button>
 </div>
