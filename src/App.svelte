@@ -262,8 +262,9 @@
         chords_and_otherwise = chords_and_otherwise
     }
 
-    let addComment = (index) => {
+    let addComment = (index, bypass = false) => {
         let real = real_index_of(index)
+        if (bypass) real = index
         chords_and_otherwise.splice(real, 0, { type: "comment", kind: "custom", text: "Add a comment..." })
         renderSelection()
     }
@@ -330,7 +331,7 @@
         let initial_transposition = first_note.transposition
 
         // Add first transpose comment
-        chords_and_otherwise.splice(0, 0, { type: "comment", kind: "transpose", text: `Transpose by: ${-initial_transposition} #1`, notop: true  })
+        chords_and_otherwise.splice(1, 0, { type: "comment", kind: "transpose", text: `Transpose by: ${-initial_transposition} #1`, notop: true  })
         let transpose_index = 1
 
         let previous_transposition = initial_transposition
@@ -852,6 +853,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                         history.export(existingProject.name).then((piece) => downloadSheetData(piece))
                     }, 0)
                 }}
+                on:addTitle={() => { addComment(0, true) }}
             />
 
             <div style="background: #2D2A32; user-select: none" bind:this={container}>
@@ -870,11 +872,12 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                                     <br>
                                 {/if}
                                 {#if inner.kind == "custom" || inner.kind == "tempo" || inner.kind == "inline"}
-                                    <span class="comment" on:click|stopPropagation
+                                    <span class="comment"
+                                      on:click|stopPropagation
                                       on:keypress|stopPropagation
                                       contenteditable="true"
                                       on:contextmenu|preventDefault
-                                      style="white-space:pre-wrap;"
+                                      style="white-space:pre-wrap; z-index: 100000"
                                       on:focusout={(e) => { updateComment(index, e.target.innerText) }}>
                                         {#if inner.kind == 'inline'}
                                           {@html inner.text}
