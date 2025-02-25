@@ -330,7 +330,29 @@
         let initial_transposition = first_note.transposition
 
         // Add first transpose comment
-        chords_and_otherwise.splice(0, 0, { type: "comment", kind: "transpose", text: `Transpose by: ${-initial_transposition} #1`, notop: true  })
+        let previous_title = undefined
+        // Always keep title on top
+        for (let i = 0; i < 5; i++) {
+            if(chords_and_otherwise[i]?.kind == "title") {
+                previous_title = chords_and_otherwise[i].text
+                // Remove old title
+                chords_and_otherwise.splice(i, 1)
+            }
+        }
+
+        if (previous_title) {
+            // Add new title
+            chords_and_otherwise.splice(0, 0, { type: "comment", kind: "title", text: previous_title, notop: true })
+        }
+
+        let first_transpose_position = 0
+        for (const [index, e] of chords_and_otherwise.entries()) {
+            if (e.kind == 'title') first_transpose_position = index+1
+        }
+
+        console.log(first_transpose_position)
+
+        chords_and_otherwise.splice(first_transpose_position, 0, { type: "comment", kind: "transpose", text: `Transpose by: ${-initial_transposition} #1`, notop: true  })
         let transpose_index = 1
 
         let previous_transposition = initial_transposition
@@ -351,10 +373,10 @@
                 let non_comment_index = i-1
 
                 // Make sure to add the transpose before all other comments for consistency
-                while (chords_and_otherwise[non_comment_index]?.type == "comment")
-                    non_comment_index--
+                // while (chords_and_otherwise[non_comment_index]?.type == "comment")
+                //     non_comment_index--
 
-                chords_and_otherwise.splice(non_comment_index+1, 0, { type: "comment", kind: "transpose", text })
+                chords_and_otherwise.splice(non_comment_index, 0, { type: "comment", kind: "transpose", text })
                 previous_transposition = transposition
             }
         }
@@ -852,6 +874,10 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                         history.export(existingProject.name).then((piece) => downloadSheetData(piece))
                     }, 0)
                 }}
+                on:addTitle={() => {
+                    chords_and_otherwise.splice(0, 0, { type: "comment", kind: "title", text: "Add a title..." })
+                    renderSelection()
+                 }}
             />
 
             <div style="background: #2D2A32; user-select: none" bind:this={container}>
@@ -861,15 +887,13 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                         {#if inner.type}
                             {@const next_thing = chords_and_otherwise[+index+1]}
                             {@const previous_thing = chords_and_otherwise[+index-1]}
-                            {#if inner.type === "break"}
-                                {#if next_thing?.type != "comment"}
-                                    <br>
-                                {/if}
+                            {#if inner.type === "break" && next_thing.type != "comment" && previous_thing.type != "comment"}
+                                <br>
                             {:else if inner.type === "comment"}
                                 {#if previous_thing?.type != "comment" && inner.notop != true && inner.kind != 'inline'}
                                     <br>
                                 {/if}
-                                {#if inner.kind == "custom" || inner.kind == "tempo" || inner.kind == "inline"}
+                                {#if ["custom", "tempo", "inline", "title"].includes(inner.kind)}
                                     <span class="comment" on:click|stopPropagation
                                       on:keypress|stopPropagation
                                       contenteditable="true"
@@ -894,7 +918,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                                         {/if}
                                     </span>
                                 {/if}
-                                {#if inner.kind != 'inline'}
+                                {#if inner.kind != 'inline'} <!-- and is any comment, break after -->
                                     <br>
                                 {/if}
                             {/if}
