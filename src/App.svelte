@@ -370,7 +370,7 @@
                 text += ` (${-difference > 0 ? '+' : ''}${-difference})`
                 text += ` #${++transpose_index}`
 
-                let non_comment_index = i-1
+                let non_comment_index = i
 
                 // Make sure to add the transpose before all other comments for consistency
                 // while (chords_and_otherwise[non_comment_index]?.type == "comment")
