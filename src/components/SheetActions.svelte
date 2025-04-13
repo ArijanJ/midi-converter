@@ -6,7 +6,7 @@
     let dispatch = createEventDispatcher()
 </script>
 
-<div class="flex flex-row gap-1">
+<div class="flex flex-row gap-1 sticky top-0 z-10 app-background-color">
     <button on:click={ () => dispatch("copyText") }>Copy Text</button>
 
     <button disabled={settings.capturingImage} on:click={() => dispatch("captureSheetAsImage", {mode: "download"})}>

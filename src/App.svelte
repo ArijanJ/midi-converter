@@ -102,6 +102,9 @@
 
     let container
 
+    document.addEventListener("copy", handleCopy);
+    document.addEventListener("selectionchange", handleNativeSelection)
+
     async function onFileChange() {
         filename = basename(fileInput.files[0].name)
         let exists = pieces.find((entry) => entry.name == filename) ?? false
@@ -436,12 +439,74 @@
     }
 
     let sheetTransposes = () => {
-        let transpose_comments = chords_and_otherwise.filter(e => e.kind == "transpose")
-        return transpose_comments.map((e) => {
+        let transposes = [];
+
+        if (has_selection) {
+            let start_real_index = real_index_of(selection.left);
+            let end_real_index = real_index_of(selection.right);
+
+            let initial_transpose_el = null;
+            for (let i = start_real_index; i >= 0; i--) {
+                if (chords_and_otherwise[i]?.kind === "transpose") {
+                    initial_transpose_el = chords_and_otherwise[i];
+                    transposes.push(initial_transpose_el);
+                    break;
+                }
+            }
+
+            for (let i = start_real_index; i <= end_real_index; i++) {
+                let el = chords_and_otherwise[i];
+                if (!el) break;
+                if (el.kind === "transpose" && el !== initial_transpose_el) {
+                    transposes.push(el);
+                }
+            }
+
+        }
+        else {
+            transposes = chords_and_otherwise.filter(e => e.kind == "transpose");
+        }
+
+        return transposes.map((e) => {
             const match = e.text.match(/Transpose by:\s(\+?(-?\d+))/);
             return match ? match[2] : null;
         }).join(' ');
+
     }
+
+    function handleCopy(e) {
+        settings.tempoMarks = true;
+        settings.oorMarks = true;
+
+        setTimeout(() => {
+            let text;
+            const nativeSelection = window.getSelection();
+
+            if (nativeSelection.toString().length > 0) {
+                // copy part of the sheet by native selection
+                text = nativeSelection.toString()
+            }
+            else {
+                // copy the entire sheet
+                text = container.firstChild.innerText
+            }
+
+            nativeSelection.removeAllRanges()
+
+            text = text.replace(/(Transpose by: [^#]*)(#\d+)/g, '$1') // removes all "#{number}" occurrences
+
+            navigator.clipboard.writeText(text)
+        }, 0)
+    }
+
+    function handleNativeSelection() {
+        if (has_selection) {
+            // if notes are actually selected with our custom selection logic, prevent native selection
+            const nativeSelection = window.getSelection()
+            nativeSelection.removeAllRanges()
+        }
+    }
+
 
     /**
      * Takes an image of the sheet, which can then be either copied/downloaded.
@@ -570,6 +635,7 @@
     }
     $: {
         has_selection = selection.left != undefined && selection.right != undefined
+        handleNativeSelection() // would unset natively selected content if it now has_selection
         // print("Selection: ", selection)
     }
 
@@ -850,16 +916,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
         <div class="flex flex-col items-start" on:click|self={resetSelection} on:keypress|self={() => {}} on:contextmenu|preventDefault>
             <SheetActions {settings}
                 on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode) }}
-                on:copyText={() => {
-                    settings.tempoMarks = true
-                    settings.oorMarks = true
-                    setTimeout(() => {
-                        let text = container.firstChild.innerText
-                        text = text.replace(/(Transpose by: [^#]*)(#\d+)/g, '$1') // removes all "#{number}" occurrences
-
-                        navigator.clipboard.writeText(text)
-                    }, 0)
-                }}
+                on:copyText={handleCopy}
                 on:copyTransposes={() => {navigator.clipboard.writeText(sheetTransposes())}}
                 on:export={() => {
                     autosave()
@@ -877,10 +934,11 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                 on:addTitle={() => {
                     chords_and_otherwise.splice(0, 0, { type: "comment", kind: "title", text: "Add a title..." })
                     renderSelection()
+                    window.scroll(0, 0)
                  }}
             />
 
-            <div style="background: #2D2A32; user-select: none" bind:this={container}>
+            <div class:select-none={has_selection} class:select-text={!has_selection} style="background: #2D2A32;" bind:this={container}>
                 <div style="width: max-content; font-family:{settings.font}; line-height:{settings.lineHeight}%" on:click|self={resetSelection} on:keypress|self={() => {}}>
                     {#each chords_and_otherwise as inner, index }
                         <!-- not a chord -->
