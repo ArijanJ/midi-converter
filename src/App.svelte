@@ -103,6 +103,13 @@
     let container
 
     document.addEventListener("copy", handleCopy);
+    document.addEventListener('keydown', (e) => {
+        // TODO: ctrl + a is causing out of range separator input text to be selected from the sidebar, sheet text should only ever get selected
+        const activeElIsComment = document.activeElement.classList.contains("comment")
+        if (!activeElIsComment && e.ctrlKey && e.key.toLowerCase() === "a") {
+            e.preventDefault();
+        }
+    });
     document.addEventListener("selectionchange", handleNativeSelection)
 
     async function onFileChange() {
