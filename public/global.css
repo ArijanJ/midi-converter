@@ -13,6 +13,7 @@ body {
 	margin: 0;
 	box-sizing: border-box;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+	user-select: none;
 }
 
 a {
@@ -85,4 +86,8 @@ button:hover {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
   background-color: gray;
+}
+
+.app-background-color {
+	background: rgb(45, 42, 50);
 }

@@ -241,10 +241,6 @@
 </div>
 
 <style>
-    * {
-        user-select: none;
-    }
-
     label {
         max-width: fit-content;
         text-align: center;
@@ -262,6 +258,7 @@
         margin-left: 0.4em;
         margin-top: 0.2em;
         margin-bottom: 0;
+        user-select: none;
     }
 
     select option {
@@ -285,6 +282,7 @@
 
     input[type="text"] {
         margin-bottom: 0;
+        user-select: none;
     }
 
     .beats, .select-label, .tempo {
