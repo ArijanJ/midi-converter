@@ -666,7 +666,7 @@
 
     function selectAll() {
         selection.left = 0
-        selection.right = chords_and_otherwise.length - 1
+        selection.right = chords_and_otherwise[chords_and_otherwise.length - 1].index
 
         renderSelection()
     }
@@ -700,7 +700,7 @@
         if (event_or_index.detail?.toBottom) {
             resetSelection()
             selection.left = index
-            index = chords_and_otherwise.length - 1
+            index = chords_and_otherwise[chords_and_otherwise.length - 1].index
         }
 
         // Double-click to select line
