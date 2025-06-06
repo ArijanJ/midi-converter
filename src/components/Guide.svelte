@@ -6,6 +6,7 @@
     Click on a note to set selection beginning/ending<br>
     Double-click on a note to select the whole line<br>
     Middle-click to select everything below the note<br>
+    Ctrl-Z for a limited undo<br>
     <hr class="my-2 mx-1">
     Note that <span title="Track imports, break every x beats, quantize, and any tempo/BPM changes" class="underline cursor-help">some settings</span> must fully regenerate your sheet, so you may lose some manual changes.<br>
     <hr class="my-2 mx-1">

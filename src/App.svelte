@@ -56,6 +56,7 @@
 
                 sheetReady = true
                 chords_and_otherwise = existingProject.data
+                undoStack = []
 
                 let old_style_project = !chords_and_otherwise.find((e) => is_chord(e))?.notes
                 if (old_style_project) {
@@ -136,6 +137,7 @@
 
             sheetReady = true
             chords_and_otherwise = existingProject.data
+            undoStack = [] // Reset undo stack when importing
             softRegen()
 
             const first_transpose = chords_and_otherwise.find(x => x.kind === "transpose")
@@ -249,14 +251,15 @@
             "bpmChanges",
             "bpmType",
             "bpm",
-            "tracks"].some(changed))
+            "tracks"].some(changed)) {
                 saveSheet() // Full regeneration needed
+                undoStack = []
+            }
 
        // Regeneration that doesn't require a MIDIObject
         if (["pShifts",
              "pOors",
              "classicChordOrder",
-             "quantize",
              "sequentialQuantize"].some(changed))
                 softRegen()
 
@@ -275,6 +278,7 @@
     let addComment = (index) => {
         let real = real_index_of(index)
         chords_and_otherwise.splice(real, 0, { type: "comment", kind: "custom", text: "Add a comment..." })
+        pushUndoAction({ type: 'addComment', index: real });
         renderSelection()
     }
 
@@ -289,6 +293,10 @@
 
     let transposeRegion = (left, right, by, opts = undefined) => {
         let relative = opts?.relative ?? false
+
+        // Store undo action
+        if (!opts?.skipSave)
+            pushUndoAction({ type: 'transposeRegion', left, right, by, opts })
 
         for (let i = left; i <= chords_and_otherwise.length; i++) {
             let chord = chord_at(i)
@@ -309,6 +317,17 @@
         let skipSave = opts?.skipSave ?? false
         let ignorePrevious = opts?.ignorePrevious ?? false
 
+        // Store original transpositions
+        let originalTranspositions = [];
+        for (let i = left; i <= right; i++) {
+            let chord = chord_at(i);
+            if (not_chord(chord)) continue;
+            originalTranspositions.push({
+                index: i,
+                transposition: chord.notes[0].transposition
+            });
+        }
+
         let chords_in_region = []
         for (let i = left; i <= right; i++) {
             let selected_chord = chords_and_otherwise[real_index_of(i)]
@@ -321,6 +340,14 @@
         let ignores = ignorePrevious ? [chords_in_region[0].notes[0].transposition] : []
         let best = best_transposition_for_monochord(chords_in_region, 11, stickTo, settings.resilience ?? 4, ignores)
         transposeRegion(left, right, best, { relative: false, skipSave: true })
+
+        // Store undo action
+        if (!skipSave) {
+            pushUndoAction({
+                type: 'autoRegion',
+                originalTranspositions
+            });
+        }
 
         repopulateTransposeComments()
         if (!skipSave) autosave()
@@ -402,7 +429,16 @@
         let chord = chord_at(index)
         if(not_chord(chord)) return
 
-        // console.log('transposing', chord, 'by', by)
+        // Store undo action
+        if (!skipUpdate) {
+            pushUndoAction({
+                type: 'transposeChord',
+                index,
+                by,
+                opts
+            });
+        }
+
         chord.transpose(by, relative, true) // mutate
 
         if (!skipUpdate) updateChords()
@@ -425,21 +461,36 @@
             }
         }
 
-        // console.log(regions)
+        // Store original transpositions for each region
+        let regionTranspositions = regions.map(region => {
+            let originalTranspositions = [];
+            for (let i = region.left; i <= region.right; i++) {
+                let chord = chord_at(i);
+                if (not_chord(chord)) continue;
+                originalTranspositions.push({
+                    index: i,
+                    transposition: chord.notes[0].transposition
+                });
+            }
+            return { ...region, originalTranspositions };
+        });
 
         let chord = chords_and_otherwise[real_index_of(regions[0].left)]
-
         let previous_transposition = chord.notes[0]?.transposition ?? 0
-        // console.log('prevt:', previous_transposition);
+
         for (let region of regions) {
-            // console.log('transposing region', region.left, region.right)
             let best = autoRegion(region.left, region.right, {
                 stickTo: previous_transposition,
                 skipSave: true,
             })
             previous_transposition = best
-            // console.log('prevt:', previous_transposition);
         }
+
+        // Store undo action
+        pushUndoAction({
+            type: 'multiTransposeRegion',
+            regions: regionTranspositions
+        });
 
         repopulateTransposeComments()
         autosave()
@@ -733,12 +784,35 @@
     function splitLineAt(index) {
         let real_index = real_index_of(index)
 
+        // Store undo action
+        pushUndoAction({
+            type: 'splitLineAt',
+            left: index,
+            right: index
+        });
+
         chords_and_otherwise.splice(real_index, 0, { type: "break" })
         updateChords()
     }
 
     function joinRegion(left, right) {
         let start = real_index_of(left)
+
+        // Store break positions for undo
+        let breakIndices = [];
+        for (let i = start; i < chords_and_otherwise.length; i++) {
+            if (chords_and_otherwise[i]?.type == "break") {
+                breakIndices.push(i);
+            }
+            if (i > real_index_of(right)) break;
+        }
+
+        // Store undo action
+        pushUndoAction({
+            type: 'joinRegion',
+            breakIndices
+        });
+
         for (let i = start; i < chords_and_otherwise.length; i++) {
             if (chords_and_otherwise[i]?.type == "break") {
                 chords_and_otherwise.splice(i, 1)
@@ -773,6 +847,65 @@
         softRegen()
         autosave()
     }
+
+    let undoStack = [];
+    const MAX_UNDO_STEPS = 50;
+    let undoing = false
+    function pushUndoAction(action) {
+        if (undoing) return // Don't overwrite the same thing
+        undoStack.push(action);
+        if (undoStack.length > MAX_UNDO_STEPS) {
+            undoStack.shift();
+        }
+    }
+
+    function undo() {
+        if (undoStack.length === 0) return;
+        const action = undoStack.pop();
+        undoing = true
+        switch (action.type) {
+            case 'transposeChord':
+                transposeChord(action.index, -action.by, action.opts);
+                break;
+            case 'transposeRegion':
+                transposeRegion(action.left, action.right, -action.by, action.opts);
+                break;
+            case 'autoRegion':
+                // Restore original transpositions
+                for (let i = 0; i < action.originalTranspositions.length; i++) {
+                    const {index, transposition} = action.originalTranspositions[i];
+                    transposeChord(index, transposition, {relative: false, skipUpdate: true});
+                }
+                updateChords();
+                break;
+            case 'multiTransposeRegion':
+                // Restore original transpositions for each region
+                for (const region of action.regions) {
+                    for (let i = 0; i < region.originalTranspositions.length; i++) {
+                        const {index, transposition} = region.originalTranspositions[i];
+                        transposeChord(index, transposition, {relative: false, skipUpdate: true});
+                    }
+                }
+                updateChords();
+                break;
+            case 'addComment':
+                chords_and_otherwise.splice(action.index, 1);
+                updateChords();
+                break;
+            case 'splitLineAt':
+                joinRegion(action.left-1, action.right);
+                break;
+            case 'joinRegion':
+                for (const breakIndex of action.breakIndices)
+                    chords_and_otherwise.splice(breakIndex, 0, { type: "break" });
+                updateChords();
+                break;
+        }
+        undoing = false
+        repopulateTransposeComments();
+        renderSelection();
+        autosave();
+    }
 </script>
 
 <svelte:window on:keydown={(e) => {
@@ -785,6 +918,10 @@
         console.log('-----------')
     }
     if (e.key == "B") { console.log(chords_and_otherwise) }
+    if (e.ctrlKey && e.key === 'z') {
+        e.preventDefault();
+        undo();
+    }
 }}></svelte:window>
 
 <!-- Only shown if needed -->
