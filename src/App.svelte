@@ -918,10 +918,11 @@
         console.log('-----------')
     }
     if (e.key == "B") { console.log(chords_and_otherwise) }
-    if (e.ctrlKey && e.key === 'z') {
-        e.preventDefault();
-        undo();
-    }
+
+    if (e.key == "s") splitLineAt(selection.left)
+    if (e.key == "j" || e.key == "g") joinRegion(selection.left, selection.right)
+    if (e.ctrlKey && e.key.toLowerCase() === "z") undo()
+
 }}></svelte:window>
 
 <!-- Only shown if needed -->
@@ -1030,8 +1031,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                 </div>
                 <hr class="my-2 mx-1">
                 <div class="flex flex-row justify-around items-stretch gap-2">
-                    <button class="w-full block" on:click={() => { joinRegion(selection.left, selection.right) }}>Join selection</button>
-                    <button class="w-full block" on:click={() => { splitLineAt(selection.left) }}>Split selection</button>
+                    <button class="w-full block cursor-help" title="Shortcut: J or G" on:click={() => { joinRegion(selection.left, selection.right) }}>Join selection</button>
+                    <button class="w-full block cursor-help" title="Shortcut: S" on:click={() => { splitLineAt(selection.left) }}>Split selection</button>
                 </div>
                 <div class="flex flex-row justify-around items-stretch gap-2">
                     <button class="w-full block" disabled={settings.breaks != 'realistic'}
