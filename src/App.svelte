@@ -910,23 +910,19 @@
 
 <svelte:window on:keydown={(e) => {
     if (e.key == "Escape") resetSelection()
-    // console.log(e.target)
-    if (e.target.tagName != "INPUT" && e.target.tagName != "TEXTAREA" && e.target.contentEditable != "true") {
-        if (e.key == "b") {
-            let chord_to_print = chord_at(selection.left)
-            console.log('-----------')
-            console.log(chord_to_print)
-            console.log(chord_to_print.notes[0])
-            console.log('-----------')
-        }
-        if (e.key == "B") { console.log(chords_and_otherwise) }
-
-        if (selection.left !== undefined) {
-            if (e.key == "s") splitLineAt(selection.left);
-            if (e.key == "j" || e.key == "g") joinRegion(selection.left, selection.right);
-        }
-        if (e.ctrlKey && e.key.toLowerCase() === "z") undo()
+    if (e.key == "b") {
+        let chord_to_print = chord_at(selection.left)
+        console.log('-----------')
+        console.log(chord_to_print)
+        console.log(chord_to_print.notes[0])
+        console.log('-----------')
     }
+    if (e.key == "B") { console.log(chords_and_otherwise) }
+
+    if (e.key == "s") splitLineAt(selection.left)
+    if (e.key == "j" || e.key == "g") joinRegion(selection.left, selection.right)
+    if (e.ctrlKey && e.key.toLowerCase() === "z") undo()
+
 }}></svelte:window>
 
 <!-- Only shown if needed -->
@@ -1094,7 +1090,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                         {#if inner.type}
                             {@const next_thing = chords_and_otherwise[+index+1]}
                             {@const previous_thing = chords_and_otherwise[+index-1]}
-                            {#if inner.type === "break" && next_thing.type != "comment" && previous_thing?.type != "comment"}
+                            {#if inner.type === "break" && next_thing.type != "comment" && previous_thing.type != "comment"}
                                 <br>
                             {:else if inner.type === "comment"}
                                 {#if previous_thing?.type != "comment" && inner.notop != true && inner.kind != 'inline'}
