@@ -50,7 +50,7 @@
                     settings.tracks = settings.tracks.map((track) => ({ ...track }))
                 }}
             />
-            Track {idx+1} ({track.name || "None"}) - {track.length} events
+            Track {idx+1} - {track.name} {track.instrument ? `(${track.instrument}) ` : ''}- {track.length} events
         </label>
     {/each}
 {/if}

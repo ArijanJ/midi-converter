@@ -10,9 +10,9 @@ function getTempo(MIDIObject) {
         // console.log('tpb', MIDIObject.header.getTicksPerBeat())
         return { ticksPerBeat: MIDIObject.header.getTicksPerBeat() }
     } else {
-        return { 
+        return {
             SMPTEFrames:   MIDIObject.header.getSMPTEFrames(),
-            ticksPerFrame: MIDIObject.header.getTicksPerFrame() 
+            ticksPerFrame: MIDIObject.header.getTicksPerFrame()
         }
     }
 }
@@ -21,7 +21,7 @@ function getEvents(MIDIObject, tracks) {
     let totalEvents = []
 
     let events = MIDIObject.getEvents()
-    
+
     events[0].ticks = 0
     for (let i = 0; i < events.length; i++) {
         // console.log(events.at(i-1))
@@ -30,17 +30,17 @@ function getEvents(MIDIObject, tracks) {
 
     events.forEach((event) => {
         // console.log(event)
-        
+
         if(event.type == MIDIEvents.EVENT_META) {
             let pushabes = [
                 MIDIEvents.EVENT_META_SET_TEMPO,
                 MIDIEvents.EVENT_META_TIME_SIGNATURE,
             ]
-            
+
             if (!pushabes.includes(event.subtype)) return
-            
+
             totalEvents.push(event)
-            
+
             return
         }
 
@@ -67,18 +67,27 @@ function getTracks(MIDIObject) {
     let tracks = []
 
     MIDIObject.tracks.forEach((track) => {
-        tracks.push({ name: "Unknown", length: track.getTrackLength() })
+        tracks.push({ name: "Unknown", instrument: undefined, length: track.getTrackLength() })
     })
 
-    let track_index = 0
-    for (let event of MIDIObject.getEvents()) {
-        if (event.type == MIDIEvents.EVENT_META && event.subtype == MIDIEvents.EVENT_META_TRACK_NAME) {
-            let name = new TextDecoder().decode(new Uint8Array(event.data))
-            tracks[track_index].name = name
-            track_index++
+    for (let [index, track] of MIDIObject.tracks.entries()) {
+        let events = MIDIEvents.createParser(track.getTrackContent())
+        let event;
+
+        while(event = events.next()) {
+            if (event.type == MIDIEvents.EVENT_META) {
+                switch (event.subtype) {
+                    case MIDIEvents.EVENT_META_TRACK_NAME:
+                        tracks[index].name = new TextDecoder().decode(new Uint8Array(event.data))
+                        break;
+                    case MIDIEvents.EVENT_META_INSTRUMENT_NAME:
+                        tracks[index].instrument = new TextDecoder().decode(new Uint8Array(event.data))
+                        break;
+                }
+            }
         }
     }
-    
+
     return tracks
 }
 
