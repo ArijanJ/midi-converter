@@ -13,7 +13,7 @@
         beats: 4,
         breaks: 'realistic',
         quantize: 35,
-        classicChordOrder: true,
+        classicChordOrder: false,
         sequentialQuantize: true,
         curlyQuantizes: true,
         pShifts: 'Start',
