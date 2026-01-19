@@ -40,9 +40,7 @@
     const sample_uri =
         "https://gist.githubusercontent.com/ArijanJ/" +
         "80f86cbe9dcf8384dbdf9578c83102a6/raw/4ec84c63f655866e6d0d4e1c75949a22537c417e/" +
-        "Mar" +
-        "iage_d" +
-        "Amour_(sample).json";
+        "Mar" + "iage_d" + "Amour_(sample).json";
 
     import SheetActions from "./components/SheetActions.svelte";
     import Guide from "./components/Guide.svelte";
