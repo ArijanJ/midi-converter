@@ -16,7 +16,8 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <span
-    class="chord-block"
+    {...$$restProps}
+    class="chord-block {$$restProps.class ?? ''}"
     on:contextmenu|preventDefault
     on:mousedown|stopPropagation={(e) => {
         switch (e.button) {

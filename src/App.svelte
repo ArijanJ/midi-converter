@@ -95,6 +95,22 @@
     }
 
 	let sheetReady = false
+    let isAutoTransposing = false
+
+    function handleAutoTranspose(type) {
+        if (isAutoTransposing) return;
+        isAutoTransposing = true;
+        
+        // Allow UI to update
+        setTimeout(() => {
+            if (type === 'single') {
+                autoRegion(selection.left, selection.right, {ignorePrevious: true});
+            } else {
+                multiTransposeRegion(selection.left, selection.right);
+            }
+            isAutoTransposing = false;
+        }, 20);
+    }
 
 	let MIDIObject
     let tracks
@@ -573,18 +589,106 @@
      * @param {string} mode - A string indicating how the user wants to retrieve the image.
      * @enum {string} ["download", "copy"]
      */
-    function captureSheetAsImage(mode) {
+    function captureSheetAsImage(mode, selectionOnly = false) {
         settings.capturingImage = true;
         settings.oorMarks = false;
+        settings = settings; // Force reactivity for render_chord
 
         let notesContainer = container.firstChild;
-
+        
         // Increase actual container's size to prevent cutoff
         notesContainer.style.width = `calc(${notesContainer.clientWidth}px + 1em)`
         notesContainer.style.height = `calc(${notesContainer.clientHeight}px + 1em)`
 
+        let options = {
+            scale: 2,
+            onCloneNode: (node) => {
+                let transposeCount = 1;
+                let comments = node.querySelectorAll('.comment');
+                comments.forEach(comment => {
+                    if (comment.textContent.includes('Transpose by:')) {
+                        let indexSpan = Array.from(comment.children).find(c => c.tagName === 'SPAN' && c.textContent.trim().startsWith('#'));
+                        if (indexSpan) {
+                            indexSpan.textContent = '#' + (transposeCount++);
+                        }
+                    }
+                })
+            }
+        };
+
+        if (selectionOnly && has_selection) {
+            let start = real_index_of(selection.left);
+            let end = real_index_of(selection.right);
+
+            // Backtrack to include header comments (e.g. Transpose by ...)
+            let scan = start - 1
+            while (scan >= 0) {
+                let item = chords_and_otherwise[scan]
+                if (item.type == 'comment' && item.kind != 'inline') {
+                    start = scan
+                    scan--
+                }
+                else {
+                    break
+                }
+            }
+
+            // Check if we have a transpose above the first line in the selection, if not, find the previous one
+            let extraTransposeIndex = -1;
+            let firstItem = chords_and_otherwise[start];
+            if (firstItem.kind !== 'transpose') {
+                 let backScan = start - 1;
+                 while (backScan >= 0) {
+                     let item = chords_and_otherwise[backScan];
+                     if (item.type == 'comment' && item.kind == 'transpose') {
+                         extraTransposeIndex = backScan;
+                         break;
+                     }
+                     backScan--;
+                 }
+            }
+
+            // Create a temporary container to measure the exact size of the selected content
+            let tempDiv = notesContainer.cloneNode(false);
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.visibility = 'hidden';
+            tempDiv.style.width = 'max-content';
+            tempDiv.style.height = 'auto';
+            tempDiv.style.minHeight = '0';
+            tempDiv.style.padding = '0'; 
+            
+            // We need to replicate the class/id/style context if possible, 
+            // but cloning notesContainer should cover the immediate styles.
+            
+            let items = notesContainer.querySelectorAll('.sheet-item');
+            
+            items.forEach((node) => {
+                let index = +node.dataset.index;
+                if (index === extraTransposeIndex) {
+                    tempDiv.appendChild(node.cloneNode(true));
+                }
+                if (index >= start && index <= end) {
+                    tempDiv.appendChild(node.cloneNode(true));
+                }
+            });
+
+            container.appendChild(tempDiv);
+            options.width = tempDiv.offsetWidth;
+            // Add a small buffer to height to avoid bottom clipping due to rounding
+            options.height = tempDiv.offsetHeight + 5; 
+            container.removeChild(tempDiv);
+
+            options.filter = (node) => {
+                if (node.classList?.contains('sheet-item')) {
+                    let index = +node.dataset.index
+                    return (index >= start && index <= end) || (index === extraTransposeIndex)
+                }
+                return true
+            }
+        }
+
         setTimeout(() =>
-            domToBlob(container, {scale: 2}).then((blob) => {
+            domToBlob(container, options).then((blob) => {
                 if (mode === "copy") {
                     copyCapturedImage(blob);
                 }
@@ -593,6 +697,7 @@
                 }
 
                 settings.capturingImage = false;
+                settings = settings;
 
                 // Restore original element size
                 notesContainer.style.width = notesContainer.style.height = 'max-content'
@@ -1025,8 +1130,12 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                     <button class="w-full block" on:click={() => { transposeRegion(selection.left, selection.right, 1, { relative: true }); repopulateTransposeComments() }}>Transpose selection down</button>
                     <button class="w-full block" on:click={() => { transposeRegion(selection.left, selection.right, -1, { relative: true }); repopulateTransposeComments() }}>Transpose selection up</button>
                 </div>
-                <button on:click={() => { autoRegion(selection.left, selection.right, {ignorePrevious: true})}}>Auto-transpose (single)</button>
-                <button on:click={() => { multiTransposeRegion(selection.left, selection.right) }}>Auto-transpose (multi)</button>
+                <button disabled={isAutoTransposing} on:click={() => handleAutoTranspose('single')}>
+                    {isAutoTransposing ? "Please Wait..." : "Auto-transpose (single)"}
+                </button>
+                <button disabled={isAutoTransposing} on:click={() => handleAutoTranspose('multi')}>
+                    {isAutoTransposing ? "Please Wait..." : "Auto-transpose (multi)"}
+                </button>
 
                 <!-- Continue transpose L/R -->
                 <div class="flex flex-row justify-around items-stretch gap-2">
@@ -1063,8 +1172,8 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
 
     {#if sheetReady == true}
         <div class="flex flex-col items-start" on:click|self={resetSelection} on:keypress|self={() => {}} on:contextmenu|preventDefault>
-            <SheetActions {settings}
-                on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode) }}
+            <SheetActions {settings} hasSelection={has_selection}
+                on:captureSheetAsImage={(event) => { captureSheetAsImage(event.detail.mode, event.detail.selectionOnly) }}
                 on:copyText={handleCopy}
                 on:copyTransposes={() => {navigator.clipboard.writeText(sheetTransposes())}}
                 on:export={() => {
@@ -1095,13 +1204,13 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                             {@const next_thing = chords_and_otherwise[+index+1]}
                             {@const previous_thing = chords_and_otherwise[+index-1]}
                             {#if inner.type === "break" && next_thing.type != "comment" && previous_thing?.type != "comment"}
-                                <br>
+                                <br data-index={index} class="sheet-item">
                             {:else if inner.type === "comment"}
                                 {#if previous_thing?.type != "comment" && inner.notop != true && inner.kind != 'inline'}
-                                    <br>
+                                    <br data-index={index} class="sheet-item">
                                 {/if}
                                 {#if ["custom", "tempo", "inline", "title"].includes(inner.kind)}
-                                    <span class="comment" on:click|stopPropagation
+                                    <span class="comment sheet-item" data-index={index} on:click|stopPropagation
                                       on:keypress|stopPropagation
                                       contenteditable="true"
                                       on:contextmenu|preventDefault
@@ -1114,7 +1223,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                                         {/if}
                                     </span>
                                 {:else}
-                                    <span on:contextmenu|preventDefault class="comment">
+                                    <span on:contextmenu|preventDefault class="comment sheet-item" data-index={index}>
                                         {#if inner.kind === "transpose"}
                                             {@const [transposeText, transposeIndex] = inner.text.split(" #")}
 
@@ -1126,15 +1235,15 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span>
                                     </span>
                                 {/if}
                                 {#if inner.kind != 'inline'} <!-- and is any comment, break after -->
-                                    <br>
+                                    <br data-index={index} class="sheet-item">
                                 {/if}
                             {/if}
-                        {:else}
-                            <!-- if it's an actual chord -->
-                            <Chord chord={inner}
+                        {:else}<Chord chord={inner}
                                    next={inner.next ?? undefined}
                                    selected={inner.selected}
                                    index={inner.index}
+                                   data-index={index} 
+                                   class="sheet-item"
                                    on:select={setSelection}
                                    {settings}
                                 />
