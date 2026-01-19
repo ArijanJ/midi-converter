@@ -109,7 +109,6 @@ function render_chord(chord, next, settings, selected) {
             const isFirstEndOorWithoutChord = !isChord && note === endOors[0];
             const isChordWithOnlyEndOorsAndIsFirstEndOor = isChord && nonOors.length === 0 && startOors.length === 0 && note === endOors[0];
             const isChordWithMoreThanOneNonOorAndIsFirstEndOor = isChord && nonOors.length > 0 && note === endOors[0];
-
             let text_representation = note.char
 
             // TODO: does not work with sequential quantize (e.g. you can get {:8p4q'} where the 4 is a regular non-oor note)
@@ -122,14 +121,12 @@ function render_chord(chord, next, settings, selected) {
                 if (settings.oorMarks)
                     text_representation = settings.oorSeparator + text_representation
             }
-
             res += `<span style="display:inline-flex; justify-content: center; min-width: 0.6em; border-bottom: 2px solid; font-weight: 900">`
                 + `${text_representation}</span>`
 
             if (settings.oorMarks)
                 if (isLastStartOor && nonOors.length > 0)
                     res += `'`
-
         } else if (!draw_as_oor && !note.outOfRange) {
             res += note.char
         }
