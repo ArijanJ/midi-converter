@@ -253,7 +253,8 @@
 
     try {
         settings = JSON.parse(localStorage.getItem('preferences'));
-        settings.beats = 4; settings.breaks = 'realistic'; settings.bpm = 120 // doesn't make sense to save this
+        settings.beats = 4; settings.breaks = 'realistic';
+        settings.bpm = 120; settings.capturingImage = false; // doesn't make sense to save these
     }
     catch (e) { settings = undefined; }
 	$: {
