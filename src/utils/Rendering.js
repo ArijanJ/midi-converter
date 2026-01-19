@@ -57,14 +57,15 @@ function colored_string(s, color, options = {}) {
 }
 
 function render_chord(chord, next, settings, selected) {
-    const selection_color = "rgba(97, 97, 97, 50)";
+    // If capturing image, we want to hide the selection background
+    const selection_color = settings?.capturingImage ? "rgba(0, 0, 0, 0)" : "rgba(97, 97, 97, 50)";
 
     let color
 
     let curr_note = chord?.notes?.[0]
     let next_note = next?.notes?.[0]
     if (!curr_note) return "";
-    
+
     let beat = 0, difference = 0
 
     if (!next_note) {
@@ -97,18 +98,17 @@ function render_chord(chord, next, settings, selected) {
         }
 
         let draw_as_oor = (note.outOfRange === true && settings.oors === true)
-        
+
         if (draw_as_oor === true) {
             let nonOors = chord.notes.filter(note => note.outOfRange === false)
             let startOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value - 1024)
             let endOors = chord.notes.filter(note => note.outOfRange === true && note.displayValue === note.value + 1024)
 
             const isFirstStartOor = (note === startOors[0])
-            const isLastStartOor = (note === startOors[startOors.length-1])
+            const isLastStartOor = (note === startOors[startOors.length - 1])
             const isFirstEndOorWithoutChord = !isChord && note === endOors[0];
             const isChordWithOnlyEndOorsAndIsFirstEndOor = isChord && nonOors.length === 0 && startOors.length === 0 && note === endOors[0];
             const isChordWithMoreThanOneNonOorAndIsFirstEndOor = isChord && nonOors.length > 0 && note === endOors[0];
-            
             let text_representation = note.char
 
             // TODO: does not work with sequential quantize (e.g. you can get {:8p4q'} where the 4 is a regular non-oor note)
@@ -118,17 +118,15 @@ function render_chord(chord, next, settings, selected) {
                 isChordWithOnlyEndOorsAndIsFirstEndOor ||
                 isChordWithMoreThanOneNonOorAndIsFirstEndOor
             ) {
-                if(settings.oorMarks) 
+                if (settings.oorMarks)
                     text_representation = settings.oorSeparator + text_representation
             }
-            
             res += `<span style="display:inline-flex; justify-content: center; min-width: 0.6em; border-bottom: 2px solid; font-weight: 900">`
-                    + `${text_representation}</span>`
+                + `${text_representation}</span>`
 
             if (settings.oorMarks)
                 if (isLastStartOor && nonOors.length > 0)
                     res += `'`
-        
         } else if (!draw_as_oor && !note.outOfRange) {
             res += note.char
         }
@@ -142,7 +140,7 @@ function render_chord(chord, next, settings, selected) {
     }
 
     // Separator
-    res += settings.tempoMarks ? 
+    res += settings.tempoMarks ?
         colored_string(separator(beat ?? undefined, difference), color)
         : ' ';
     return res + "</span>";
