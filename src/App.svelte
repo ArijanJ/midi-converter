@@ -721,20 +721,45 @@
 
       // Backtrack to include header comments (e.g. Transpose by ...)
       let scan = start - 1;
+      let transposeFound = false;
       while (scan >= 0) {
         let item = chords_and_otherwise[scan];
         if (item.type == "comment" && item.kind != "inline") {
+          if (item.kind == "transpose") {
+            if (transposeFound) break;
+            transposeFound = true;
+          }
           start = scan;
+          scan--;
+        } else if (item.type == "break") {
           scan--;
         } else {
           break;
         }
       }
 
-      // Check if we have a transpose above the first line in the selection, if not, find the previous one
+      // Find the first chord in the selection to determine if it has a governing header
+      let firstChordIndex = -1;
+      for (let i = start; i <= end; i++) {
+        if (!not_chord(chords_and_otherwise[i])) {
+          firstChordIndex = i;
+          break;
+        }
+      }
+
+      // If no chord found, effectively the range is the whole selection
+      let checkLimit = firstChordIndex !== -1 ? firstChordIndex : end;
+
+      let hasGoverningTranspose = false;
+      for (let i = start; i <= checkLimit; i++) {
+        if (chords_and_otherwise[i].kind === "transpose") {
+          hasGoverningTranspose = true;
+          break;
+        }
+      }
+
       let extraTransposeIndex = -1;
-      let firstItem = chords_and_otherwise[start];
-      if (firstItem.kind !== "transpose") {
+      if (!hasGoverningTranspose) {
         let backScan = start - 1;
         while (backScan >= 0) {
           let item = chords_and_otherwise[backScan];
