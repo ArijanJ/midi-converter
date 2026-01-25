@@ -1311,7 +1311,7 @@
       </div>
     </div>
 
-    <div class="w-[30em]">
+    <div>
       <StorageIndicator used={remaining} />
     </div>
   {/if}
