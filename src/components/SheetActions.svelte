@@ -9,6 +9,7 @@
 </script>
 
 <div class="flex flex-row gap-1 sticky top-0 z-10 app-background-color">
+  <button on:click={() => dispatch("addTitle")}>Add title</button>
   <button on:click={() => dispatch("copyText")}>Copy Text</button>
 
   <button
@@ -56,6 +57,11 @@
       <SelectionIcon />
     {/if}
   </button>
-  <button on:click={() => dispatch("addTitle")}>Add title</button>
+  <button disabled={!hasSelection} on:click={() => dispatch("splitSheet")}>
+    Split Sheet
+    {#if hasSelection}
+      <SelectionIcon />
+    {/if}
+  </button>
   <button on:click={() => dispatch("export")}>Export</button>
 </div>
