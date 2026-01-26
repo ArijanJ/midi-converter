@@ -15,7 +15,12 @@
     not_chord,
     index_of_index,
   } from "./utils/VP.js";
-  let real_index_of = (x) => index_of_index(chords_and_otherwise, x);
+  let real_index_of = (x) => {
+    const result = index_of_index(chords_and_otherwise, x);
+    if (result !== undefined) return result;
+    // Fallback for split sheets or edge cases where binary search fails
+    return chords_and_otherwise?.findIndex((e) => e.index === x) ?? -1;
+  };
   let chord_at = (x) => chords_and_otherwise[real_index_of(x)];
 
   import SheetOptions from "./components/SheetOptions.svelte";
