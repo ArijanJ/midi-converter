@@ -47,6 +47,9 @@
   import SheetActions from "./components/SheetActions.svelte";
   import Guide from "./components/Guide.svelte";
   import ChordEditor from "./components/ChordEditor.svelte";
+  import Toasts from "./components/Toasts.svelte";
+  import StorageIndicator from "./components/StorageIndicator.svelte";
+  import { addToast } from "./stores/ToastStore.js";
 
   let existingProject = {
     element: undefined,
@@ -665,6 +668,7 @@
       text = text.replace(/(Transpose by: [^#]*)(#\d+)/g, "$1"); // removes all "#{number}" occurrences
 
       navigator.clipboard.writeText(text);
+      addToast("Sheet text copied!", "success");
     }, 0);
   }
 
@@ -685,6 +689,9 @@
    * @enum {string} ["download", "copy"]
    */
   function captureSheetAsImage(mode, selectionOnly = false) {
+    if (mode === "download") {
+      addToast("Downloading...", "info");
+    }
     settings.capturingImage = true;
     settings.oorMarks = false;
     settings = settings; // Force reactivity for render_chord
@@ -721,20 +728,45 @@
 
       // Backtrack to include header comments (e.g. Transpose by ...)
       let scan = start - 1;
+      let transposeFound = false;
       while (scan >= 0) {
         let item = chords_and_otherwise[scan];
         if (item.type == "comment" && item.kind != "inline") {
+          if (item.kind == "transpose") {
+            if (transposeFound) break;
+            transposeFound = true;
+          }
           start = scan;
+          scan--;
+        } else if (item.type == "break") {
           scan--;
         } else {
           break;
         }
       }
 
-      // Check if we have a transpose above the first line in the selection, if not, find the previous one
+      // Find the first chord in the selection to determine if it has a governing header
+      let firstChordIndex = -1;
+      for (let i = start; i <= end; i++) {
+        if (!not_chord(chords_and_otherwise[i])) {
+          firstChordIndex = i;
+          break;
+        }
+      }
+
+      // If no chord found, effectively the range is the whole selection
+      let checkLimit = firstChordIndex !== -1 ? firstChordIndex : end;
+
+      let hasGoverningTranspose = false;
+      for (let i = start; i <= checkLimit; i++) {
+        if (chords_and_otherwise[i].kind === "transpose") {
+          hasGoverningTranspose = true;
+          break;
+        }
+      }
+
       let extraTransposeIndex = -1;
-      let firstItem = chords_and_otherwise[start];
-      if (firstItem.kind !== "transpose") {
+      if (!hasGoverningTranspose) {
         let backScan = start - 1;
         while (backScan >= 0) {
           let item = chords_and_otherwise[backScan];
@@ -816,13 +848,16 @@
           "image/png": blob,
         }),
       ]);
+      addToast("Image copied to clipboard!", "success");
     } catch (err) {
       console.error(err);
+      addToast("Failed to copy image", "warning");
     }
   }
 
   function downloadCapturedImage(blob) {
     download(blob, "png");
+    addToast("Image downloaded!", "success");
   }
 
   function downloadSheetData(piece) {
@@ -884,9 +919,12 @@
     if (filename)
       history
         .add(filename, settings, chords_and_otherwise)
-        .then(() => (pieces = history.getAll()));
+        .then(() => (pieces = history.getAll()))
+        .then(() => (remaining = remainingSize()))
+        .catch((err) => {
+          console.error(err);
+        });
 
-    remaining = remainingSize();
     console.log("saving", chords_and_otherwise);
     return;
   }
@@ -1081,7 +1119,10 @@
   }
 
   function undo() {
-    if (undoStack.length === 0) return;
+    if (undoStack.length === 0) {
+      addToast("Nothing to undo", "warning");
+      return;
+    }
     const action = undoStack.pop();
     undoing = true;
     switch (action.type) {
@@ -1129,6 +1170,7 @@
         break;
     }
     undoing = false;
+    addToast("Action undone!", "info");
     repopulateTransposeComments();
     renderSelection();
     autosave();
@@ -1270,15 +1312,12 @@
     </div>
 
     <div>
-      Used ~{remaining} / 5000 kB
-      <span
-        title="The last entry (or multiple) will automatically be dropped if an autosave fails.
-You can also right-click a saved sheet to manually delete it.
-Individual sizes are an estimation, the total is correct.">ⓘ</span
-      >
+      <StorageIndicator used={remaining} />
     </div>
   {/if}
 </div>
+
+<Toasts />
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
@@ -1294,6 +1333,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span
     <div>
       {#if sheetReady}
         <p class="mb-2">You are currently editing: {filename}</p>
+        <StorageIndicator used={remaining} />
         <button
           class="w-full"
           on:click={() => {
@@ -1434,6 +1474,7 @@ Individual sizes are an estimation, the total is correct.">ⓘ</span
         on:copyText={handleCopy}
         on:copyTransposes={() => {
           navigator.clipboard.writeText(sheetTransposes());
+          addToast("Transposes copied!", "success");
         }}
         on:export={() => {
           autosave();

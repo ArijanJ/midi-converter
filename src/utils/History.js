@@ -1,4 +1,5 @@
 import pako from "pako";
+import { addToast } from "../stores/ToastStore.js";
 
 const _key = "pieces";
 
@@ -52,22 +53,36 @@ const module = {
 
     try {
       localStorage.setItem(_key, JSON.stringify(thisPieceRemoved));
+      addToast("Saved!", "success");
     } catch ({ error, message }) {
       if (
         error == "QuotaExceededError" ||
         message == "The quota has been exceeded."
       ) {
-        console.log("Quota exceeded, dropping: ", thisPieceRemoved.pop());
+        const dropped = thisPieceRemoved.pop();
+        console.log("Quota exceeded, dropping: ", dropped);
         thisPieceRemoved.shift(); // undo addition
         localStorage.setItem(_key, JSON.stringify(thisPieceRemoved));
+
+        addToast(
+          `Storage full, dropping sheet to make room...`,
+          "warning",
+          5000,
+        );
+
         module.add(name, settings, json, skip_compression);
-      } else console.error(error, message);
+      } else {
+        console.error(error, message);
+        addToast("Failed to save due to storage limits!", "error");
+        throw new Error(message || "QuotaExceededError");
+      }
     }
   },
 
   export: async (name) => {
     let pieces = module.getAll();
     let thisPiece = pieces.filter((entry) => entry.name === name)[0];
+    addToast("Exporting sheet...", "info");
 
     return thisPiece;
   },
@@ -75,6 +90,7 @@ const module = {
   delete: (name) => {
     let pieces = module.getAll().filter((entry) => entry.name != name);
     localStorage.setItem(_key, JSON.stringify(pieces));
+    addToast(`Deleted "${name}"`, "info");
   },
 };
 

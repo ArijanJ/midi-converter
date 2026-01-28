@@ -8,7 +8,7 @@
   Middle-click to select everything below the note<br />
   Ctrl-Z for a limited undo<br />
   <hr class="my-2 mx-1" />
-  Note that<span
+  Note that <span
     title="Track imports, break every x beats, quantize, and any tempo/BPM changes"
     class="underline cursor-help">some settings</span
   >
