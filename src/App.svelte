@@ -15,7 +15,12 @@
     not_chord,
     index_of_index,
   } from "./utils/VP.js";
-  let real_index_of = (x) => index_of_index(chords_and_otherwise, x);
+  let real_index_of = (x) => {
+    const result = index_of_index(chords_and_otherwise, x);
+    if (result !== undefined) return result;
+    // Fallback for split sheets or edge cases where binary search fails
+    return chords_and_otherwise?.findIndex((e) => e.index === x) ?? -1;
+  };
   let chord_at = (x) => chords_and_otherwise[real_index_of(x)];
 
   import SheetOptions from "./components/SheetOptions.svelte";
@@ -1053,6 +1058,93 @@
     updateChords();
   }
 
+  // URL Params
+  {
+    const urlParams = new URLSearchParams(window.location.search);
+    const openSheet = urlParams.get("open");
+
+    if (openSheet) {
+      const decodedName = decodeURIComponent(openSheet);
+
+      // Timeout to ensure DOM is ready
+      setTimeout(() => {
+        pieces = history.getAll();
+        const piece = pieces.find((p) => p.name === decodedName);
+
+        if (piece) {
+          filename = decodedName;
+          existingProject.setAndProceed(piece);
+          if (importer.element) importer.hide();
+        } else {
+          console.warn("Could not find sheet with name:", decodedName);
+          alert(`Could not find sheet "${decodedName}".`);
+        }
+      }, 1);
+    }
+  }
+
+  function splitSheet() {
+    if (!has_selection) return;
+
+    let start = real_index_of(selection.left);
+    let end = real_index_of(selection.right);
+
+    // Backtrack to include preceding comments
+    let scan = start - 1;
+    while (scan >= 0) {
+      let item = chords_and_otherwise[scan];
+      if (item.type == "comment" && item.kind != "inline") {
+        start = scan;
+        scan--;
+      } else if (item.type == "break") {
+        scan--;
+      } else {
+        break;
+      }
+    }
+
+    let newName = prompt("Enter a name for the new sheet:", "");
+    if (!newName) return;
+
+    const exists = history.getAll().some((entry) => entry.name === newName);
+    if (exists) {
+      alert(
+        "A sheet with this name already exists. Please choose a different name.",
+      );
+      return;
+    }
+
+    // Open new tab for the split sheet
+    const newWindow = window.open("", "_blank");
+
+    let items = JSON.parse(
+      JSON.stringify(chords_and_otherwise.slice(start, end + 1)),
+    );
+
+    // Remove selection markers and re-index chords
+    let newIndex = 0;
+    items.forEach((item) => {
+      if (item.selected) delete item.selected;
+      if (is_chord(item)) {
+        item.index = newIndex++;
+      }
+    });
+
+    history.add(newName, settings, items).then(() => {
+      pieces = history.getAll((remaining = remainingSize()));
+      // Open in new tab
+      const url = new URL(window.location.href);
+      url.searchParams.set("open", newName);
+
+      if (newWindow) {
+        newWindow.location.href = url.toString();
+      } else {
+        // Fallback if window failed to open (rare if triggered by click)
+        window.open(url.toString(), "_blank");
+      }
+    });
+  }
+
   function joinRegion(left, right) {
     let start = real_index_of(left);
 
@@ -1502,6 +1594,7 @@
           renderSelection();
           window.scroll(0, 0);
         }}
+        on:splitSheet={splitSheet}
       />
 
       <div
