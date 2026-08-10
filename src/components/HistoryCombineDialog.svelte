@@ -1,6 +1,7 @@
 <script>
   import { createEventDispatcher, onMount } from "svelte";
   import SheetOptions from "./SheetOptions.svelte";
+  import ProgressBar from "./ProgressBar.svelte";
   import { getDefaultSettings } from "../utils/Settings";
 
   const dispatch = createEventDispatcher();
@@ -211,19 +212,8 @@
     </div>
 
     {#if busy}
-      <div class="flex flex-col gap-2 mt-2">
-        <div class="flex justify-between items-center text-sm">
-          <span class="text-gray-300"
-            >{progressDescription || "Starting..."}</span
-          >
-          <span class="text-gray-400 tabular-nums">{progressPercent}%</span>
-        </div>
-        <div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-          <div
-            class="h-full bg-blue-500 rounded-full"
-            style="width: {progressPercent}%"
-          ></div>
-        </div>
+      <div class="mt-2">
+        <ProgressBar percent={progressPercent} description={progressDescription} />
       </div>
     {/if}
 

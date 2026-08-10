@@ -1,5 +1,6 @@
 import pako from "pako";
 import { addToast } from "../stores/ToastStore.js";
+import { showQuotaError, clearQuotaError } from "../stores/QuotaStore.js";
 
 const _key = "pieces";
 
@@ -53,6 +54,7 @@ const module = {
 
     try {
       localStorage.setItem(_key, JSON.stringify(thisPieceRemoved));
+      clearQuotaError();
       addToast("Saved!", "success");
     } catch (e) {
       const errorMsg = e.message || "";
@@ -64,26 +66,14 @@ const module = {
         errorMsg.includes("The quota has been exceeded.") ||
         errorMsg.includes("NS_ERROR_DOM_QUOTA_REACHED");
 
-      if (isQuotaError && !opts.noAutoDelete) {
-        const dropped = thisPieceRemoved.pop();
-        console.log("Quota exceeded, dropping: ", dropped);
-        thisPieceRemoved.shift(); // undo addition
-        localStorage.setItem(_key, JSON.stringify(thisPieceRemoved));
-
-        addToast(
-          `Storage full, dropping sheet to make room...`,
-          "warning",
-          5000,
-        );
-
-        module.add(name, settings, json, skip_compression);
+      console.error(e);
+      if (isQuotaError) {
+        addToast("Storage quota exceeded! Sheet could not be saved. Please open a new tab and export/delete other sheets!", "error");
+        showQuotaError({ name });
       } else {
-        console.error(e);
-        if (!isQuotaError) {
-          addToast("Failed to save due to storage limits!", "error");
-        }
-        throw e;
+        addToast("Failed to save sheet due to storage error!", "error");
       }
+      throw e;
     }
   },
 

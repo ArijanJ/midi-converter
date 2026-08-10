@@ -55,11 +55,19 @@
   import ChordEditor from "./components/ChordEditor.svelte";
   import HistoryCombineDialog from "./components/HistoryCombineDialog.svelte";
   import HistoryList from "./components/HistoryList.svelte";
-  import { handleHistoryCombineCommand as handleHistoryCombineCommandUtils } from "./utils/HistoryCombine.js";
+  import ProgressBar from "./components/ProgressBar.svelte";
+  import {
+    handleHistoryCombineCommand as handleHistoryCombineCommandUtils,
+    captureChunksAndStitch,
+    loadSheetForHistoryCombine,
+    chunkSheetData,
+    calculateChunkMaxItems,
+  } from "./utils/SheetCombine.js";
   import { setGlobalContext } from "./utils/GlobalContext.js";
   import Toasts from "./components/Toasts.svelte";
   import StorageIndicator from "./components/StorageIndicator.svelte";
   import { addToast } from "./stores/ToastStore.js";
+  import { showQuotaError } from "./stores/QuotaStore.js";
 
   let existingProject = {
     element: undefined,
@@ -185,6 +193,10 @@
   let selectedSheets = [];
   let forcedNextSheetStartTime = undefined;
   let HistoryCombineDialogComp; // will be bound to HistoryCombineDialog component
+
+  let captureBusy = false;
+  let capturePercent = 0;
+  let captureDescription = "";
 
   /**
    * Helper for the HistoryCombine utility to load a sheet and wait for layout.
@@ -755,10 +767,151 @@
    * @param {boolean} selectionOnly - A boolean indicating whether to capture only the selected notes.
    * @enum {string} ["download", "copy"]
    */
-  function captureSheetAsImage(mode, selectionOnly = false) {
+  async function captureSheetAsImage(mode, selectionOnly = false) {
     if (mode === "download") {
       addToast("Downloading...", "info");
     }
+
+    // Determine target data for chunk check
+    let targetData = [];
+    if (selectionOnly && has_selection) {
+      let start = real_index_of(selection.left);
+      let end = real_index_of(selection.right);
+
+      let scan = start - 1;
+      let transposeFound = false;
+      while (scan >= 0) {
+        let item = chords_and_otherwise[scan];
+        if (item.type == "comment" && item.kind != "inline") {
+          if (item.kind == "transpose") {
+            if (transposeFound) break;
+            transposeFound = true;
+          }
+          start = scan;
+          scan--;
+        } else if (item.type == "break") {
+          scan--;
+        } else {
+          break;
+        }
+      }
+
+      let firstChordIndex = -1;
+      for (let i = start; i <= end; i++) {
+        if (!not_chord(chords_and_otherwise[i])) {
+          firstChordIndex = i;
+          break;
+        }
+      }
+
+      let checkLimit = firstChordIndex !== -1 ? firstChordIndex : end;
+
+      let hasGoverningTranspose = false;
+      for (let i = start; i <= checkLimit; i++) {
+        if (chords_and_otherwise[i].kind === "transpose") {
+          hasGoverningTranspose = true;
+          break;
+        }
+      }
+
+      let extraTransposeIndex = -1;
+      if (!hasGoverningTranspose) {
+        let backScan = start - 1;
+        while (backScan >= 0) {
+          let item = chords_and_otherwise[backScan];
+          if (item.type == "comment" && item.kind == "transpose") {
+            extraTransposeIndex = backScan;
+            break;
+          }
+          backScan--;
+        }
+      }
+
+      if (extraTransposeIndex !== -1) {
+        targetData.push(chords_and_otherwise[extraTransposeIndex]);
+      }
+      for (let i = start; i <= end; i++) {
+        targetData.push(chords_and_otherwise[i]);
+      }
+    } else {
+      targetData = chords_and_otherwise || [];
+    }
+
+    const chunks = chunkSheetData(
+      targetData,
+      calculateChunkMaxItems(targetData, settings),
+    );
+
+    // If large sheet requiring stitching (> 1 chunk), use image-stitch pipeline with progress tracking
+    if (chunks.length > 1) {
+      const flatChunks = chunks.map((chunkData, index) => ({
+        name: filename,
+        chunkData,
+        nextStart: undefined,
+        isLastOfAll: index === chunks.length - 1,
+        progressLabel: `Capturing chunk ${index + 1} of ${chunks.length}`,
+      }));
+
+      let originalData = chords_and_otherwise;
+      let originalFilename = filename;
+      let originalSettings = { ...settings };
+
+      settings.capturingImage = true;
+      settings.oorMarks = false;
+      settings = settings;
+
+      let onCloneNode = (node) => {
+        let transposeCount = 1;
+        let comments = node.querySelectorAll(".comment");
+        comments.forEach((comment) => {
+          if (comment.textContent.includes("Transpose by:")) {
+            let indexSpan = Array.from(comment.children).find(
+              (c) =>
+                c.tagName === "SPAN" && c.textContent.trim().startsWith("#"),
+            );
+            if (indexSpan) {
+              indexSpan.textContent = "#" + transposeCount++;
+            }
+          }
+        });
+      };
+
+      captureBusy = true;
+      capturePercent = 0;
+      captureDescription = "Preparing large sheet...";
+
+      try {
+        const blob = await captureChunksAndStitch({
+          flatChunks,
+          loadSheet: (name, data) => loadSheetForHistoryCombine(name, data),
+          onProgress: (percent, description) => {
+            capturePercent = Math.round(percent);
+            captureDescription = description;
+          },
+          onCloneNode,
+        });
+
+        if (blob) {
+          if (mode === "copy") {
+            copyCapturedImage(blob);
+          } else {
+            downloadCapturedImage(blob);
+          }
+        }
+      } catch (err) {
+        console.error("Capture failed:", err);
+        addToast("Capture failed: " + err.message, "warning");
+      } finally {
+        chords_and_otherwise = originalData;
+        filename = originalFilename;
+        settings = originalSettings;
+        captureBusy = false;
+        softRegen();
+      }
+      return;
+    }
+
+    // Standard fast single-shot capture for normal/small sheets
     settings.capturingImage = true;
     settings.oorMarks = false;
     settings = settings; // Force reactivity for render_chord
@@ -1232,13 +1385,7 @@
           errorMsg.includes("NS_ERROR_DOM_QUOTA_REACHED");
 
         if (isQuotaError) {
-          if (
-            confirm("Storage is full, unable to save. Open in current window?")
-          ) {
-            filename = newName;
-            chords_and_otherwise = items;
-            softRegen();
-          }
+          showQuotaError({ name: newName });
         } else {
           addToast("Failed to split sheet: " + errorMsg, "error");
         }
@@ -1523,10 +1670,23 @@
     </button>
 
     <div>
-      <StorageIndicator used={remaining} />
+      <StorageIndicator used={remaining} showQuotaButton={false} />
     </div>
   {/if}
 </div>
+
+{#if captureBusy}
+  <div
+    class="fixed inset-0 bg-black/60 z-[9999] flex items-center justify-center"
+  >
+    <div
+      class="bg-[#242424] border border-neutral-600 rounded-lg p-6 w-[350px] flex flex-col gap-4 text-white shadow-2xl"
+    >
+      <h3 class="font-bold text-lg text-center">Capturing Sheet Image</h3>
+      <ProgressBar percent={capturePercent} description={captureDescription} />
+    </div>
+  </div>
+{/if}
 
 <Toasts />
 
@@ -1730,7 +1890,7 @@
           on:click|self={resetSelection}
           on:keypress|self={() => {}}
         >
-          {#each chords_and_otherwise as inner, index}
+          {#each chords_and_otherwise || [] as inner, index}
             <!-- not a chord -->
             {#if inner.type}
               {@const next_thing = chords_and_otherwise[+index + 1]}
