@@ -20,4 +20,5 @@ $ npm run build # to build static site
 If you're interested in VP, you can check out the following resources:
 - [Wispow FreePiano](https://freepiano.tiwb.com/en/) with [the VP keymap](https://gist.github.com/ArijanJ/c0c8b382897cae5e133bfaaf468c1bef)
 - https://vp-sheets.fly.dev/
+- [PianoBlox](https://pianoblox.com/) — free Virtual Piano / Roblox sheets with copy-ready notes, in-browser practice, and accuracy challenges
 
